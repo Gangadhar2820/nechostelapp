@@ -10,6 +10,7 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { Divider } from "primereact/divider";
 import AdminStudentDataUpload from "./AdminStudentDataUpload";
+import { AdminStudentRegisteration } from "../services/RegisterService";
 
 interface Semester {
   name: string;
@@ -117,30 +118,35 @@ function AdminStudentRegister() {
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
-    console.log(semester);
-    console.log(department);
-
     setIsRegistering(true);
-    setTimeout(() => {
+
+    AdminStudentRegisteration(rollNumber,hostelId,firstname,lastname,gender,phoneno,fatherName,fatherMobile,dateOfBirth,email,JSON.stringify(semester),JSON.stringify(department))
+    .then((data)=>{
+      const {success,message} = data;
       setIsRegistering(false);
-      if (rollNumber !== "21471A0521") {
-        if (adminStudentToast.current) {
-          adminStudentToast.current.show({
-            severity: "success",
-            summary: "Registered Successfully !",
-            detail: "New Student has been added",
-          });
-        }
-      } else {
-        if (adminStudentToast.current) {
-          adminStudentToast.current.show({
-            severity: "error",
-            summary: "Register Failed",
-            detail: "Student already exist",
-          });
-        }
-      }
-    }, 2000);
+    }).catch((err)=>{
+      console.log(err)
+    })
+
+    // setTimeout(() => {
+    //   if (rollNumber !== "21471A0521") {
+    //     if (adminStudentToast.current) {
+    //       adminStudentToast.current.show({
+    //         severity: "success",
+    //         summary: "Registered Successfully !",
+    //         detail: "New Student has been added",
+    //       });
+    //     }
+    //   } else {
+    //     if (adminStudentToast.current) {
+    //       adminStudentToast.current.show({
+    //         severity: "error",
+    //         summary: "Register Failed",
+    //         detail: "Student already exist",
+    //       });
+    //     }
+    //   }
+    // }, 2000);
   };
 
 

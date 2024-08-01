@@ -7,7 +7,7 @@ import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./components/Home";
+import Home from "./components/student/Home";
 import StudentRegister from "./components/StudentRegister";
 import StudentForgotPassword from "./components/StudentForgotPassword";
 import AdminHome from "./components/AdminHome";
@@ -23,20 +23,34 @@ import StudentPermissionAndLeaves from "./components/StudentPermissionAndLeaves"
 import StudentHistory from "./components/StudentHistory";
 import QRScanner from "./components/QRScanner";
 import AdminViewStudent from "./components/AdminViewStudent";
+import Dashboard from "./components/student/Dashboard";
+import Profile from "./components/student/Profile";
+import Leave from "./components/student/Leave";
+import History from "./components/student/History";
+import Incharge from "./components/student/Incharge";
 
 function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />}></Route>
 
-          <Route path="/login" element={<Login />}>
-          <Route path="studentregister" element={<StudentRegister/>}>
+          <Route path="/" element={<Login />} />
+          
+          <Route path="/student" element={<Home/>}>
+          <Route path="profile" element={<Profile/>} />
+          <Route path="dashboard" element={<Dashboard/>} />
+          <Route path="leave" element={<Leave/>} />
+          <Route path="history" element={<History/>} />
+          <Route path="incharge" element={<Incharge/>} />
           </Route>
-          <Route path="studentfpassword" element={<StudentForgotPassword/>}>
+
+
+          <Route path="/studentregister" element={<StudentRegister/>}>
           </Route>
+          <Route path="/studentfpassword" element={<StudentForgotPassword/>}>
           </Route>
+          
 
           <Route path="/adminhome" element={<AdminHome/>}>
           <Route path="dashboard" element={<AdminDashboard/>}></Route>

@@ -78,6 +78,7 @@ function StudentPermissionAndLeaves() {
     setIsApplying(true);
 
     if(selectionOption==="Leave"){
+      console.log(fromTime)
       setTimeout(() => {
         setIsApplying(false);
         if(PermissionLeaveToast.current){
@@ -87,6 +88,7 @@ function StudentPermissionAndLeaves() {
       }, 2000);
 
     }else if(selectionOption==="Permission"){
+      console.log(fromTime)
       setTimeout(() => {
         setIsApplying(false);
         if(PermissionLeaveToast.current){

@@ -5,6 +5,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import {Card} from "primereact/card";
 import { Toast } from 'primereact/toast';
+import { RegisterStudent, VerifyStudentRegister } from "../services/RegisterService";
 
         
 function StudentRegister() {
@@ -32,32 +33,58 @@ function StudentRegister() {
   },[stuPassword,stuCPassword])
 
 
+
+
   const handleStuRegFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setisValidating(true);
     setIsStudentExist(null);
-    setTimeout(() => {
+    VerifyStudentRegister(rollno).then((data)=>{
       setisValidating(false);
-      if (rollno === "21471A0521") {
-        setIsStudentExist(true);
-      } else {
-        setIsStudentExist(false);
+      const {isExist,message} = data;
+      if(isExist){
+        setIsStudentExist(true)
+      }else{
+        setIsStudentExist(false)
       }
-    }, 2000);
+    }).catch((err)=>{
+      console.log("Error :",err)
+    })
+  
   };
 
   const handleRegisterForm = (event:React.FormEvent<HTMLFormElement>)=>{
     event.preventDefault();
     setIsRegistering(true);
-    setTimeout(() => {
+    RegisterStudent(rollno,stuPassword).then(data=>{
       setIsRegistering(false);
-      if(registerToast.current){
-        registerToast.current.show({ severity: 'success', summary: 'Register Successful !', detail: 'Welcome, User' });
-        setTimeout(() => {
-          Navigate("/login",{replace:true})
-        }, 2000);
+      const {success,message} = data;
+      if(success){
+        if(registerToast.current){
+              registerToast.current.show({ severity: 'success', summary: 'Register Successful !', detail:message });
+                // Navigate("/",{replace:true})
         }
-    }, 2000);
+      }else{
+        if(registerToast.current){
+          registerToast.current.show({ severity: 'warn', summary: 'Register Unsuccessful !', detail: message });
+            // Navigate("/",{replace:true})
+        }
+      }
+
+    }).catch(err=>{
+      setIsRegistering(false);
+      console.log("error",err);
+    })
+
+    // setTimeout(() => {
+    //   setIsRegistering(false);
+    //   if(registerToast.current){
+    //     registerToast.current.show({ severity: 'success', summary: 'Register Successful !', detail: 'Welcome, User' });
+    //     setTimeout(() => {
+    //       Navigate("/",{replace:true})
+    //     }, 2000);
+    //     }
+    // }, 2000);
   }
 
 
@@ -69,7 +96,7 @@ function StudentRegister() {
         visible={true}
         style={{ width: "50vw" }}
         onHide={() => {
-          Navigate("/login", { replace: true });
+          Navigate("/", { replace: true });
         }}
         className="w-11 lg:w-5"
       >

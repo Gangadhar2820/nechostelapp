@@ -4,6 +4,7 @@ import { InputText } from "primereact/inputtext";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
+import { AdminInchargeRegisteration } from "../services/RegisterService";
 
 function AdminInchargeRegister() {
   const [hostelId, setHostelId] = useState<string>("");
@@ -38,19 +39,23 @@ function AdminInchargeRegister() {
   ) => {
     event.preventDefault();
     setIsRegistering(true);
-    setTimeout(() => {
+    AdminInchargeRegisteration(hostelId,name,phoneno,username,password).then((data)=>{
       setIsRegistering(false);
-      if(username !== "11"){
-        if(adminInchargeToast.current){
-          adminInchargeToast.current.show({ severity: 'success', summary: 'Register Successfully !', detail: 'New Incharge has been added' });
-        }
-      }else{
-        if(adminInchargeToast.current){
-          adminInchargeToast.current.show({ severity: 'error', summary: 'Register Failed', detail: 'Incharge already exist' });
-        }
+      const {success,message} = data;
+      if(success){
+      if(adminInchargeToast.current){
+        adminInchargeToast.current.show({ severity: 'success', summary: 'Register Successfully !', detail: 'New Incharge has been added' });
       }
- 
-    }, 2000);
+      setHostelId("");setName("");setPhoneno("");setUsername("");setPassword("");setCPassword("")
+    }else{
+      if(adminInchargeToast.current){
+        adminInchargeToast.current.show({ severity: 'error', summary: 'Register Failed', detail: 'Incharge already exist' });
+      }
+    }
+    }).catch((err)=>{
+      console.log(err)
+    })
+   
   };
 
   return (
@@ -78,7 +83,7 @@ function AdminInchargeRegister() {
                   className="w-12 sm:w-8"
                   value={hostelId}
                   onChange={(e) => {
-                    setHostelId(e.target.value);
+                    setHostelId(e.target.value.toUpperCase());
                   }}
                   required
                 />

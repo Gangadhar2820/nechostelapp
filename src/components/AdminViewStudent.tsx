@@ -1,10 +1,14 @@
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Card } from "primereact/card";
+import { Column } from "primereact/column";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
+import { DataTable } from "primereact/datatable";
 import { Divider } from "primereact/divider";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { FloatLabel } from "primereact/floatlabel";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 import { Toast } from "primereact/toast";
@@ -78,6 +82,25 @@ function AdminViewStudent() {
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   const ViewStudentToast = useRef<Toast>(null);
+
+  const [listSemester,setListSemester] = useState<Semester | null>(null);
+  const [listDepartment,setListDepartment] = useState<Department | null>(null);
+  const [isListSearching,setIsListSearching] = useState<boolean>(false);
+
+
+  const [studentsList,setStudentsList] = useState<Student[]>();
+  const [globalFilterValue, setGlobalFilterValue] = useState<string>('');
+  const tableFooter = `Total : ${studentsList ? studentsList.length : 0}  Students.`
+
+  const Students:Student[] = [
+    {rollNumber:"111",hostelId: "Bh",firstname: "aa",lastname: "bb",gender: "male",dob: "12-12-2002",mobileno: "1111111111",email: "aa@gaaa.aa",semester: "3",department: "cse",fathername: "bb",fathermobileno: "222222"},
+    {rollNumber:"118",hostelId: "Bh",firstname: "aa",lastname: "bb",gender: "male",dob: "12-12-2002",mobileno: "1111111111",email: "aa@gaaa.aa",semester: "3",department: "cse",fathername: "bb",fathermobileno: "222222"},
+    {rollNumber:"113",hostelId: "Bh",firstname: "cc",lastname: "bb",gender: "female",dob: "12-12-2002",mobileno: "1111111111",email: "aa@gaaa.aa",semester: "3",department: "cse",fathername: "bb",fathermobileno: "222222"},
+    {rollNumber:"117",hostelId: "Bh",firstname: "cc",lastname: "bb",gender: "male",dob: "12-12-2002",mobileno: "1111111111",email: "aa@gaaa.aa",semester: "3",department: "cse",fathername: "bb",fathermobileno: "222222"},
+    {rollNumber:"115",hostelId: "Bh",firstname: "aa",lastname: "dd",gender: "female",dob: "12-12-2002",mobileno: "1111111111",email: "aa@gaaa.aa",semester: "3",department: "cse",fathername: "bb",fathermobileno: "222222"},
+    {rollNumber:"116",hostelId: "Bh",firstname: "aa",lastname: "dd",gender: "male",dob: "12-12-2002",mobileno: "1111111111",email: "aa@gaaa.aa",semester: "3",department: "cse",fathername: "bb",fathermobileno: "222222"},
+  ]
+
 
   const handleSearchFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -210,6 +233,30 @@ function AdminViewStudent() {
     semester,
     department,
   ]);
+
+  const handleListStudentForm = (event:React.FormEvent<HTMLFormElement>)=>{
+    event.preventDefault();
+    setIsListSearching(true);
+    setTimeout(() => {
+      setIsListSearching(false);
+      setStudentsList(Students);
+    }, 2000);
+  }
+
+  const renderHeader = () => {
+    return (
+        <div className="flex justify-content-between">
+             <Button type="button" icon="pi pi-filter-slash" label="Clear" outlined onClick={()=>{setGlobalFilterValue("")}} />
+            <IconField iconPosition="left">
+                <InputIcon className="pi pi-search" />
+                <InputText value={globalFilterValue}  onChange={(e)=>{setGlobalFilterValue(e.target.value)}} placeholder="Search" />
+            </IconField>
+        </div>
+    );
+};
+
+  const tableHeader = renderHeader();
+
 
   return (
     <>
@@ -522,12 +569,12 @@ function AdminViewStudent() {
 
 
         <Card title="List Students">
-          <form onSubmit={handleSearchFormSubmit} className="grid">
+          <form onSubmit={handleListStudentForm} className="grid">
           <div className="col-12 md:col-6 lg:col-4 mt-3">
                 <Dropdown
                   required
-                  value={semester}
-                  onChange={(e: DropdownChangeEvent) => setSemester(e.value)}
+                  value={listSemester}
+                  onChange={(e: DropdownChangeEvent) => setListSemester(e.value)}
                   options={Semesters}
                   optionLabel="name"
                   placeholder="Semester"
@@ -538,9 +585,9 @@ function AdminViewStudent() {
               <div className="col-12 md:col-6 lg:col-4 mt-3">
                 <Dropdown
                   required
-                  value={department}
+                  value={listDepartment}
                   onChange={(e: DropdownChangeEvent) => {
-                    setDepartment(e.value);
+                    setListDepartment(e.value);
                   }}
                   options={Departments}
                   optionLabel="name"
@@ -553,15 +600,33 @@ function AdminViewStudent() {
             <div className="col-12 md:col-6 lg:col-4 mt-3">
               <Button
                 type="submit"
-                disabled={!isSearchFormValid || isSearching}
+                disabled={isListSearching}
               >
-                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
+                {isListSearching && <i className="pi pi-spin pi-spinner"></i>}
                 &nbsp;&nbsp;
-                {isSearching ? "Searching" : "Search"}
+                {isListSearching ? "Searching" : "Search"}
               </Button>
             </div>
           </form>
         </Card>
+      
+
+    {studentsList &&  <Card  className="mt-2">
+     <DataTable value={studentsList } stripedRows header={tableHeader} removableSort globalFilter={globalFilterValue} scrollable footer={tableFooter} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]}  tableStyle={{ minWidth: '50rem' }}>
+        <Column field="rollNumber" header="Roll Number" frozen sortable className="font-bold"></Column>       
+        <Column field="hostelId" header="Hostel Id"></Column>       
+        <Column field="firstname" header="Firstname"></Column>       
+        <Column field="lastname" header="Lastname"></Column>       
+        <Column field="gender" header="Gender"  ></Column>       
+        <Column field="dob" header="Date of birth" ></Column>       
+        <Column field="mobileno" header="Mobile no" ></Column>       
+        <Column field="email" header="Email"></Column>       
+        <Column field="semester" header="Semester"></Column>       
+        <Column field="department" header="Department"></Column>       
+        <Column field="fathername" header="Father name"></Column>       
+        <Column field="fathermobileno" header="Father Mobileno"></Column>       
+    </DataTable>
+     </Card> }
 
       </div>
     </>

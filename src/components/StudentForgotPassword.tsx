@@ -6,6 +6,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputOtp } from "primereact/inputotp";
 import { Toast } from "primereact/toast";
+import { UpdateStuNewPassword, VerifyStuFPassMail } from "../services/LoginService";
+import { Password } from "primereact/password";
 
 function StudentForgotPassword() {
   const Navigate = useNavigate();
@@ -51,18 +53,27 @@ function StudentForgotPassword() {
     event.preventDefault();
     setisValidating(true);
     setIsStudentExist(null);
-    setTimeout(() => {
+
+    VerifyStuFPassMail(email).then((data)=>{
       setisValidating(false);
-      if (email === "ganga@gmail.com") {
+      const {isExist,message} = data;
+      if(isExist){
         setIsStudentExist(true);
         if(FPassToast.current){
           FPassToast.current.show({ severity: 'success', summary: 'OTP Send Successfully !', detail: 'OTP has been send to your registered email' });
         }
-      } else {
+      }else {
         setIsStudentExist(false);
+        if(FPassToast.current){
+          FPassToast.current.show({ severity: 'warn', summary:message, detail: 'Please register' });
+        }
       }
-    }, 2000);
+
+    }).catch((err)=>{
+      console.log(err)
+    })
   };
+
 
   const handleOTPSubmit = (event:React.FormEvent<HTMLFormElement>)=>{
     event.preventDefault();
@@ -99,16 +110,22 @@ function StudentForgotPassword() {
   const handleNewPasswordForm = (event:React.FormEvent<HTMLFormElement>)=>{
     event.preventDefault();
     setIsUpdatingNewPass(true);
-    setTimeout(() => {
+
+    UpdateStuNewPassword(email,stuNewPassword).then((data)=>{
       setIsUpdatingNewPass(false);
+      const {isUpdated,message} = data;
+      if(isUpdated){
       if(FPassToast.current){
         FPassToast.current.show({ severity: 'success', summary: 'Password Reset Successfully !', detail: 'Your password has been updated successfully !' });
+        setTimeout(() => {
+              Navigate("/",{replace:true})
+            }, 1000);
       }
-      setTimeout(() => {
-        Navigate("/login",{replace:true})
-      }, 2000);
-      
-    }, 2000);
+    }
+    }).catch((err)=>{
+      console.log(err)
+    })
+    
   }
 
   return (
@@ -120,7 +137,7 @@ function StudentForgotPassword() {
         visible={true}
         style={{ width: "50vw" }}
         onHide={() => {
-          Navigate("/login", { replace: true });
+          Navigate("/", { replace: true });
         }}
         className="w-11 lg:w-5"
       >

@@ -2,11 +2,10 @@ import React, { useRef, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { TabView, TabPanel } from "primereact/tabview";
-import { Toast } from 'primereact/toast';
+import { Toast } from "primereact/toast";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 
-import { Link, Outlet } from "react-router-dom";
-        
-
+import { AuthenticateAdminLogin, AuthenticateStudentLogin } from "../services/LoginService";
 
 function Login() {
   const [stuUsername, setStuUsername] = useState<string>("");
@@ -14,69 +13,74 @@ function Login() {
   const [incUsername, setIncUsername] = useState<string>("");
   const [incPassword, setIncPassword] = useState<string>("");
 
-  const [isStuFormValid,setIsStuFormValid] = useState<boolean>(false);
-  const [isIncFormValid,setIsIncFormValid] = useState<boolean>(false);
+  const [isStuFormValid, setIsStuFormValid] = useState<boolean>(false);
+  const [isIncFormValid, setIsIncFormValid] = useState<boolean>(false);
 
-  const [showStuLoading,setShowStuLoading] = useState<boolean>(false);
-  const [showIncLoading,setShowIncLoading] = useState<boolean>(false);
+  const [showStuLoading, setShowStuLoading] = useState<boolean>(false);
+  const [showIncLoading, setShowIncLoading] = useState<boolean>(false);
 
   const loginToast = useRef<Toast>(null);
 
+  const Navigate = useNavigate()
 
   const handleStudentSigninForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsStuFormValid(false);
-    setShowStuLoading(false);
-    if(stuUsername && stuPassword){
-      setIsStuFormValid(true);
-      setShowStuLoading(true);
-    }
 
-    setTimeout(() => {
-      setShowStuLoading(false);
-      if(stuUsername == "521" && stuPassword == "521"){
-        if(loginToast.current){
-        loginToast.current.show({ severity: 'success', summary: 'Login Successful !', detail: 'Welcome, User' });
-        }
-      }else{
-        if(loginToast.current){
-          loginToast.current.show({ severity: 'warn', summary: 'Invalid Credentials', detail: 'Check Username or Password' });
+    setShowStuLoading(true);
+
+    AuthenticateStudentLogin(stuUsername, stuPassword)
+      .then((data) => {
+        setShowStuLoading(false);
+
+        const { success, message } = data;
+
+        if (success) {
+          if (loginToast.current) {
+            loginToast.current.show({ severity: "success",summary: "Login Successful !",detail: "Welcome, User"});
+            Navigate("/studenthome",{replace:true})
           }
-      } 
-    }, 2000);
+        } else {
+          if(loginToast.current){
+            loginToast.current.show({ severity: 'warn', summary: 'Invalid Credentials', detail: 'Check Username or Password' });
+          }
+        }
+      })
+      .catch((err) => {
+        console.log("there is error",err);
+      });
+
    
   };
+
+
 
   const handleInchargeSigninForm = (
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
-    setIsIncFormValid(false);
-    setShowIncLoading(false);
-    if(incUsername && incPassword){
-      setIsIncFormValid(true);
-      setShowIncLoading(true);
-    }
+    setShowIncLoading(true);
 
-    setTimeout(() => {
+    AuthenticateAdminLogin(incUsername,incPassword).then((data)=>{
       setShowIncLoading(false);
-      if(incUsername == "521" && incPassword == "521"){
-        if(loginToast.current){
-          loginToast.current.show({ severity: 'success', summary: 'Login Successful !', detail: 'Welcome, User' });
+      const {success,message} = data;
+      if (success) {
+        if (loginToast.current) {
+          loginToast.current.show({ severity: "success",summary: "Login Successful !",detail: "Welcome, User"});
+          Navigate("/adminhome",{replace:true})
         }
-      }else{
+      } else {
         if(loginToast.current){
           loginToast.current.show({ severity: 'warn', summary: 'Invalid Credentials', detail: 'Check Username or Password' });
-          }
-      } 
-      
-    }, 2000);
-
+        }
+      }
+    }).catch(err=>{
+      console.log("there is some error",err)
+    })
   };
 
   return (
     <>
-    <Toast ref={loginToast} position="top-center" />
+      <Toast ref={loginToast} position="top-center" />
       <div className="flex align-items-center justify-content-center mt-1">
         <div className="surface-card p-4 shadow-2 border-round w-full lg:w-5">
           <div className="text-center mb-5">
@@ -97,8 +101,12 @@ function Login() {
                 <span className="text-600 font-medium line-height-2">
                   Don't have an account?
                 </span>
-                <Link className="font-medium no-underline ml-2 text-blue-500  cursor-pointer mt-2" to="/login/studentregister">
-                Register</Link>
+                <Link
+                  className="font-medium no-underline ml-2 text-blue-500  cursor-pointer mt-2"
+                  to="/studentregister"
+                >
+                  Register
+                </Link>
               </div>
               <div>
                 <form onSubmit={handleStudentSigninForm}>
@@ -117,13 +125,13 @@ function Login() {
                       id="stu-username"
                       value={stuUsername}
                       onChange={(e) => {
-                        setStuUsername(e.target.value);
+                        setStuUsername(e.target.value.toUpperCase());
                       }}
                       placeholder="Username"
                       required
                     />
                   </div>
-                  
+
                   <label
                     htmlFor="stu-password"
                     className="block text-900 font-medium mb-1"
@@ -162,13 +170,25 @@ function Login() {
                       <i className="pi pi-eye cursor-pointer"></i>
                     </span>
                   </div>
-                  <Button label={`${showStuLoading ?`Signing`:"Sign in"}`} disabled={showStuLoading}
-                   type="submit" className="w-full" >{showStuLoading && <i className="pi pi-spin pi-spinner"></i>}</Button>
+                  <Button
+                    label={`${showStuLoading ? `Signing` : "Sign in"}`}
+                    disabled={showStuLoading}
+                    type="submit"
+                    className="w-full"
+                  >
+                    {showStuLoading && (
+                      <i className="pi pi-spin pi-spinner"></i>
+                    )}
+                  </Button>
                 </form>
               </div>
               <div className="flex align-items-center justify-content-end">
-                <Link className="font-medium no-underline ml-2 text-blue-500  cursor-pointer mt-2" to="/login/studentfpassword">
-                Forgot your password?</Link>
+                <Link
+                  className="font-medium no-underline ml-2 text-blue-500  cursor-pointer mt-2"
+                  to="/studentfpassword"
+                >
+                  Forgot your password?
+                </Link>
               </div>
             </TabPanel>
             <TabPanel header="Incharge">
@@ -244,8 +264,16 @@ function Login() {
                       <i className="pi pi-eye cursor-pointer"></i>
                     </span>
                   </div>
-                  <Button label={`${showIncLoading ?`Signing`:"Sign in"}`} disabled={showIncLoading} type="submit" className="w-full" >{showIncLoading && <i className="pi pi-spin pi-spinner"></i>}</Button>
-                  
+                  <Button
+                    label={`${showIncLoading ? `Signing` : "Sign in"}`}
+                    disabled={showIncLoading}
+                    type="submit"
+                    className="w-full"
+                  >
+                    {showIncLoading && (
+                      <i className="pi pi-spin pi-spinner"></i>
+                    )}
+                  </Button>
                 </form>
               </div>
               <div className="flex align-items-center justify-content-end">
@@ -258,7 +286,7 @@ function Login() {
         </div>
       </div>
       <div className="absolute top-0 left-0">
-      <Outlet></Outlet>
+        <Outlet></Outlet>
       </div>
     </>
   );
