@@ -1,11 +1,16 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { TabView, TabPanel } from "primereact/tabview";
 import { Toast } from "primereact/toast";
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
-import { AuthenticateAdminLogin, AuthenticateStudentLogin } from "../services/LoginService";
+import {
+  AuthenticateAdminLogin,
+  AuthenticateStudentLogin,
+} from "../services/LoginService";
+import { useAuth } from "../utils/AuthProvider";
 
 function Login() {
   const [stuUsername, setStuUsername] = useState<string>("");
@@ -13,46 +18,56 @@ function Login() {
   const [incUsername, setIncUsername] = useState<string>("");
   const [incPassword, setIncPassword] = useState<string>("");
 
-  const [isStuFormValid, setIsStuFormValid] = useState<boolean>(false);
-  const [isIncFormValid, setIsIncFormValid] = useState<boolean>(false);
-
   const [showStuLoading, setShowStuLoading] = useState<boolean>(false);
   const [showIncLoading, setShowIncLoading] = useState<boolean>(false);
 
-  const loginToast = useRef<Toast>(null);
+  const {setUser} = useAuth();
 
-  const Navigate = useNavigate()
+  const loginToast = useRef<Toast>(null);
+  const Navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const token = localStorage.getItem("sessionToken");
+  //   if (token) {
+  //     const decoded: any = jwtDecode(token);
+  //     Navigate(`student/${decoded.rollNo}`);
+  //   }
+  // }, []);
+
 
   const handleStudentSigninForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     setShowStuLoading(true);
-
+    
     AuthenticateStudentLogin(stuUsername, stuPassword)
       .then((data) => {
         setShowStuLoading(false);
-
-        const { success, message } = data;
-
+        const { success, token } = data;
         if (success) {
           if (loginToast.current) {
-            loginToast.current.show({ severity: "success",summary: "Login Successful !",detail: "Welcome, User"});
-            Navigate("/studenthome",{replace:true})
+            loginToast.current.show({
+              severity: "success",
+              summary: "Login Successful !",
+              detail: "Welcome, User",
+            });
           }
+          // setUser(stuUsername);
+          // localStorage.setItem("sessionToken", token);
+          Navigate(`/student/${stuUsername}`, { replace: true });
         } else {
-          if(loginToast.current){
-            loginToast.current.show({ severity: 'warn', summary: 'Invalid Credentials', detail: 'Check Username or Password' });
+          if (loginToast.current) {
+            loginToast.current.show({
+              severity: "warn",
+              summary: "Invalid Credentials",
+              detail: "Check Username or Password",
+            });
           }
         }
       })
       .catch((err) => {
-        console.log("there is error",err);
+        console.log("there is error", err);
       });
-
-   
   };
-
-
 
   const handleInchargeSigninForm = (
     event: React.FormEvent<HTMLFormElement>
@@ -60,22 +75,33 @@ function Login() {
     event.preventDefault();
     setShowIncLoading(true);
 
-    AuthenticateAdminLogin(incUsername,incPassword).then((data)=>{
-      setShowIncLoading(false);
-      const {success,message} = data;
-      if (success) {
-        if (loginToast.current) {
-          loginToast.current.show({ severity: "success",summary: "Login Successful !",detail: "Welcome, User"});
-          Navigate("/adminhome",{replace:true})
+    AuthenticateAdminLogin(incUsername, incPassword)
+      .then((data) => {
+        setShowIncLoading(false);
+
+        const { success, token } = data;
+        if (success) {
+          if (loginToast.current) {
+            loginToast.current.show({
+              severity: "success",
+              summary: "Login Successful !",
+              detail: "Welcome, User",
+            });
+            Navigate("/adminhome", { replace: true });
+          }
+        } else {
+          if (loginToast.current) {
+            loginToast.current.show({
+              severity: "warn",
+              summary: "Invalid Credentials",
+              detail: "Check Username or Password",
+            });
+          }
         }
-      } else {
-        if(loginToast.current){
-          loginToast.current.show({ severity: 'warn', summary: 'Invalid Credentials', detail: 'Check Username or Password' });
-        }
-      }
-    }).catch(err=>{
-      console.log("there is some error",err)
-    })
+      })
+      .catch((err) => {
+        console.log("there is some error", err);
+      });
   };
 
   return (

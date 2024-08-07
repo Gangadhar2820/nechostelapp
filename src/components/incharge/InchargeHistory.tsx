@@ -1,5 +1,5 @@
 import { Card } from "primereact/card";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
@@ -11,146 +11,21 @@ import { Button } from "primereact/button";
 import { Permission, Leave } from "../interfaces/Request";
 import { formatDate, formatDateWithTime, formatTime } from "../interfaces/Date";
 
-function History() {
-  const [selectionOption, setSelectionOption] = useState<string>("");
+import { getStudentAllRequests } from "../../services/StudentService";
+import { FloatLabel } from "primereact/floatlabel";
 
-  const [tableData, setTableData] = useState<Permission[] | Leave[]>([]);
+function History() {
+  const [permissions, setPermissions] = useState<Permission[]>([]);
+  const [leaves, setLeaves] = useState<Leave[]>([]);
+
+  const [selectionOption, setSelectionOption] = useState<string>("Permissions");
 
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
   const tableFooter = `Total : ${
-    tableData ? tableData.length : 0
-  } ${selectionOption} Requests.`;
+    selectionOption === "Leaves" ? leaves.length : permissions.length
+  } ${selectionOption}`;
 
-  const Permissions: Permission[] = [
-    {
-      name: "Gangadhar",
-      rollNo: "21471A0521",
-      hostelId: "BH1",
-      date: new Date("12-12-2002"),
-      toTime: new Date("12-12-2002"),
-      fromTime: new Date("12-12-2002"),
-      reason: "Outing",
-      id: "mmm",
-      type: "LEAVE",
-      status: "SUBMITTED",
-      submitted: null,
-      accepted: null,
-      rejected: null,
-      arrived: null,
-      phoneNo: "11111111111",
-      parentPhoneNo: "33333333333",
-      isActive:false
-
-    },
-    {
-      name: "Gangadhar",
-      rollNo: "21471A0521",
-      hostelId: "BH1",
-      date: new Date("12-12-2002"),
-      toTime: new Date("12-12-2002"),
-      fromTime: new Date("12-12-2002"),
-      reason: "Outing",
-      id: "jjjj",
-      type: "LEAVE",
-      status: "SUBMITTED",
-      submitted: null,
-      accepted: null,
-      rejected: null,
-      arrived: null,
-      phoneNo: "11111111111",
-      parentPhoneNo: "33333333333",
-      isActive:false
-
-    },
-    {
-      name: "Gangadhar",
-      rollNo: "21471A0521",
-      hostelId: "BH1",
-      date: new Date("12-12-2002"),
-      toTime: new Date("12-12-2002"),
-      fromTime: new Date("12-12-2002"),
-      reason: "Outing",
-      id: "ghhak",
-      type: "LEAVE",
-      status: "SUBMITTED",
-      submitted: null,
-      accepted: null,
-      rejected: null,
-      arrived: null,
-      phoneNo: "11111111111",
-      parentPhoneNo: "33333333333",
-      isActive:false
-
-    },
-  ];
-
-  const Leaves: Leave[] = [
-    {
-      id: "BH121471A0521L004",
-      type: "LEAVE",
-      status: "SUBMITTED",
-      submitted: { time: new Date("12-12-2002") },
-      phoneNo: "9182233993",
-      parentPhoneNo: "111111111",
-      name: "Gangadhar",
-      rollNo: "21471A0521",
-      hostelId: "BH1",
-      fromDate: new Date("12-12-2002"),
-      toDate: new Date("12-12-2002"),
-      reason: "Home",
-      accepted: { time: new Date("12-12-2002"), name: "ganga", eid: "121" },
-      rejected: null,
-      arrived: null,
-      isActive:false
-    },
-    {
-      id: "BH121471A0521L001",
-      type: "LEAVE",
-      status: "SUBMITTED",
-      submitted: { time: new Date("12-12-2002") },
-      phoneNo: "9182233993",
-      parentPhoneNo: "111111111",
-      name: "Ganga",
-      rollNo: "21471A0521",
-      hostelId: "BH1",
-      fromDate: new Date("7-1-2024"),
-      toDate: new Date("10-07-2024"),
-      reason: "Home",
-      accepted: { time: new Date("11-22-2023"), name: "bbbb", eid: "123" },
-      rejected: null,
-      arrived: { time: new Date("11-29-2023"), name: "cccc", eid: "456" },
-      isActive:false
-
-    },
-    {
-      id: "BH121471A0521L002",
-      type: "LEAVE",
-      status: "SUBMITTED",
-      submitted: { time: new Date("12-12-2002") },
-      phoneNo: "9182233993",
-      parentPhoneNo: "111111111",
-      name: "Ganga",
-      rollNo: "21471A0521",
-      hostelId: "BH1",
-      fromDate: new Date("10-07-2024"),
-      toDate: new Date("10-07-2024"),
-      reason: "Home",
-      accepted: null,
-      rejected: { time: new Date("11-30-2023"), name: "cccc", eid: "456" },
-      arrived: null,
-      isActive:false
-
-    },
-  ];
-
-  useEffect(() => {
-    if (selectionOption === "Permissions") {
-      setTableData(Permissions);
-    } else if (selectionOption === "Leaves") {
-      setTableData(Leaves);
-    }
-  }, [selectionOption]);
 
   const renderHeader = () => {
     return (
@@ -158,7 +33,7 @@ function History() {
         <Button
           type="button"
           icon="pi pi-filter-slash"
-          label="Clear"
+          label=""
           outlined
           onClick={() => {
             setGlobalFilterValue("");
@@ -181,105 +56,146 @@ function History() {
   const tableHeader = renderHeader();
 
   const submittedTime = (data: any) => {
-    if(data.submitted){
+    if (data.submitted) {
       const date = data?.submitted?.time;
-    const formatDate = data ? formatDateWithTime(date) : "";
-    return formatDate;
+      const formatDate = data ? formatDateWithTime(new Date(date)) : "";
+      return formatDate;
     }
-    return ""
+    return "---";
   };
 
   const acceptedTime = (data: any) => {
-    if(data.accepted){
+    if (data.accepted) {
       const date = data?.accepted?.time;
-    const formatDate = data ? formatDateWithTime(date) : "";
-    return formatDate;
+      const formatDate = data ? formatDateWithTime(new Date(date)) : "";
+      return formatDate;
     }
-    return ""
+    return "---";
   };
 
   const rejectedTime = (data: any) => {
-    if(data.rejected){
+    if (data.rejected) {
       const date = data?.rejected?.time;
-    const formatDate = data ? formatDateWithTime(date) : "";
-    return formatDate;
+      const formatDate = data ? formatDateWithTime(new Date(date)) : "";
+      return formatDate;
     }
-    return ""
+    return "---";
   };
 
   const arrivedTime = (data: any) => {
-    if(data.arrived){
+    if (data.arrived) {
       const date = data?.arrived?.time;
-    const formatDate = data ? formatDateWithTime(date) : "";
-    return formatDate;
+      const formatDate = data ? formatDateWithTime(new Date(date)) : "";
+      return formatDate;
     }
-    return ""
+    return "---";
   };
 
   const acceptedName = (data: any) => {
-    if(data.accepted){
+    if (data.accepted) {
       const name = data?.accepted?.name;
       return name;
-      }
-      return "";
+    }
+    return "---";
   };
 
   const rejectedName = (data: any) => {
-    if(data.rejected){
-    const name = data?.rejected?.name;
-    return name;
+    if (data.rejected) {
+      const name = data?.rejected?.name;
+      return name;
     }
-    return "";
+    return "---";
   };
 
   const arrivedName = (data: any) => {
-    if(data.arrived){
+    if (data.arrived) {
       const name = data?.arrived?.name;
       return name;
-      }
-      return "";
+    }
+    return "---";
   };
 
   const fromDateTemplate = (data: any) => {
-    if(data.fromDate){
-    const fromDate = formatDateWithTime(data?.fromDate);
-    return fromDate;
+    if (data.fromDate) {
+      const fromDate = formatDateWithTime(new Date(data?.fromDate));
+      return fromDate;
     }
-    return ""
+    return "---";
   };
 
   const toDateTemplate = (data: any) => {
-    if(data.toDate){
-      const toDate = formatDateWithTime(data?.toDate);
+    if (data.toDate) {
+      const toDate = formatDateWithTime(new Date(data?.toDate));
       return toDate;
-      }
-      return ""
+    }
+    return "---";
   };
 
-  const dateTemplate = (data:any)=>{
-
-    if(data.date){
-      const date = formatDate(data.date);
-      return date
+  const dateTemplate = (data: any) => {
+    if (data.date) {
+      const date = formatDate(new Date(data.date));
+      return date;
     }
-    return "";
-  }
+    return "---";
+  };
 
-  const fromTimeTemplate = (data:any)=>{
-    if(data.fromTime){
-      const time = formatTime(data.fromTime);
-      return time
+  const fromTimeTemplate = (data: any) => {
+    if (data.fromTime) {
+      const time = formatTime(new Date(data.fromTime));
+      return time;
     }
-    return "";
-  }
+    return "---";
+  };
 
-  const toTimeTemplate = (data:any)=>{
-    if(data.toTime){
-      const time = formatTime(data.toTime);
-      return time
+  const toTimeTemplate = (data: any) => {
+    if (data.toTime) {
+      const time = formatTime(new Date(data.toTime));
+      return time;
     }
-    return "";
-  }
+    return "---";
+  };
+
+  const [stuRollNumber, setStuRollNumber] = useState<string>("");
+
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [isSearchFormValid, setIsSearchFormValid] = useState<boolean>(false);
+
+  const handleSearchFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSearching(true);
+
+    getStudentAllRequests("21471A05K4")
+      .then((data) => {
+        setIsSearching(false);
+        let leaves: any = [];
+        let permissions: any = [];
+
+        data.forEach((request: any) => {
+          if (request.type === "LEAVE") {
+            leaves = [...leaves, request];
+          } else if (request.type === "PERMISSION") {
+            permissions = [...permissions, request];
+          }
+        });
+        setLeaves(leaves);
+        setPermissions(permissions);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const validateSearchForm = () => {
+    setIsSearchFormValid(false);
+    const isRollValid = /^[a-zA-Z0-9]{10}$/.test(stuRollNumber);
+    if (isRollValid) {
+      setIsSearchFormValid(true);
+    }
+  };
+
+  useEffect(() => {
+    validateSearchForm();
+  }, [stuRollNumber]);
 
   return (
     <>
@@ -291,7 +207,36 @@ function History() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Request History">
+        <Card title="Student Request History">
+          <form onSubmit={handleSearchFormSubmit} className="grid">
+            <div className="col-12 md:col-6 lg:col-4 mt-3 ">
+              <FloatLabel>
+                <InputText
+                  id="ad-view-rollno"
+                  type="text"
+                  className="w-12 md:w-8"
+                  value={stuRollNumber}
+                  onChange={(e) => {
+                    setStuRollNumber(e.target.value.toUpperCase());
+                  }}
+                  required
+                />
+                <label htmlFor="ad-view-rollno">Roll Number</label>
+              </FloatLabel>
+            </div>
+            <div className="col-12 md:col-6 lg:col-4 mt-3">
+              <Button
+                type="submit"
+                disabled={!isSearchFormValid || isSearching}
+              >
+                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
+                &nbsp;&nbsp;
+                {isSearching ? "Searching" : "Search"}
+              </Button>
+            </div>
+          </form>
+        </Card>
+        <Card title="">
           <div className="card flex justify-content-center">
             <div className="flex flex-wrap gap-3">
               <div className="flex align-items-center">
@@ -299,9 +244,9 @@ function History() {
                   inputId="not-app-permissions"
                   name="Permissions"
                   value="Permissions"
-                  onChange={(e: RadioButtonChangeEvent) =>
-                    setSelectionOption(e.value)
-                  }
+                  onChange={(e: RadioButtonChangeEvent) => {
+                    setSelectionOption(e.value);
+                  }}
                   checked={selectionOption === "Permissions"}
                 />
                 <label htmlFor="not-app-permissions" className="ml-2">
@@ -329,7 +274,7 @@ function History() {
         <Card title={selectionOption} className="mt-2">
           {selectionOption === "Leaves" ? (
             <DataTable
-              value={tableData}
+              value={leaves}
               stripedRows
               header={tableHeader}
               removableSort
@@ -407,7 +352,7 @@ function History() {
             </DataTable>
           ) : (
             <DataTable
-              value={tableData}
+              value={permissions}
               stripedRows
               header={tableHeader}
               removableSort

@@ -10,11 +10,12 @@ import { Toast } from "primereact/toast";
 import { Nullable } from "primereact/ts-helpers";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Student } from "../interfaces/Student";
-import { UserContext } from "./Home";
-import { Permission , Leave as LEAVE } from "../interfaces/Request";
+import { StudentContext } from "./StudentHome";
+import { Permission , Leave } from "../interfaces/Request";
 import { Link } from "react-router-dom";
+import { applyRequest } from "../../services/StudentService";
 
-function Leave() {
+function StudentLeave() {
   const [selectionOption, setSelectionOption] = useState<string>("Permission");
 
   //permission
@@ -34,7 +35,7 @@ function Leave() {
   const PermissionLeaveToast = useRef<Toast>(null);
   const msgs = useRef<Messages>(null);
 
-  const { user, updateUser } = useContext(UserContext);
+  const { student, updateStudent } = useContext(StudentContext);
 
 
   const ValidateForm = () => {
@@ -70,41 +71,42 @@ function Leave() {
 
   useEffect(() => {
     msgs.current?.clear();
-      msgs.current?.show({
-        id: "1",
-        icon:"pi pi-send",
-        sticky: true,
-        severity: "info",
-        summary: "Request Info",
-        content: (
-        <>
-          <div className="ml-2">Your Request has been submitted successfully.
-          <Link to="/student/dashboard" className="no-underline cursor-pointer p-3 w-full">
-          <span className="font-medium">View Details</span>
-          </Link>
-          </div>
-        </>
-      ),
-        closable: false,
-    })
+    msgs.current?.show({
+      id: "1",
+      icon:"pi pi-send",
+      sticky: true,
+      severity: "info",
+      summary: "Request Info",
+      content: (
+      <>
+        <div className="ml-2">Your Request has been submitted successfully.
+        <Link to={`/student/${student.rollNo}/dashboard`} className="no-underline cursor-pointer p-3 w-full">
+        <span className="font-medium">View Details</span>
+        </Link>
+        </div>
+      </>
+    ),
+      closable: false,
+  })
+    
   });
 
-  const createRequest = ()=>{
-    let request:Permission|LEAVE|null = null;
-    if(selectionOption === "Leave"){
+  const createRequest =  ()=>{
+    let request:Permission|Leave|null = null;
 
-      request = {id:`${user?.hostelId}${user?.rollNo}L`+(user?.requestCount+1).toString().padStart(3,"0"),type:"LEAVE",
-      status:"SUBMITTED",submitted:{time:new Date()},rejected:{time:new Date("12-12-2002"),name:"Ganga",eid:"521"},accepted:null,
-      arrived:null,name:user?.name,rollNo:user?.rollNo,hostelId:user?.hostelId,
-      phoneNo:user?.phoneNo,parentPhoneNo:user?.parentPhoneNo,reason:reason,fromDate:fromDate as Date,toDate:toDate as Date,isActive:true};
-
+     if(selectionOption === "Leave"){
+      request = {id:`${student?.hostelId}${student?.rollNo}L`+(student?.requestCount+1).toString().padStart(3,"0"),type:"LEAVE",
+      status:"SUBMITTED",submitted:{time:new Date()},accepted:null,rejected:null,
+      arrived:null,name:student?.name,rollNo:student?.rollNo,hostelId:student?.hostelId,
+      phoneNo:student?.phoneNo,parentPhoneNo:student?.parentPhoneNo,reason:reason,fromDate:fromDate as Date,toDate:toDate as Date,isActive:true};
     }else if(selectionOption==="Permission"){
-      request = {id:`${user?.hostelId}${user?.rollNo}P`+(user?.requestCount+1).toString().padStart(3,"0"),type:"PERMISSION",
-      status:"SUBMITTED",submitted:{time:new Date()},accepted:{time:new Date("12-12-2002"),name:"Ganga",eid:"521"},rejected:null,
-      arrived:{time:new Date("11-11-2011"),name:"bbb",eid:"55"},name:user?.name,rollNo:user?.rollNo,hostelId:user?.hostelId,
-      phoneNo:user?.phoneNo,parentPhoneNo:user?.parentPhoneNo,reason:reason,date:date as Date,fromTime:fromTime as Date,toTime:toTime as Date,isActive:true};
+      request = {id:`${student?.hostelId}${student?.rollNo}P`+(student?.requestCount+1).toString().padStart(3,"0"),type:"PERMISSION",
+      status:"SUBMITTED",submitted:{time:new Date()},accepted:null,rejected:null,
+      arrived:null,name:student?.name,rollNo:student?.rollNo,hostelId:student?.hostelId,
+      phoneNo:student?.phoneNo,parentPhoneNo:student?.parentPhoneNo,reason:reason,date:date as Date,fromTime:fromTime as Date,toTime:toTime as Date,isActive:true};
     }
-    updateUser({...user,lastRequest:request,isLastRequestActive:true,requestCount:user?.requestCount+1} as Student)
+    updateStudent({...student,lastRequest:request,requestCount:student?.requestCount+1} as Student)
+    return request;
   }
 
   const handleLeavePermissionForm = (
@@ -112,32 +114,35 @@ function Leave() {
   ) => {
     event.preventDefault();
     setIsApplying(true);
-    createRequest();
+    let request = createRequest();
 
-    if (selectionOption === "Leave") {
-      setTimeout(() => {
-        setIsApplying(false);
+    applyRequest(request).then((data)=>{
+      setIsApplying(false);
+
+      if(data.success){
+      if (selectionOption === "Leave") {
         if (PermissionLeaveToast.current) {
           PermissionLeaveToast.current.show({
             severity: "success",
             summary: "Your Leave has been Submitted successfully !",
-            detail: "New Student has been added",
+            detail: "Wait for Incharge Acceptance",
           });
         }
-       
-      }, 2000);
     } else if (selectionOption === "Permission"){
-      setTimeout(() => {
-        setIsApplying(false);
         if (PermissionLeaveToast.current) {
           PermissionLeaveToast.current.show({
             severity: "success",
             summary: "Your Permission has been Submitted successfully !",
-            detail: "New Student has been added",
+            detail: "Wait for Incharge Acceptance",
           });
         }
-      }, 2000);
     }
+  }
+   
+    }).catch((err)=>{
+      console.log(err)
+    })
+
   };
 
   return (
@@ -186,7 +191,7 @@ function Leave() {
           </div>
         </Card>
 
-        {!(user?.lastRequest?.isActive) ? (
+        {!(student?.lastRequest?.isActive) ? (
           <Card title={selectionOption} className="mt-2">
             <form
               action=""
@@ -200,7 +205,7 @@ function Leave() {
                     id="stu-pl-name"
                     type="text"
                     className="w-12 md:w-8"
-                    value={user?.name || ""}
+                    value={student?.name || ""}
                     required
                     disabled
                   />
@@ -214,7 +219,7 @@ function Leave() {
                     id="stu-pl-rollno"
                     type="text"
                     className="w-12 md:w-8"
-                    value={user?.rollNo || ""}
+                    value={student?.rollNo || ""}
                     required
                     disabled
                   />
@@ -228,7 +233,7 @@ function Leave() {
                     id="stu-pl-hostelid"
                     type="text"
                     className="w-12 md:w-8"
-                    value={user?.hostelId || ""}
+                    value={student?.hostelId || ""}
                     required
                     disabled
                   />
@@ -247,6 +252,7 @@ function Leave() {
                         onChange={(e) => setDate(e.value)}
                         className="w-12 md:w-8"
                         showButtonBar
+                        dateFormat="dd/mm/yy"
                       />
                       <label htmlFor="stu-pl-date">Date</label>
                     </FloatLabel>
@@ -355,4 +361,4 @@ function Leave() {
   );
 }
 
-export default Leave;
+export default StudentLeave;

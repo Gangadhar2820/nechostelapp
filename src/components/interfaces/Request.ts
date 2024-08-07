@@ -1,7 +1,7 @@
 interface Request{
     id:string,
     type:"PERMISSION" | "LEAVE",
-    status:"SUBMITTED" | "ACCEPTED" | "REJECTED" | "ARRIVED" ,
+    status:"SUBMITTED" | "ACCEPTED" | "REJECTED" | "ARRIVED"  ,
     submitted:{time:Date} | null,
     accepted:{time:Date,name:string,eid:string} | null,
     rejected:{time:Date,name:string,eid:string} | null,

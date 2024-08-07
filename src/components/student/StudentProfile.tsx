@@ -1,17 +1,19 @@
 import React, { useContext } from "react";
 import { Student } from "../interfaces/Student";
-import { UserContext } from "./Home";
+import { StudentContext } from "./StudentHome";
 import { Button } from "primereact/button";
 import { Chip } from "primereact/chip";
 import { Card } from "primereact/card";
 
-function Profile() {
-  const { user, updateUser } = useContext(UserContext);
+import { formatDate } from "../interfaces/Date";
+
+function StudentProfile() {
+  const { student, setStudent } = useContext(StudentContext);
 
   return (
     <>
       <div
-        className="p-2 w-10"
+        className="p-1 w-12"
         style={{
           position: "absolute",
           left: "50%",
@@ -28,12 +30,12 @@ function Profile() {
               <div className="status">
                 <Chip
                   className={`${
-                    user?.currentStatus === "HOSTEL"
+                    student?.currentStatus === "HOSTEL"
                       ? "bg-green-500"
                       : "bg-orange-500"
                   } text-white-alpha-90`}
                   icon={"pi pi-circle-fill"}
-                  label={user?.currentStatus}
+                  label={student?.currentStatus}
                 ></Chip>
               </div>
             </div>
@@ -43,13 +45,13 @@ function Profile() {
                 <div className="flex w-12 md:w-6 align-items-center justify-content-start">
                   <div className="text-500 font-medium w-6">Name</div>
                   <div className="text-900 w-6">
-                    {user?.name}
+                    {student?.name}
                   </div>
                 </div>
                 <div className="flex w-12 md:w-6 align-items-center justify-content-start">
                   <div className="text-500 font-medium w-6">Roll Number</div>
                   <div className="text-900 w-6">
-                    {user?.rollNo}
+                    {student?.rollNo}
                   </div>
                 </div>
               </li>
@@ -58,13 +60,13 @@ function Profile() {
                 <div className="flex w-12 md:w-6 align-items-center justify-content-start">
                   <div className="text-500 font-medium w-6">Hostel ID</div>
                   <div className="text-900 w-6">
-                    {user?.hostelId}
+                    {student?.hostelId}
                   </div>
                 </div>
                 <div className="flex w-12 md:w-6 align-items-center justify-content-start">
                   <div className="text-500 font-medium w-6">College</div>
                   <div className="text-900 w-6 ">
-                    {user?.college}
+                    {student?.college}
                   </div>
                 </div>
               </li>
@@ -73,13 +75,13 @@ function Profile() {
                 <div className="flex w-12 md:w-6 align-items-center justify-content-start">
                   <div className="text-500 w-6 font-medium">Year</div>
                   <div className="text-900 w-6">
-                    {user?.year}
+                    {student?.year}
                   </div>
                 </div>
                 <div className="flex w-12 md:w-6 align-items-center justify-content-start">
                   <div className="text-500 font-medium w-6">Branch</div>
                   <div className="text-900 w-6">
-                    {user?.branch}
+                    {student?.branch}
                   </div>
                 </div>
               </li>
@@ -88,13 +90,13 @@ function Profile() {
                 <div className="flex w-12 md:w-6 align-items-center justify-content-start">
                   <div className="text-500 w-6 font-medium">Gender</div>
                   <div className="text-900 w-6">
-                    {user?.gender}
+                    {student?.gender}
                   </div>
                 </div>
                 <div className="flex w-12 md:w-6 align-items-center justify-content-start">
                   <div className="text-500 font-medium w-6">Date Of Birth</div>
                   <div className="text-900 w-6">
-                    {user?.dob.getFullYear()}
+                    {formatDate(new Date(student?.dob))}
                   </div>
                 </div>
               </li>
@@ -103,13 +105,13 @@ function Profile() {
                 <div className="flex w-12 md:w-6 align-items-center justify-content-start">
                   <div className="text-500 w-6 font-medium">Phone No</div>
                   <div className="text-900 w-6">
-                    {user?.phoneNo}
+                    {student?.phoneNo}
                   </div>
                 </div>
                 <div className="flex w-12 md:w-6 align-items-center justify-content-start">
                   <div className="text-500 font-medium w-6">Email</div>
                   <div className="text-900 w-6">
-                    {user?.email}
+                    {student?.email}
                   </div>
                 </div>
               </li>
@@ -118,13 +120,13 @@ function Profile() {
                 <div className="flex w-12 md:w-6 align-items-center justify-content-start">
                   <div className="text-500 w-6 font-medium">Parent Name</div>
                   <div className="text-900 w-6">
-                    {user?.parentName}
+                    {student?.parentName}
                   </div>
                 </div>
                 <div className="flex w-12 md:w-6 align-items-center justify-content-start">
                   <div className="text-500 font-medium w-6">Parent PhoneNo</div>
                   <div className="text-900 w-6">
-                    {user?.parentPhoneNo}
+                    {student?.parentPhoneNo}
                   </div>
                 </div>
               </li>
@@ -138,4 +140,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default StudentProfile;

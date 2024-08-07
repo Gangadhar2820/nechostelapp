@@ -1,12 +1,16 @@
 import axios from "axios";
 
+const server = "http://192.168.14.124:5000";
+
+// const server = "https://hostelportal-backend.onrender.com"
+
 export {};
 
 const AuthenticateStudentLogin = async (username: string, password: string) => {
   try {
     const response = await axios.post(
-      "https://hostelportal-backend.onrender.com/api/hostler-credentials/login",
-      { RollNumber: username, password: password },
+      `${server}/student-auth/login`,
+      { rollNo: username, password: password },
       {
         headers: {
           "Content-Type": "application/json",

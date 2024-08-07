@@ -18,14 +18,14 @@ function ReqCard(props: any) {
 
   useEffect(() => {
     if (request?.type === "LEAVE") {
-      let startDate = formatDateWithTime(request?.fromDate);
-      let endDate = formatDateWithTime(request?.toDate);
+      let startDate = formatDateWithTime(new Date(request?.fromDate));
+      let endDate = formatDateWithTime(new Date(request?.toDate));
       setFromDate(startDate);
       setToDate(endDate);
     } else if (request?.type === "PERMISSION") {
-      let date = formatDate(request?.date);
-      let fromTime = formatTime(request?.fromTime);
-      let toTime = formatTime(request?.toTime);
+      let date = formatDate(new Date(request?.date));
+      let fromTime = formatTime(new Date(request?.fromTime));
+      let toTime = formatTime(new Date(request?.toTime));
       setDate(date);
       setFromTime(fromTime);
       setToTime(toTime);

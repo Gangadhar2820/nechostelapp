@@ -13,24 +13,24 @@ function ReqTimeline(props: any) {
     if (submitted) {
       setSubmit({
         status: "Submitted",
-        time: formatDateWithTime(submitted?.time),
+        time: formatDateWithTime(new Date(submitted?.time)),
       });
     } else {
       setSubmit(null);
     }
 
     if (accORrej) {
-      if (accORrej.acc !== null && accORrej.rej === null) {
+      if (accORrej?.acc !== null && accORrej?.rej === null) {
         setAccRej({
           status: "Accepted",
-          name: accORrej.acc.name,
-          time: formatDateWithTime(accORrej.acc.time),
+          name: accORrej?.acc?.name,
+          time: formatDateWithTime(new Date(accORrej?.acc?.time)),
         });
-      } else if (accORrej.acc === null && accORrej.rej !== null) {
+      } else if (accORrej?.acc === null && accORrej?.rej !== null) {
         setAccRej({
           status: "Rejected",
-          name: accORrej.rej.name,
-          time: formatDateWithTime(accORrej.rej.time),
+          name: accORrej?.rej?.name,
+          time: formatDateWithTime(new Date(accORrej?.rej?.time)),
         });
       }
     } else {
@@ -40,8 +40,8 @@ function ReqTimeline(props: any) {
     if (arrived) {
       setArrive({
         status: "Arrived",
-        time: formatDateWithTime(arrived?.time),
-        name: arrived.name,
+        time: formatDateWithTime(new Date(arrived?.time)),
+        name: arrived?.name,
       });
     } else {
       setArrive(null);

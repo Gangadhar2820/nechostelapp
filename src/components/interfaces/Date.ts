@@ -40,4 +40,23 @@ export const formatTime = (date:Date)=>{
 }
 
 
+
+export function getDateBeforeDays(date:Date, daysBefore:number) {
+
+  date.setDate(date.getDate() - daysBefore);
+
+  return date
+}
+
+export function getDateAfterDays(date:Date, daysAfter:number) {
+
+  date.setDate(date.getDate() + daysAfter);
+
+  return date
+}
+
+
+
+
+
 export {}
