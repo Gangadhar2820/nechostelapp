@@ -2,13 +2,13 @@ import { Leave, Permission } from "./Request";
 
 export interface Student{
 
-    hostelId:"BH1" | "GH1",
+    hostelId:"BH1" | "GH1" | string,
     rollNo:string,
     name:string,
-    college:"NEC" | "NIPS",
-    year:1|2|3|4,
-    branch:"CSE" | "ECE" | "EEE" | "MECH" | "CIVIL" | "MBA",
-    gender:"MALE" | "FEMALE" | "OTHER",
+    college:"NEC" | "NIPS" | string,
+    year:1|2|3|4|number,
+    branch:"CSE" | "ECE" | "EEE" | "MECH" | "CIVIL" | "MBA" | string,
+    gender:"MALE" | "FEMALE" | "OTHER" | string,
     dob:Date,
     phoneNo:string,
     email:string,

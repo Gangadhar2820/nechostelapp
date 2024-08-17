@@ -40,7 +40,7 @@ function StudentProfile() {
               </div>
             </div>
 
-            <ul className="list-none p-0 m-0">
+            <ul className="list-none p-0 m-0" style={{wordWrap:"break-word"}}>
               <li className="grid py-3 px-2 border-top-1 border-300">
                 <div className="flex w-12 md:w-6 align-items-center justify-content-start">
                   <div className="text-500 font-medium w-6">Name</div>
@@ -109,8 +109,8 @@ function StudentProfile() {
                   </div>
                 </div>
                 <div className="flex w-12 md:w-6 align-items-center justify-content-start">
-                  <div className="text-500 font-medium w-6">Email</div>
-                  <div className="text-900 w-6">
+                  <div className="text-500 font-medium w-6" >Email</div>
+                  <div className="text-900 w-6" style={{wordWrap:"break-word"}} >
                     {student?.email}
                   </div>
                 </div>

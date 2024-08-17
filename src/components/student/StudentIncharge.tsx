@@ -1,30 +1,29 @@
 import { Card } from "primereact/card";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import InchargeCard from "./InchargeCard";
-import { Incharge as INCHARGE } from "../interfaces/Incharge";
+import { Incharge} from "../interfaces/Incharge";
 import { useNavigate } from "react-router-dom";
+import { getAllIncharges } from "../../services/StudentService";
+import { StudentContext } from "./StudentHome";
 
-import { useAuth } from "../../utils/AuthProvider";
 
 function StudentIncharge() {
 
-  const Navigate = useNavigate();
-  const {setUser} = useAuth();
+  const {student , setStudent} = useContext(StudentContext);
+
+  const [incharges,setIncharges] = useState<Incharge[]>([]);
 
   useEffect(()=>{
-    // localStorage.removeItem("sessionToken");
-    setUser(null);
-    // Navigate("/",{replace:true})
-    
-  },[])
+    if(student){
+      getAllIncharges(student?.hostelId).then((data)=>{
+        setIncharges(data.incharges);
+      }).catch((err)=>{
+        console.log("something wrong",err)
+      })
+    }
+  },[student])
 
 
-  const incList:INCHARGE[] = [
-    {eid:"521",name:"Gangadhar",phoneNo:"9988776655",designation:"--",hostelId:"BH1"},
-    {eid:"522",name:"Gangadhar",phoneNo:"9988776655",designation:"--",hostelId:"BH1"},
-    {eid:"523",name:"Gangadhar",phoneNo:"9988776655",designation:"--",hostelId:"BH1"},
-    {eid:"524",name:"Gangadhar",phoneNo:"9988776655",designation:"--",hostelId:"BH1"},
-  ]
   return (
     <>
       <div
@@ -37,7 +36,7 @@ function StudentIncharge() {
       >
         <Card title="Hostel Incharges" className="pt-2 pb-2">
           <div className="grid">
-          {incList.map((incharge)=>{return (
+          {incharges.map((incharge)=>{return (
             <div key={incharge.eid} className="col-12 sm:col-6">
             <InchargeCard  incharge={incharge} showId={false}/>
             </div>

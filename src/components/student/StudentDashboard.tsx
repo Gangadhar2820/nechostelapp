@@ -1,10 +1,11 @@
-import React, { useContext } from "react";
+import  { useContext } from "react";
 import ReqCard from "./ReqCard";
 import { Card } from "primereact/card";
 import { StudentContext } from "./StudentHome";
 
-function Dashboard() {
-  const { student, setStudent } = useContext(StudentContext);
+function StudentDashboard() {
+  const { student } = useContext(StudentContext);
+  
 
   return (
     <>
@@ -24,4 +25,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default StudentDashboard;

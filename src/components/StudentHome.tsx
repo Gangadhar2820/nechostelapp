@@ -6,8 +6,6 @@ import { Link, Outlet } from "react-router-dom";
 
 function StudentHome() {
     const [visible, setVisible] = useState(false);
-
-    
   return (
     <>
       <div className={styles.container}>

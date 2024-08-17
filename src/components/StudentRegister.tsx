@@ -3,11 +3,17 @@ import { Dialog } from "primereact/dialog";
 import { useNavigate } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import {Card} from "primereact/card";
-import { Toast } from 'primereact/toast';
-import { RegisterStudent, VerifyStudentRegister } from "../services/RegisterService";
+import { Card } from "primereact/card";
+import { Toast } from "primereact/toast";
+import {
+  RegisterStudent,
+  VerifyStudentRegister,
+} from "../services/RegisterService";
+import { FloatLabel } from "primereact/floatlabel";
+import { Student } from "./interfaces/Student";
+import { Calendar } from "primereact/calendar";
+import { formatDate, parseDate } from "./interfaces/Date";
 
-        
 function StudentRegister() {
   const Navigate = useNavigate();
   const [rollno, setRollno] = useState<string>("");
@@ -15,82 +21,103 @@ function StudentRegister() {
   const [isValidating, setisValidating] = useState<boolean>(false);
   const [isStudentExist, setIsStudentExist] = useState<boolean | null>(null);
 
-  const [stuPassword,setStuPassword] = useState<string>("");
-  const [stuCPassword,setStuCPassword] = useState<string>("");
+  const [stuPassword, setStuPassword] = useState<string>("");
+  const [stuCPassword, setStuCPassword] = useState<string>("");
 
-  const [isPasswordsSame,setIsPasswordsSame] = useState<boolean>(true);
+  const [isPasswordsSame, setIsPasswordsSame] = useState<boolean>(true);
 
-  const [isRegistering,setIsRegistering] = useState<boolean>(false);
+  const [isRegistering, setIsRegistering] = useState<boolean>(false);
 
   const registerToast = useRef<Toast>(null);
 
+  const [studentData, setStudentData] = useState<Student | null>(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     setIsPasswordsSame(false);
-    if(stuPassword === stuCPassword){
+    if (stuPassword === stuCPassword) {
       setIsPasswordsSame(true);
     }
-  },[stuPassword,stuCPassword])
-
-
-
+  }, [stuPassword, stuCPassword]);
 
   const handleStuRegFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setisValidating(true);
     setIsStudentExist(null);
-    VerifyStudentRegister(rollno).then((data)=>{
-      setisValidating(false);
-      const {isExist,message} = data;
-      if(isExist){
-        setIsStudentExist(true)
-      }else{
-        setIsStudentExist(false)
-      }
-    }).catch((err)=>{
-      console.log("Error :",err)
-    })
-  
+    VerifyStudentRegister(rollno)
+      .then((data) => {
+        setisValidating(false);
+        const { isExist, isRegistered } = data;
+
+        if (isExist) {
+          if (isRegistered) {
+            if (registerToast.current) {
+              registerToast.current.show({
+                severity: "warn",
+                summary: "Student already registered",
+                detail: "Please Login or Reset Password",
+              });
+            }
+          } else {
+            setIsStudentExist(true);
+            const { hosteler } = data;
+            setStudentData(hosteler);
+          }
+        } else {
+          setIsStudentExist(false);
+          if (registerToast.current) {
+            registerToast.current.show({
+              severity: "error",
+              summary: "Student Not Found",
+              detail: "Student doesn't exist",
+            });
+          }
+        }
+      })
+      .catch((err) => {
+        console.log("Error :", err);
+      });
   };
 
-  const handleRegisterForm = (event:React.FormEvent<HTMLFormElement>)=>{
+  const handleRegisterForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsRegistering(true);
-    RegisterStudent(rollno,stuPassword).then(data=>{
-      setIsRegistering(false);
-      const {success,message} = data;
-      if(success){
-        if(registerToast.current){
-              registerToast.current.show({ severity: 'success', summary: 'Register Successful !', detail:message });
-                // Navigate("/",{replace:true})
+    RegisterStudent(rollno,studentData as Student, stuPassword)
+      .then((data) => {
+        setIsRegistering(false);
+        const {success} = data;
+        if (success) {
+          if (registerToast.current) {
+            registerToast.current.show({
+              severity: "success",
+              summary: "Register Successful !",
+              detail: "You have successfully registered into NEC Hostel Portal",
+            });
+            setTimeout(() => {
+              Navigate("/",{replace:true}) 
+            }, 2000);
+          }
+        } else {
+          if (registerToast.current) {
+            registerToast.current.show({
+              severity: "warn",
+              summary: "Register Unsuccessful !",
+              detail: "Something went wrong.Try Again or Consult Hostel Admin",
+            });
+            setTimeout(() => {
+              Navigate("/",{replace:true}) 
+            }, 2000);
+          }
         }
-      }else{
-        if(registerToast.current){
-          registerToast.current.show({ severity: 'warn', summary: 'Register Unsuccessful !', detail: message });
-            // Navigate("/",{replace:true})
-        }
-      }
-
-    }).catch(err=>{
-      setIsRegistering(false);
-      console.log("error",err);
-    })
-
-    // setTimeout(() => {
-    //   setIsRegistering(false);
-    //   if(registerToast.current){
-    //     registerToast.current.show({ severity: 'success', summary: 'Register Successful !', detail: 'Welcome, User' });
-    //     setTimeout(() => {
-    //       Navigate("/",{replace:true})
-    //     }, 2000);
-    //     }
-    // }, 2000);
-  }
-
+      })
+      .catch((err) => {
+        setIsRegistering(false);
+        console.log("error", err);
+      });
+  };
 
   return (
     <>
-    <Toast ref={registerToast} position="top-center" />
+      <Toast ref={registerToast} position="top-center" />
       <Dialog
         header="Student Registration"
         visible={true}
@@ -107,13 +134,14 @@ function StudentRegister() {
                 <i className="pi pi-key"></i>
               </span>
               <InputText
-                placeholder="Roll no"
+                placeholder="Roll Number"
+                id="stu-reg-key-rollNo"
                 value={rollno}
                 onChange={(e) => {
                   setIsRollnoValid(false);
                   let rollno = e.target.value.toUpperCase();
                   setRollno(rollno);
-                  if (/^[a-zA-Z0-9]{10}$/.test(rollno)){
+                  if (/^[a-zA-Z0-9]{10}$/.test(rollno)) {
                     setIsRollnoValid(true);
                   } else {
                     setIsRollnoValid(false);
@@ -149,66 +177,277 @@ function StudentRegister() {
               )}
             </div>
           </form>
-          {isStudentExist &&
-        <div className="mt-4">
-          <form onSubmit={handleRegisterForm}>
-            <label htmlFor="stu-reg-password" className="block text-900 font-medium mb-1">Password</label>
-            <div className="p-inputgroup flex-1 mb-3">
-                    <span className="p-inputgroup-addon">
-                      <i className="pi pi-lock"></i>
-                    </span>
+          {isStudentExist && (
+            <div className="mt-4 ">
+              <form onSubmit={handleRegisterForm} className="grid">
+                <div className="col-12 md:col-6 mt-3">
+                  <FloatLabel>
                     <InputText
-                      id="stu-reg-password"
-                      name="stu-reg-password"
-                      type="password"
-                      placeholder="Password"
-                      value={stuPassword}
-                      onChange={(e) => {
-                        setStuPassword(e.target.value);
-                      }}
+                      id="stu-reg-rollno"
+                      type="text"
+                      className="w-12"
+                      value={studentData?.rollNo}
+                      disabled
                       required
                     />
-                    <span
-                      className="p-inputgroup-addon"
-                      onClick={() => {
-                        const ele = document.getElementById("stu-reg-password") as HTMLInputElement | null;
-                        if (ele) {
-                          if (ele.type === "text") {
-                            ele.type = "password";
-                          } else if (ele.type === "password") {
-                            ele.type = "text";
-                          }
-                        }
-                      }}
-                    >
-                      <i className="pi pi-eye cursor-pointer"></i>
-                    </span>
-                  </div>
+                    <label htmlFor="stu-reg-rollno">Roll Number</label>
+                  </FloatLabel>
+                </div>
 
-                  <label htmlFor="stu-reg-cpassword" className="block text-900 font-medium mb-1">Confirm Password</label>
-                  <div className="p-inputgroup flex-1 mb-3">
-                    <span className="p-inputgroup-addon">
-                      <i className="pi pi-lock"></i>
-                    </span>
+                <div className="col-12 md:col-6 mt-3">
+                  <FloatLabel>
                     <InputText
-                      id="stu-reg-cpassword"
-                      name="stu-reg-cpassword"
-                      type="password"
-                      placeholder="Confirm Password"
-                      value={stuCPassword}
+                      id="stu-reg-hostelID"
+                      type="text"
+                      className="w-12"
+                      value={studentData?.hostelId}
+                      disabled
+                      required
+                    />
+                    <label htmlFor="stu-reg-hostelID">Hostel ID</label>
+                  </FloatLabel>
+                </div>
+
+                <div className="col-12 md:col-6 mt-3">
+                  <FloatLabel>
+                    <InputText
+                      id="stu-reg-name"
+                      type="text"
+                      className="w-12"
+                      value={studentData?.name}
                       onChange={(e) => {
-                        setStuCPassword(e.target.value);
+                        setStudentData({
+                          ...studentData,
+                          name: e.target.value,
+                        } as Student);
                       }}
                       required
                     />
+                    <label htmlFor="stu-reg-name">Full Name</label>
+                  </FloatLabel>
+                </div>
+
+                <div className="col-12 md:col-6 mt-3">
+                  <FloatLabel>
+                    <InputText
+                      id="stu-reg-gender"
+                      type="text"
+                      className="w-12"
+                      value={studentData?.gender}
+                      disabled
+                      required
+                    />
+                    <label htmlFor="stu-reg-gender">Gender</label>
+                  </FloatLabel>
+                </div>
+
+                <div className="col-12 md:col-6 mt-3">
+                  <FloatLabel>
+                    <Calendar
+                      required
+                      inputId="stu-reg-birth_date"
+                      dateFormat="dd/mm/yy"
+                      value={parseDate(
+                        formatDate(new Date(studentData?.dob as Date))
+                      )}
+                      onChange={(e) => {
+                        setStudentData({
+                          ...studentData,
+                          dob: e.value,
+                        } as Student);
+                      }}
+                      className="w-12"
+                    />
+                    <label htmlFor="stu-reg-birth_date">Date Of Birth</label>
+                  </FloatLabel>
+                </div>
+
+                <div className="col-12 md:col-6 mt-3">
+                  <FloatLabel>
+                    <InputText
+                      id="stu-reg-phoneno"
+                      type="text"
+                      className="w-12 md:w-12"
+                      value={studentData?.phoneNo}
+                      onChange={(e) => {
+                        setStudentData({
+                          ...studentData,
+                          phoneNo: e.target.value,
+                        } as Student);
+                      }}
+                      required
+                    />
+                    <label htmlFor="stu-reg-phoneno">Phone No</label>
+                  </FloatLabel>
+                  {!/^[0-9]{10}$/.test(studentData?.phoneNo as string) &&
+                    studentData?.phoneNo !== "" && (
+                      <small id="phoneno-help" className="text-red-500">
+                        Phone number must be 10 digits
+                      </small>
+                    )}
+                </div>
+
+                <div className="col-12 md:col-6 mt-3">
+                  <FloatLabel>
+                    <InputText
+                      id="stu-reg-email"
+                      type="text"
+                      className="w-12 md:w-12"
+                      value={studentData?.email}
+                      onChange={(e) => {
+                        setStudentData({
+                          ...studentData,
+                          email: e.target.value,
+                        } as Student);
+                      }}
+                      required
+                    />
+                    <label htmlFor="stu-reg-rollno">Email</label>
+                  </FloatLabel>
+                  {!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+                    studentData?.email as string
+                  ) &&
+                    studentData?.email !== "" && (
+                      <small id="email-help" className="text-red-500">
+                        Invalid Email Format
+                      </small>
+                    )}
+                </div>
+
+                <div className="col-12 md:col-6 mt-3">
+                  <div className="custom-select-container w-full">
+                    <select
+                      className="custom-select w-12"
+                      id="stu-reg-college"
+                      value={studentData?.college}
+                      onChange={(e) => {
+                        setStudentData({
+                          ...studentData,
+                          college: e.target.value as string,
+                        } as Student);
+                      }}
+                      required
+                      disabled
+                    >
+                      <option value="label" disabled>
+                        Select College
+                      </option>
+                      <option value="NEC">NEC</option>
+                      <option value="NIPS">NIPS</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="col-12 md:col-6 mt-3">
+                  <div className="custom-select-container w-full">
+                    <select
+                      className="custom-select w-12"
+                      id="stu-reg-year"
+                      value={studentData?.year.toString()}
+                      onChange={(e) => {
+                        setStudentData({
+                          ...studentData,
+                          year: Number(e.target.value),
+                        } as Student);
+                      }}
+                      required
+                    >
+                      <option value="label" disabled>
+                        Select Year
+                      </option>
+                      <option value="1">I Year</option>
+                      <option value="2">II Year</option>
+                      <option value="3">III Year</option>
+                      <option value="4">IV Year</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="col-12 md:col-6 mt-3">
+                  <div className="custom-select-container w-full">
+                    <select
+                      className="custom-select w-12"
+                      id="stu-reg-branch"
+                      value={studentData?.branch}
+                      onChange={(e) => {
+                        setStudentData({
+                          ...studentData,
+                          branch: e.target.value as string,
+                        } as Student);
+                      }}
+                      required
+                      disabled
+                    >
+                      <option value="label" disabled>
+                        Select Branch
+                      </option>
+                      <option value="CSE">CSE</option>
+                      <option value="ECE">ECE</option>
+                      <option value="EEE">EEE</option>
+                      <option value="MECH">MECH</option>
+                      <option value="CIVIL">CIVIL</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="col-12 md:col-6 mt-3">
+                  <FloatLabel>
+                    <InputText
+                      id="stu-reg-parentName"
+                      type="text"
+                      className="w-12"
+                      value={studentData?.parentName}
+                      onChange={(e) => {
+                        setStudentData({
+                          ...studentData,
+                          parentName: e.target.value,
+                        } as Student);
+                      }}
+                      required
+                    />
+                    <label htmlFor="stu-reg-parentName">Parent Name</label>
+                  </FloatLabel>
+                </div>
+
+                <div className="col-12 md:col-6 mt-3">
+                  <FloatLabel>
+                    <InputText
+                      id="stu-reg-parentPhone"
+                      type="text"
+                      className="w-12"
+                      value={studentData?.parentPhoneNo}
+                      disabled = {studentData?.parentPhoneNo?true:false}
+                      required
+                    />
+                    <label htmlFor="stu-reg-parentPhone">Parent Phone No</label>
+                  </FloatLabel>
+                </div>
+
+                <div className="col-12 md:col-6 mt-3">
+                  <div className="p-inputgroup flex-1 w-12 ">
+                    <FloatLabel>
+                      <InputText
+                        id="stu-reg-password"
+                        type="password"
+                        className="w-12"
+                        value={stuPassword}
+                        onChange={(e) => {
+                          setStuPassword(e.target.value);
+                        }}
+                        required
+                      />
+                      <label htmlFor="stu-reg-password">Password</label>
+                    </FloatLabel>
                     <span
                       className="p-inputgroup-addon"
                       onClick={() => {
-                        const ele = document.getElementById("stu-reg-cpassword") as HTMLInputElement | null;
+                        const ele = document.getElementById(
+                          "stu-reg-password"
+                        ) as HTMLInputElement | null;
                         if (ele) {
-                          if (ele.type === "text") {
+                          if (ele.type == "text") {
                             ele.type = "password";
-                          } else if (ele.type === "password") {
+                          } else if (ele.type == "password") {
                             ele.type = "text";
                           }
                         }
@@ -217,14 +456,65 @@ function StudentRegister() {
                       <i className="pi pi-eye cursor-pointer"></i>
                     </span>
                   </div>
-                 {!isPasswordsSame &&  <p className="text-center text-red-400">Passwords are not same</p> }
-                  <Button  type="submit" label={`${isRegistering ? "Registering" :"Register"}`} disabled={((isPasswordsSame && stuPassword)?false:true) ||(isRegistering?true:false)} className="w-full text-center" >
+                </div>
+
+                <div className="col-12 md:col-6 mt-3">
+                  <div className="p-inputgroup flex-1 w-12">
+                    <FloatLabel>
+                      <InputText
+                        id="stu-reg-cpassword"
+                        type="password"
+                        className="w-12"
+                        value={stuCPassword}
+                        onChange={(e) => {
+                          setStuCPassword(e.target.value);
+                        }}
+                        required
+                      />
+                      <label htmlFor="stu-reg-cpassword">
+                        Confirm Password
+                      </label>
+                    </FloatLabel>
+                    <span
+                      className="p-inputgroup-addon"
+                      onClick={() => {
+                        const ele = document.getElementById(
+                          "stu-reg-cpassword"
+                        ) as HTMLInputElement | null;
+                        if (ele) {
+                          if (ele.type == "text") {
+                            ele.type = "password";
+                          } else if (ele.type == "password") {
+                            ele.type = "text";
+                          }
+                        }
+                      }}
+                    >
+                      <i className="pi pi-eye cursor-pointer"></i>
+                    </span>
+                  </div>
+                  {!(stuPassword === stuCPassword) && (
+                    <small id="stu-reg-password-help" className="text-red-500">
+                      Passwords are not same
+                    </small>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  label={`${isRegistering ? "Registering" : "Register"}`}
+                  disabled={
+                    (isPasswordsSame && stuPassword ? false : true) ||
+                    (isRegistering ? true : false)
+                  }
+                  className="w-full text-center"
+                >
                   {isRegistering && <i className="pi pi-spin pi-spinner"></i>}
-                  </Button>
-          </form>
-        </div> }
+                </Button>
+              </form>
+            </div>
+          )}
         </Card>
-
       </Dialog>
     </>
   );

@@ -6,13 +6,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InputOtp } from "primereact/inputotp";
 import { Toast } from "primereact/toast";
-import { UpdateStuNewPassword, VerifyStuFPassMail } from "../services/LoginService";
-import { Password } from "primereact/password";
+import { UpdateStuNewPassword, VerifyStuFPassMail, VerifyStuOTP } from "../services/LoginService";
 
 function StudentForgotPassword() {
   const Navigate = useNavigate();
-  const [email, setEmail] = useState<string>("");
-  const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
+  const [rollNo, setRollNo] = useState<string>("");
+  const [isRollNoValid, setIsRollNoValid] = useState<boolean>(false);
   const [isValidating, setisValidating] = useState<boolean>(false);
   const [isStudentExist, setIsStudentExist] = useState<boolean | null>(null);
   const [otpToken, setOtpTokens] = useState<any>();
@@ -29,6 +28,9 @@ function StudentForgotPassword() {
   const [stuNewCPassword,setStuNewCPassword] = useState<string>("");
   const [isPasswordsSame,setIsPasswordsSame] = useState<boolean>(true);
   const [isUpdatingNewPass,setIsUpdatingNewPass] = useState<boolean>(false);
+
+  const [phoneNo,setPhoneNo] = useState<string>("");
+
 
   useEffect(()=>{
     if(otpToken){
@@ -54,9 +56,11 @@ function StudentForgotPassword() {
     setisValidating(true);
     setIsStudentExist(null);
 
-    VerifyStuFPassMail(email).then((data)=>{
+    VerifyStuFPassMail(rollNo).then((data)=>{
       setisValidating(false);
-      const {isExist,message} = data;
+      const {isExist,phoneNo} = data;
+      const maskedPhoneNo = phoneNo ? phoneNo.slice(0,2)+"*****"+phoneNo.slice(7,10):"";
+      setPhoneNo(maskedPhoneNo)
       if(isExist){
         setIsStudentExist(true);
         if(FPassToast.current){
@@ -65,7 +69,7 @@ function StudentForgotPassword() {
       }else {
         setIsStudentExist(false);
         if(FPassToast.current){
-          FPassToast.current.show({ severity: 'warn', summary:message, detail: 'Please register' });
+          FPassToast.current.show({ severity: 'warn', summary:"Invalid Student", detail: `Student with Roll Number ${rollNo} doesn't exist` });
         }
       }
 
@@ -79,39 +83,43 @@ function StudentForgotPassword() {
     event.preventDefault();
     setIsOTPcorrect(false);
     setIsOTPsubmitting(true);
-    setTimeout(() => {
+
+    VerifyStuOTP(rollNo,otpToken.toString()).then((data)=>{
       setIsOTPsubmitting(false);
-    if(otpToken){
-      if(otpToken.toString() === "1111"){
+      const {isOTPValid} = data;
+      if(isOTPValid){
         setIsOTPcorrect(true);
         if(FPassToast.current){
-          FPassToast.current.show({ severity: 'success', summary: 'Valid OTP', detail: 'OTP Authorization is Successfull' });
+          FPassToast.current.show({ severity: 'success', summary: 'Valid OTP', detail: 'Set your new password !' });
         }
       }else{
         setIsOTPcorrect(false);
         if(FPassToast.current){
-          FPassToast.current.show({ severity: 'error', summary: 'Invalid OTP', detail: 'OTP Authorization is Unsuccessfull' });
+          FPassToast.current.show({ severity: 'error', summary: 'Invalid OTP', detail: 'Try Again' });
         }
       }
-    }
-  }, 2000);
+
+    }).catch((err)=>{
+      console.log("Something went wrong",err)
+    })
+
   }
 
   const handleResendOTP = ()=>{
     if(FPassToast.current){
-      FPassToast.current.show({ severity: 'success', summary: 'OTP Resend Successfully !', detail: 'You can resend OTP again after 02:30 seconds' });
+      FPassToast.current.show({ severity: 'success', summary: 'OTP Resend Successfully !', detail: 'You can resend OTP again after 02:30 minutes' });
     }
     setDisableResendOTP(true);
     setTimeout(() => {
       setDisableResendOTP(false);
-    }, 5000);
+    }, 150000);
   }
 
   const handleNewPasswordForm = (event:React.FormEvent<HTMLFormElement>)=>{
     event.preventDefault();
     setIsUpdatingNewPass(true);
 
-    UpdateStuNewPassword(email,stuNewPassword).then((data)=>{
+    UpdateStuNewPassword(rollNo,stuNewPassword).then((data)=>{
       setIsUpdatingNewPass(false);
       const {isUpdated,message} = data;
       if(isUpdated){
@@ -127,6 +135,7 @@ function StudentForgotPassword() {
     })
     
   }
+
 
   return (
     <>
@@ -148,20 +157,20 @@ function StudentForgotPassword() {
                 <i className="pi pi-envelope"></i>
               </span>
               <InputText
-                placeholder="Email"
-                value={email}
+                placeholder="Roll Number"
+                value={rollNo}
                 onChange={(e) => {
-                  setIsEmailValid(false);
-                  let email = e.target.value;
-                  setEmail(email);
+                  setIsRollNoValid(false);
+                  let rollNo = e.target.value.toUpperCase();
+                  setRollNo(rollNo);
                   if (
-                    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-                      email
+                    /^[0-9a-zA-Z]{10}$/.test(
+                      rollNo
                     )
                   ) {
-                    setIsEmailValid(true);
+                    setIsRollNoValid(true);
                   } else {
-                    setIsEmailValid(false);
+                    setIsRollNoValid(false);
                   }
                 }}
                 className="text-center font-bold"
@@ -170,7 +179,7 @@ function StudentForgotPassword() {
               {isStudentExist == null ? (
                 <Button
                   className={`${isStudentExist}`}
-                  disabled={!isEmailValid || isValidating}
+                  disabled={!isRollNoValid || isValidating}
                   type="submit"
                 >
                   {isValidating && <i className="pi pi-spin pi-spinner"></i>}
@@ -198,7 +207,7 @@ function StudentForgotPassword() {
                 <div className="card flex justify-content-center">
                   <div className="flex flex-column align-items-center w-full">
                     <p className="text-color-secondary block mb-5">
-                      Please enter the code sent to your registered email
+                      Please enter the code sent to your registered phone no {phoneNo}
                     </p>
                     <div className="card flex justify-content-center">
                       <InputOtp
@@ -213,7 +222,6 @@ function StudentForgotPassword() {
                       <Button type="button" label="Resend Code" disabled={disableResendOTP} link className="p-0" onClick={handleResendOTP}></Button>
                       <Button type="submit" disabled={!isOTPvalid || isOTPsubmitting}>{isOTPsubmitting && <i className="pi pi-spin pi-spinner"></i>}&nbsp;&nbsp;{isOTPsubmitting?"Submitting":"Submit Code"}</Button>
                     </div>
-                      <p className="">02:30 sec left</p>
                   </div>
                 </div>
               </form>

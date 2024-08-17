@@ -5,12 +5,19 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { AdminInchargeRegisteration } from "../services/RegisterService";
+import { Incharge } from "./interfaces/Incharge";
 
 function AdminInchargeRegister() {
-  const [hostelId, setHostelId] = useState<string>("");
-  const [name, setName] = useState<string>("");
-  const [phoneno, setPhoneno] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
+
+  const [newIncharge,setNewIncharge] = useState<Incharge>({
+    eid:"",
+    hostelId:"",
+    designation:"",
+    name:"",
+    phoneNo:""
+  });
+
+
   const [password, setPassword] = useState<string>("");
   const [CPassword, setCPassword] = useState<string>("");
   const [isFormValid,setIsFormValid] = useState<boolean>(false);
@@ -21,8 +28,8 @@ function AdminInchargeRegister() {
 
   const ValidateForm = ()=>{
     setIsFormValid(false);
-    if(hostelId != "" && name !="" && /^[0-9]{10}$/.test(phoneno) &&
-     username != "" && password != "" && CPassword === password){
+    if(newIncharge?.hostelId !== null && newIncharge?.name !="" && /^[0-9]{10}$/.test(newIncharge?.phoneNo as string) &&
+     newIncharge?.eid != "" && password != "" && CPassword === password){
       setIsFormValid(true);
      }
     else{
@@ -32,21 +39,29 @@ function AdminInchargeRegister() {
 
   useEffect(()=>{
     ValidateForm();
-  },[hostelId,name,phoneno,username,password,CPassword]);
+  },[newIncharge,password,CPassword]);
 
   const handleAdminInchargeRegister = (
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
     setIsRegistering(true);
-    AdminInchargeRegisteration(hostelId,name,phoneno,username,password).then((data)=>{
+    AdminInchargeRegisteration(newIncharge as Incharge,password).then((data)=>{
       setIsRegistering(false);
-      const {success,message} = data;
+      const {success} = data;
       if(success){
       if(adminInchargeToast.current){
-        adminInchargeToast.current.show({ severity: 'success', summary: 'Register Successfully !', detail: 'New Incharge has been added' });
+        adminInchargeToast.current.show({ severity: 'success', summary: 'Registered Successfully !', detail: 'New Incharge has been added' });
       }
-      setHostelId("");setName("");setPhoneno("");setUsername("");setPassword("");setCPassword("")
+      setNewIncharge({
+        eid:"",
+        hostelId:"",
+        designation:"",
+        name:"",
+        phoneNo:""
+      })
+      setPassword("");
+      setCPassword("")
     }else{
       if(adminInchargeToast.current){
         adminInchargeToast.current.show({ severity: 'error', summary: 'Register Failed', detail: 'Incharge already exist' });
@@ -60,7 +75,7 @@ function AdminInchargeRegister() {
 
   return (
     <>
-    <Toast ref={adminInchargeToast} position="bottom-center"></Toast>
+    <Toast ref={adminInchargeToast} position="center"></Toast>
       <div
         className="p-2 w-10"
         style={{
@@ -81,9 +96,9 @@ function AdminInchargeRegister() {
                   id="inc-hostelid"
                   type="text"
                   className="w-12 sm:w-8"
-                  value={hostelId}
+                  value={newIncharge?.hostelId}
                   onChange={(e) => {
-                    setHostelId(e.target.value.toUpperCase());
+                    setNewIncharge({...newIncharge,hostelId:e.target.value.toUpperCase()} as Incharge);
                   }}
                   required
                 />
@@ -97,9 +112,9 @@ function AdminInchargeRegister() {
                   id="inc-name"
                   type="text"
                   className="w-12 sm:w-8"
-                  value={name}
+                  value={newIncharge?.name}
                   onChange={(e) => {
-                    setName(e.target.value);
+                    setNewIncharge({...newIncharge,name:e.target.value} as Incharge);
                   }}
                   required
                 />
@@ -112,30 +127,46 @@ function AdminInchargeRegister() {
                   id="inc-phoneno"
                   type="text"
                   className="w-12 sm:w-8"
-                  value={phoneno}
+                  value={newIncharge?.phoneNo}
                   onChange={(e) => {
-                    setPhoneno(e.target.value);
+                    setNewIncharge({...newIncharge,phoneNo:e.target.value} as Incharge);
                   }}
                   required
                 />
                 <label htmlFor="inc-phoneno">Phone Number</label>
               </FloatLabel>
-              { (!(/^[0-9]{10}$/.test(phoneno)) && phoneno!=="" ) && <small id="phoneno-help" className="text-red-500" >Phone number must be 10 digits</small>}
-
+              { (!(/^[0-9]{10}$/.test(newIncharge?.phoneNo as string)) && newIncharge?.phoneNo!=="" ) && <small id="phoneno-help" className="text-red-500" >Phone number must be 10 digits</small>}
             </div>
+
             <div className="col-12 md:col-6  mt-3">
               <FloatLabel>
                 <InputText
                   id="inc-username"
                   type="text"
                   className="w-12 sm:w-8"
-                  value={username}
+                  value={newIncharge?.eid}
                   onChange={(e) => {
-                    setUsername(e.target.value);
+                    setNewIncharge({...newIncharge,eid:e.target.value.toUpperCase()} as Incharge);
                   }}
                   required
                 />
-                <label htmlFor="inc-username">Username</label>
+                <label htmlFor="inc-username">EID</label>
+              </FloatLabel>
+            </div>
+
+            <div className="col-12 md:col-6  mt-3">
+              <FloatLabel>
+                <InputText
+                  id="inc-designation"
+                  type="text"
+                  className="w-12 sm:w-8"
+                  value={newIncharge?.designation}
+                  onChange={(e) => {
+                    setNewIncharge({...newIncharge,designation:e.target.value} as Incharge);
+                  }}
+                  required
+                />
+                <label htmlFor="inc-designation">Designation</label>
               </FloatLabel>
             </div>
 

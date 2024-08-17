@@ -1,71 +1,91 @@
 import axios from "axios";
+import { Student } from "../components/interfaces/Student";
+import { Incharge } from "../components/interfaces/Incharge";
 
-export {}
+// const server = "http://192.168.14.124:5000";
+// const server = "http://192.168.129.51:5000"
 
-const VerifyStudentRegister = async (rollnumber:string)=>{
+const server = "https://hostelportal-backend.onrender.com";
 
-    try{
-        const response = await axios.post("https://hostelportal-backend.onrender.com/api/hostelers/validate",{RollNo:rollnumber},{
-            headers:{
-                "Content-Type":"application/json"
-            }
-        })
-        return response.data
-    }catch(err){
-        console.log("error :",err)
-    }
-}
+export {};
 
-const RegisterStudent = async (rollnumber:string,password:string)=>{
+const VerifyStudentRegister = async (rollnumber: string) => {
+  try {
+    const response = await axios.get(
+      `${server}/student/register/${rollnumber}`
+    );
+    return response.data;
+  } catch (err) {
+    console.log("error : while verifying student registeration", err);
+  }
+};
 
-    try{
-        const response = await axios.post("https://hostelportal-backend.onrender.com/api/hostler-credentials",{RollNumber:rollnumber,password:password},{
-            headers:{
-                "Content-Type":"application/json"
-            }
-        })
-        return response.data;
-    }catch(err){
-        console.log("Error : ",err);
-    }
+const RegisterStudent = async (
+  rollnumber: string,
+  student: Student,
+  password: string
+) => {
+  try {
+    const response = await axios.post(
+      `${server}/student-auth/register-student`,
+      { rollNo: rollnumber, hosteler: student, password: password },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.log("Error : while registering student ", err);
+  }
+};
 
-}
+const AdminInchargeRegisteration = async (
+  newIncharge:Incharge,
+  password: string
+) => {
+  try {
+    const response = await axios.post(
+      `${server}/incharge/create`,
+      {...newIncharge,
+        password: password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.log("Error : while creating new incharge", err);
+  }
+};
 
-const AdminInchargeRegisteration = async (hostelid:string,name:string,phoneno:string,username:string,password:string)=>{
+const AdminStudentRegisteration = async (newStudent:Student
+) => {
+  try {
+    const response = await axios.post(
+      `${server}/student/create`,
+      {
+       ...newStudent
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.log("Error : while adding new student ", err);
+  }
+};
 
-    try{
-        const response = await axios.post("https://hostelportal-backend.onrender.com/api/admins",{hostelid:hostelid,name:name,phoneNo:phoneno,username:username,password:password},{
-            headers:{
-                "Content-Type":"application/json"
-            }
-        })
-        return response.data;
-    }catch(err){
-        console.log("Error : ",err);
-    }
-
-}
-
-
-const AdminStudentRegisteration = async (rollNumber:string,hostelId:string,firstname:string,
-    lastname:string,gender:string,phoneno:string,fatherName:string,fatherMobile:string,
-    dateOfBirth:any,email:string,semester:string,department:string)=>{
-    try{
-        const response = await axios.post("https://hostelportal-backend.onrender.com/api/hostelers",{RollNo:rollNumber,hostelid:hostelId,FirstName:firstname,LastName:lastname,Semester:semester,Gender:gender,
-            Department:department,PhoneNo:phoneno,FatherName:fatherName,FatherMobileNumber:fatherMobile,DOB:dateOfBirth,Email:email},{
-            headers:{
-                "Content-Type":"application/json"
-            }
-        })
-        return response.data;
-    }catch(err){
-        console.log("Error : ",err);
-    }
-
-}
-
-
-
-
-
-export {VerifyStudentRegister,RegisterStudent,AdminInchargeRegisteration,AdminStudentRegisteration}
+export {
+  VerifyStudentRegister,
+  RegisterStudent,
+  AdminInchargeRegisteration,
+  AdminStudentRegisteration,
+};

@@ -2,9 +2,10 @@ import axios from "axios";
 import { Leave, Permission } from "../components/interfaces/Request";
 import { Student } from "../components/interfaces/Student";
 
-const server = "http://192.168.14.124:5000";
+// const server = "http://192.168.14.124:5000";
+// const server = "http://192.168.129.51:5000"
 
-// const server = "https://hostelportal-backend.onrender.com"
+const server = "https://hostelportal-backend.onrender.com"
 
 
 // get current
@@ -34,15 +35,14 @@ export const applyRequest = async (request: Permission | Leave | null) => {
   }
 };
 
-export const updateStudentProfile = async (rollNumber:string,lastRequest: any,requestCount?:number) => {
+export const updateStudentProfile = async (rollNumber:string,lastRequest: any,currentStatus:string,requestCount?:number) => {
   if (lastRequest) {
-
 
     try {
       const response = await axios.put(
         `${server}/student/update/${rollNumber.toUpperCase()}`,
         {lastRequest:lastRequest,
-          currentStatus:lastRequest.currentStatus,
+          currentStatus:currentStatus,
           requestCount:requestCount},
         {
           headers: {
@@ -68,5 +68,15 @@ export const getStudentAllRequests = async (rollNumber: string) => {
     console.log("Error : while fetching the Student data", error);
   }
 };
+
+
+export const getAllIncharges = async (hostelId:"BH1"|"GH1")=>{
+  try{
+    const response = await axios.get(`${server}/incharge/getIncharges/${hostelId}`);
+    return response.data;
+  }catch(error){
+    console.log("Error : while fetching inchrages data",error)
+  }
+}
 
 export {};

@@ -1,16 +1,26 @@
 import { Card } from "primereact/card";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import InchargeCard from "../student/InchargeCard";
 import { Incharge } from "../interfaces/Incharge";
+import { getAllIncharges } from "../../services/StudentService";
+import { InchargeContext } from "./InchargeHome";
 
 function InchargeList() {
 
-  const incList:Incharge[] = [
-    {eid:"521",name:"Gangadhar",phoneNo:"9988776655",designation:"--",hostelId:"BH1"},
-    {eid:"522",name:"Gangadhar",phoneNo:"9988776655",designation:"--",hostelId:"BH1"},
-    {eid:"523",name:"Gangadhar",phoneNo:"9988776655",designation:"--",hostelId:"BH1"},
-    {eid:"524",name:"Gangadhar",phoneNo:"9988776655",designation:"--",hostelId:"BH1"},
-  ]
+  const incharge = useContext(InchargeContext);
+
+  const [incharges,setIncharges] = useState<Incharge[]>([]);
+
+  useEffect(()=>{
+    if(incharge){
+      getAllIncharges(incharge?.hostelId).then((data)=>{
+        setIncharges(data.incharges);
+      }).catch((err)=>{
+        console.log("something wrong",err)
+      })
+    }
+  },[incharge])
+  
   return (
     <>
       <div
@@ -24,7 +34,7 @@ function InchargeList() {
         <Card title="Hostel Incharges" className="pt-2 pb-2">
           <div className="grid">
             
-            {incList.map((incharge)=>{return (
+            {incharges.map((incharge)=>{return (
             <div key={incharge.eid} className="col-12 sm:col-6">
             <InchargeCard  incharge={incharge} showId={false}/>
             </div>

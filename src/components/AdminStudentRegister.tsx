@@ -11,84 +11,62 @@ import { Toast } from "primereact/toast";
 import { Divider } from "primereact/divider";
 import AdminStudentDataUpload from "./AdminStudentDataUpload";
 import { AdminStudentRegisteration } from "../services/RegisterService";
-
-interface Semester {
-  name: string;
-  code: string;
-}
-
-interface Department {
-  name: string;
-  code: string;
-}
+import { Student } from "./interfaces/Student";
 
 function AdminStudentRegister() {
-  const [rollNumber, setRollNumber] = useState<string>("");
-  const [hostelId, setHostelId] = useState<string>("");
-  const [firstname, setFirstname] = useState<string>("");
-  const [lastname, setLastname] = useState<string>("");
-  const [gender, setGender] = useState<string>("");
-  const [phoneno, setPhoneno] = useState<string>("");
-  const [fatherName, setFatherName] = useState<string>("");
-  const [fatherMobile, setFatherMobile] = useState<string>("");
-  const [dateOfBirth, setDateOfBirth] = useState<Nullable<Date>>(null);
-  const [email, setEmail] = useState<string>("");
-
-  const Semesters: Semester[] = [
-    { name: "1-1 Semester", code: "1" },
-    { name: "1-2 Semester", code: "2" },
-    { name: "2-1 Semester", code: "3" },
-    { name: "2-2 Semester", code: "4" },
-    { name: "3-1 Semester", code: "5" },
-    { name: "3-2 Semester", code: "6" },
-    { name: "4-1 Semester", code: "7" },
-    { name: "4-2 Semester", code: "8" },
-  ];
-
-  const Departments: Department[] = [
-    { name: "Computer Science Engineering", code: "CSE" },
-    { name: "Electrical and Communication Engineering", code: "ECE" },
-    { name: "Electrical and Electronics Engineering", code: "EEE" },
-    { name: "Mechanical Engineering", code: "MECH" },
-    { name: "Civil Engineering", code: "CIVIL" },
-  ];
-
-  const [semester, setSemester] = useState<Semester|null>(null);
-  const [department, setDepartment] = useState<Department|null>(null);
+  const [newStudent, setNewStudent] = useState<Student>({
+    hostelId: "",
+    rollNo: "",
+    name: "",
+    college: "label",
+    branch: "label",
+    year: 0,
+    gender: "",
+    dob: new Date(),
+    phoneNo: "",
+    email: "",
+    parentPhoneNo: "",
+    parentName: "",
+    currentStatus: "HOSTEL",
+    requestCount: 0,
+    lastRequest: null,
+  });
 
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
   const ValidateForm = () => {
     setIsFormValid(false);
-    const isRollValid = /^[a-zA-Z0-9]{10}$/.test(rollNumber);
-    const isHostelIdValid = hostelId !== "";
-    const isFNameValid = firstname !== "";
-    const isLNameValid = lastname !== "";
-    const isSemValid = semester !== null;
-    const isDeptValid = department !== null;
-    const isGenderValid = gender !== "";
-    const isPhonenoValid = /^[0-9]{10}$/.test(phoneno);
-    const isFatherNameValid = fatherName !== "";
-    const isFatherMobileValid = /^[0-9]{10}$/.test(fatherMobile);
+    const isRollValid = /^[a-zA-Z0-9]{10}$/.test(newStudent.rollNo);
+    const isHostelIdValid = newStudent.hostelId !== "";
+    const isFullNameValid = newStudent.name !== "";
+    const isYearValid = newStudent.year !== 0;
+    const isBranchValid = newStudent.branch !== "label";
+    const isCollegeValid = newStudent.college !== "label";
+    const isGenderValid = newStudent.gender !== "";
+    const isPhonenoValid = /^[0-9]{10}$/.test(newStudent.phoneNo);
+    const isFatherNameValid = newStudent.parentName !== "";
+    const isFatherMobileValid = /^[0-9]{10}$/.test(newStudent.parentPhoneNo);
     const isDOBValid =
-      dateOfBirth !== null && dateOfBirth && dateOfBirth.toString() !== "";
+      newStudent.dob !== null &&
+      newStudent.dob &&
+      newStudent.dob.toString() !== "";
     const isEmailValid =
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(newStudent.email);
 
     const isformValid =
       isRollValid &&
       isHostelIdValid &&
-      isFNameValid &&
-      isLNameValid &&
-      isSemValid &&
-      isDeptValid &&
+      isFullNameValid &&
+      isYearValid &&
+      isBranchValid &&
       isGenderValid &&
       isPhonenoValid &&
       isFatherNameValid &&
       isFatherMobileValid &&
       isDOBValid &&
-      isEmailValid;
+      isEmailValid &&
+      isCollegeValid;
 
     if (isformValid) {
       setIsFormValid(true);
@@ -99,18 +77,7 @@ function AdminStudentRegister() {
 
   useEffect(() => {
     ValidateForm();
-  }, [
-    rollNumber,
-    hostelId,
-    firstname,
-    lastname,
-    gender,
-    phoneno,
-    fatherName,
-    fatherMobile,
-    dateOfBirth,
-    email,semester,department
-  ]);
+  }, [newStudent]);
 
   const adminStudentToast = useRef<Toast>(null);
 
@@ -120,39 +87,53 @@ function AdminStudentRegister() {
     event.preventDefault();
     setIsRegistering(true);
 
-    AdminStudentRegisteration(rollNumber,hostelId,firstname,lastname,gender,phoneno,fatherName,fatherMobile,dateOfBirth,email,JSON.stringify(semester),JSON.stringify(department))
-    .then((data)=>{
-      const {success,message} = data;
-      setIsRegistering(false);
-    }).catch((err)=>{
-      console.log(err)
-    })
-
-    // setTimeout(() => {
-    //   if (rollNumber !== "21471A0521") {
-    //     if (adminStudentToast.current) {
-    //       adminStudentToast.current.show({
-    //         severity: "success",
-    //         summary: "Registered Successfully !",
-    //         detail: "New Student has been added",
-    //       });
-    //     }
-    //   } else {
-    //     if (adminStudentToast.current) {
-    //       adminStudentToast.current.show({
-    //         severity: "error",
-    //         summary: "Register Failed",
-    //         detail: "Student already exist",
-    //       });
-    //     }
-    //   }
-    // }, 2000);
+    AdminStudentRegisteration(newStudent)
+      .then((data) => {
+        setIsRegistering(false);
+        const { success, message } = data;
+        if (success) {
+          if (adminStudentToast.current) {
+            adminStudentToast.current.show({
+              severity: "success",
+              summary: "Registered Successfully !",
+              detail: "New Student has been added",
+            });
+          }
+          setNewStudent({
+            hostelId: "",
+            rollNo: "",
+            name: "",
+            college: "label",
+            branch: "label",
+            year: 0,
+            gender: "",
+            dob: new Date(),
+            phoneNo: "",
+            email: "",
+            parentPhoneNo: "",
+            parentName: "",
+            currentStatus: "HOSTEL",
+            requestCount: 0,
+            lastRequest: null,
+          });
+        } else {
+          if (adminStudentToast.current) {
+            adminStudentToast.current.show({
+              severity: "error",
+              summary: "Register Failed",
+              detail: "Student already exist",
+            });
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
-
-  const onDataUpload = ()=>{
-    console.log("data uploaded")
-  }
+  const onDataUpload = () => {
+    console.log("data uploaded");
+  };
 
   return (
     <>
@@ -177,10 +158,13 @@ function AdminStudentRegister() {
                 <InputText
                   id="ad-stu-rollno"
                   type="text"
-                  className="w-12 md:w-8"
-                  value={rollNumber}
+                  className="w-12"
+                  value={newStudent.rollNo}
                   onChange={(e) => {
-                    setRollNumber(e.target.value);
+                    setNewStudent({
+                      ...newStudent,
+                      rollNo: e.target.value.toUpperCase(),
+                    } as Student);
                   }}
                   required
                 />
@@ -193,10 +177,13 @@ function AdminStudentRegister() {
                 <InputText
                   id="ad-stu-hostelid"
                   type="text"
-                  className="w-12 md:w-8"
-                  value={hostelId}
+                  className="w-12 "
+                  value={newStudent.hostelId}
                   onChange={(e) => {
-                    setHostelId(e.target.value);
+                    setNewStudent({
+                      ...newStudent,
+                      hostelId: e.target.value.toUpperCase(),
+                    } as Student);
                   }}
                   required
                 />
@@ -206,31 +193,19 @@ function AdminStudentRegister() {
             <div className="col-12 md:col-6 lg:col-4 mt-3">
               <FloatLabel>
                 <InputText
-                  id="ad-stu-firstname"
+                  id="ad-stu-fullname"
                   type="text"
-                  className="w-12 md:w-8"
-                  value={firstname}
+                  className="w-12"
+                  value={newStudent.name}
                   onChange={(e) => {
-                    setFirstname(e.target.value);
+                    setNewStudent({
+                      ...newStudent,
+                      name: e.target.value,
+                    } as Student);
                   }}
                   required
                 />
-                <label htmlFor="ad-stu-firstname">Firstname</label>
-              </FloatLabel>
-            </div>
-            <div className="col-12 md:col-6 lg:col-4 mt-3">
-              <FloatLabel>
-                <InputText
-                  id="ad-stu-lastname"
-                  type="text"
-                  className="w-12 md:w-8"
-                  value={lastname}
-                  onChange={(e) => {
-                    setLastname(e.target.value);
-                  }}
-                  required
-                />
-                <label htmlFor="ad-stu-lastname">Lastname</label>
+                <label htmlFor="ad-stu-fullname">Full Name</label>
               </FloatLabel>
             </div>
 
@@ -242,8 +217,13 @@ function AdminStudentRegister() {
                     inputId="ad-stu-male"
                     name="gender"
                     value="male"
-                    onChange={(e: RadioButtonChangeEvent) => setGender(e.value)}
-                    checked={gender === "male"}
+                    onChange={(e: RadioButtonChangeEvent) =>
+                      setNewStudent({
+                        ...newStudent,
+                        gender: e.value,
+                      } as Student)
+                    }
+                    checked={newStudent.gender === "male"}
                   />
                   <label htmlFor="ad-stu-male" className="ml-2">
                     Male
@@ -254,8 +234,13 @@ function AdminStudentRegister() {
                     inputId="ad-stu-female"
                     name="gender"
                     value="female"
-                    onChange={(e: RadioButtonChangeEvent) => setGender(e.value)}
-                    checked={gender === "female"}
+                    onChange={(e: RadioButtonChangeEvent) =>
+                      setNewStudent({
+                        ...newStudent,
+                        gender: e.value,
+                      } as Student)
+                    }
+                    checked={newStudent.gender === "female"}
                   />
                   <label htmlFor="ad-stu-female" className="ml-2">
                     Female
@@ -266,8 +251,13 @@ function AdminStudentRegister() {
                     inputId="ad-stu-other"
                     name="gender"
                     value="other"
-                    onChange={(e: RadioButtonChangeEvent) => setGender(e.value)}
-                    checked={gender === "other"}
+                    onChange={(e: RadioButtonChangeEvent) =>
+                      setNewStudent({
+                        ...newStudent,
+                        gender: e.value,
+                      } as Student)
+                    }
+                    checked={newStudent.gender === "other"}
                   />
                   <label htmlFor="ad-stu-other" className="ml-2">
                     Other
@@ -280,12 +270,18 @@ function AdminStudentRegister() {
               <FloatLabel>
                 <Calendar
                   required
+                  dateFormat="dd/mm/yy"
                   inputId="ad-stu-birth_date"
-                  value={dateOfBirth}
-                  onChange={(e) => setDateOfBirth(e.value)}
-                  className="w-12 md:w-8"
+                  value={newStudent.dob}
+                  onChange={(e) =>
+                    setNewStudent({
+                      ...newStudent,
+                      dob: e.target.value,
+                    } as Student)
+                  }
+                  className="w-12"
                 />
-                <label htmlFor="ad-stu-birth_date">Birth Date</label>
+                <label htmlFor="ad-stu-birth_date">Date of Birth</label>
               </FloatLabel>
             </div>
 
@@ -294,20 +290,24 @@ function AdminStudentRegister() {
                 <InputText
                   id="ad-stu-phoneno"
                   type="text"
-                  className="w-12 md:w-8"
-                  value={phoneno}
+                  className="w-12"
+                  value={newStudent.phoneNo}
                   onChange={(e) => {
-                    setPhoneno(e.target.value);
+                    setNewStudent({
+                      ...newStudent,
+                      phoneNo: e.target.value,
+                    } as Student);
                   }}
                   required
                 />
                 <label htmlFor="ad-stu-phoneno">Phone Number</label>
               </FloatLabel>
-              {!/^[0-9]{10}$/.test(phoneno) && phoneno !== "" && (
-                <small id="phoneno-help" className="text-red-500">
-                  Phone number must be 10 digits
-                </small>
-              )}
+              {!/^[0-9]{10}$/.test(newStudent.phoneNo) &&
+                newStudent.phoneNo !== "" && (
+                  <small id="phoneno-help" className="text-red-500">
+                    Phone number must be 10 digits
+                  </small>
+                )}
             </div>
 
             <div className="col-12 md:col-6 lg:col-4 mt-3">
@@ -315,47 +315,94 @@ function AdminStudentRegister() {
                 <InputText
                   id="ad-stu-email"
                   type="text"
-                  className="w-12 md:w-8"
-                  value={email}
+                  className="w-12"
+                  value={newStudent.email}
                   onChange={(e) => {
-                    setEmail(e.target.value);
+                    setNewStudent({
+                      ...newStudent,
+                      email: e.target.value,
+                    } as Student);
                   }}
                   required
                 />
                 <label htmlFor="ad-stu-rollno">EMail</label>
               </FloatLabel>
               {!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-                email
+                newStudent.email
               ) &&
-                email !== "" && (
+                newStudent.email !== "" && (
                   <small id="email-help" className="text-red-500">
                     Invalid Email Format
                   </small>
                 )}
             </div>
 
-            <div className="col-12 md:col-6 lg:col-4 mt-3">
-              <Dropdown
-                required
-                value={semester}
-                onChange={(e: DropdownChangeEvent) => setSemester(e.value)}
-                options={Semesters}
-                optionLabel="name"
-                placeholder="Semester"
-                className="w-12 md:w-8"
-              />
+            <div className="col-12 sm:col-6 md:col-4 mt-3">
+              <div className="custom-select-container w-full">
+                <select
+                  className="custom-select"
+                  value={newStudent.college}
+                  onChange={(e) => {
+                    setNewStudent({
+                      ...newStudent,
+                      college: e.target.value,
+                    } as Student);
+                  }}
+                >
+                  <option value="label" disabled>
+                    Select College
+                  </option>
+                  <option value="NEC">NEC</option>
+                  <option value="NIPS">NIPS</option>
+                </select>
+              </div>
             </div>
 
-            <div className="col-12 md:col-6 lg:col-4 mt-3">
-              <Dropdown
-                required
-                value={department}
-                onChange={(e: DropdownChangeEvent) => setDepartment(e.value)}
-                options={Departments}
-                optionLabel="name"
-                placeholder="Department"
-                className="w-12 md:w-8"
-              />
+            <div className="col-12 sm:col-6 md:col-4 mt-3">
+              <div className="custom-select-container w-full">
+                <select
+                  className="custom-select"
+                  value={newStudent.year}
+                  onChange={(e) => {
+                    setNewStudent({
+                      ...newStudent,
+                      year: Number(e.target.value),
+                    } as Student);
+                  }}
+                >
+                  <option value="0" disabled>
+                    Select Year
+                  </option>
+                  <option value="1">I Year</option>
+                  <option value="2">II Year</option>
+                  <option value="3">III Year</option>
+                  <option value="4">IV Year</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="col-12 sm:col-6 md:col-4 mt-3">
+              <div className="custom-select-container w-full">
+                <select
+                  className="custom-select"
+                  value={newStudent.branch}
+                  onChange={(e) => {
+                    setNewStudent({
+                      ...newStudent,
+                      branch: e.target.value,
+                    } as Student);
+                  }}
+                >
+                  <option value="label" disabled>
+                    Select Branch
+                  </option>
+                  <option value="CSE">CSE</option>
+                  <option value="ECE">ECE</option>
+                  <option value="EEE">EEE</option>
+                  <option value="MECH">MECH</option>
+                  <option value="CIVIL">CIVIL</option>
+                </select>
+              </div>
             </div>
 
             <div className="col-12 md:col-6 lg:col-4 mt-3">
@@ -363,10 +410,13 @@ function AdminStudentRegister() {
                 <InputText
                   id="ad-stu-fathername"
                   type="text"
-                  className="w-12 md:w-8"
-                  value={fatherName}
+                  className="w-12"
+                  value={newStudent.parentName}
                   onChange={(e) => {
-                    setFatherName(e.target.value);
+                    setNewStudent({
+                      ...newStudent,
+                      parentName: e.target.value,
+                    } as Student);
                   }}
                   required
                 />
@@ -379,20 +429,24 @@ function AdminStudentRegister() {
                 <InputText
                   id="ad-stu-fathermobile"
                   type="text"
-                  className="w-12 md:w-8"
-                  value={fatherMobile}
+                  className="w-12"
+                  value={newStudent.parentPhoneNo}
                   onChange={(e) => {
-                    setFatherMobile(e.target.value);
+                    setNewStudent({
+                      ...newStudent,
+                      parentPhoneNo: e.target.value,
+                    } as Student);
                   }}
                   required
                 />
                 <label htmlFor="ad-stu-fathermobile">Father Mobile No</label>
               </FloatLabel>
-              {!/^[0-9]{10}$/.test(fatherMobile) && fatherMobile !== "" && (
-                <small id="fphoneno-help" className="text-red-500">
-                  Phone number must be 10 digits
-                </small>
-              )}
+              {!/^[0-9]{10}$/.test(newStudent.parentPhoneNo) &&
+                newStudent.parentPhoneNo !== "" && (
+                  <small id="fphoneno-help" className="text-red-500">
+                    Phone number must be 10 digits
+                  </small>
+                )}
             </div>
             <div className="col-12 md:col-6 lg:col-4 mt-3 flex justify-content-start">
               <Button type="submit" disabled={!isFormValid || isRegistering}>
@@ -409,11 +463,8 @@ function AdminStudentRegister() {
         </Divider>
 
         <Card title="Import Data (.xls / .xlsx)">
-          <AdminStudentDataUpload/>
-
+          <AdminStudentDataUpload />
         </Card>
-
-        
       </div>
     </>
   );

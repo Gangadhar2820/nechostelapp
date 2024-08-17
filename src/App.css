@@ -58,13 +58,23 @@
   outline: none;
 }
 
-/* Adding custom arrow */
 .custom-select-container::after {
   content: '▼';
   position: absolute;
   top: 50%;
   right: 10px;
   transform: translateY(-50%);
+  pointer-events: none;
+  color: #777;
+}
+
+/* Adding custom arrow */
+.custom-select-container1::after {
+  content: '▼';
+  position: absolute;
+  top: 50%;
+  left: 80%;
+  transform: translate(-80%,-50%);
   pointer-events: none;
   color: #777;
 }

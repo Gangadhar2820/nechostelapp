@@ -1,11 +1,11 @@
 import styles from "../styles/home.module.css";
-import React, { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { Sidebar } from "primereact/sidebar";
 import { Button } from "primereact/button";
-import { Link, Outlet } from "react-router-dom";
-import { Student } from "../interfaces/Student";
+import {  NavLink, Outlet, useParams } from "react-router-dom";
 import { Incharge } from "../interfaces/Incharge";
 import { getIncharge } from "../../services/InchargeService";
+import { useInchargeAuth } from "../../utils/InchargeAuth";
 
 export const InchargeContext = createContext<any>(null);
 export const InchargeProvider = InchargeContext.Provider;
@@ -14,11 +14,15 @@ export const InchargeConsumer = InchargeContext.Consumer;
 function InchargeHome() {
   const [visible, setVisible] = useState(false);
 
+  const params = useParams();
+
   const [incharge, setIncharge] = useState<Incharge>();
+
+  const {inchargeLogout} = useInchargeAuth();
 
   useEffect(() => {
 
-    getIncharge("E123").then((data)=>{
+    getIncharge(params?.eid as string).then((data)=>{
       setIncharge(data)
     }).catch((err)=>{
       console.log(err)
@@ -26,16 +30,48 @@ function InchargeHome() {
 
   }, []);
 
+  const handleLogout = () => {
+
+    let result = window.confirm("Are you sure you want to Logout?");
+    if(result){
+      inchargeLogout()
+    }
+  };
+
   return (
     <>
+
       <InchargeProvider value={incharge}>
         <div className={styles.container}>
-          <div className={`${styles.header} flex flex-row`}>
+          <div className={`${styles.header} flex p-1 align-items-center justify-content-between`}>
+          
+            <img
+              src="/images/Nec.png"
+              alt="Nec logo"
+              className="ml-3 mr-3 h-full"
+            />
+            <img
+              src="/images/logo-no-background.png"
+              alt="Nec logo"
+              className="ml-3 mr-3 h-full hidden sm:block"
+            />
+
             <Button
               icon="pi pi-bars"
               label="Menu"
+              severity="info"
               className="lg:hidden"
               onClick={() => setVisible(true)}
+              raised
+              aria-label="User"
+            />
+
+            <Button
+              icon="pi pi-power-off"
+              rounded
+              raised
+              label="Logout"
+              onClick={handleLogout}
             />
           </div>
           <div className={styles.body}>
@@ -48,90 +84,117 @@ function InchargeHome() {
                 <div className="overflow-y-auto">
                   <ul className="list-none p-3 m-0">
                     <li>
-                      <Link
-                        to="/incharge/dashboard"
-                        className="p-ripple no-underline flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full"
-                      >
+                      <NavLink
+                        to="dashboard"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-box mr-2"></i>
                         <span className="font-medium"> Dashboard</span>
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
-                        to="/incharge/profile"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="profile"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-user mr-2"></i>
                         <span className="font-medium"> My Profile</span>
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
-                        to="/incharge/viewstudent"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="viewstudent"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-address-book mr-2"></i>
                         <span className="font-medium"> View Student</span>
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
-                        to="/incharge/studentlist"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="studentlist"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-list mr-2"></i>
                         <span className="font-medium">Student List</span>
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
-                        to="/incharge/pendingreq"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="pendingreq"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-clock mr-2"></i>
                         <span className="font-medium">Pending Requests</span>
-                      </Link>
+                      </NavLink>
                     </li>
                     <li>
-                      <Link
-                        to="/incharge/activereq"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="activereq"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-verified mr-2"></i>
                         <span className="font-medium">Active Requests</span>
-                      </Link>
+                      </NavLink>
                     </li>
                     <li>
-                      <Link
-                        to="/incharge/arrivedreq"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="arrivedreq"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-list-check mr-2"></i>
                         <span className="font-medium">Arrived Requests</span>
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
-                        to="/incharge/history"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="history"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-history mr-2"></i>
                         <span className="font-medium">History</span>
-                      </Link>
+                      </NavLink>
                     </li>
                     <li>
-                      <Link
-                        to="/incharge/inchargelist"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="inchargelist"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-users mr-2"></i>
                         <span className="font-medium">Incharge List</span>
-                      </Link>
+                      </NavLink>
                     </li>
                   </ul>
                 </div>
@@ -147,90 +210,117 @@ function InchargeHome() {
                     <div className="overflow-y-auto">
                       <ul className="list-none p-3 m-0">
                       <li>
-                      <Link
-                        to="/incharge/dashboard"
-                        className="p-ripple no-underline flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full"
-                      >
+                      <NavLink
+                        to="dashboard"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-box mr-2"></i>
                         <span className="font-medium"> Dashboard</span>
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
-                        to="/incharge/profile"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="profile"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-user mr-2"></i>
                         <span className="font-medium"> My Profile</span>
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
-                        to="/incharge/viewstudent"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="viewstudent"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-address-book mr-2"></i>
                         <span className="font-medium"> View Student</span>
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
-                        to="/incharge/studentlist"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="studentlist"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-list mr-2"></i>
                         <span className="font-medium">Student List</span>
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
-                        to="/incharge/pendingreq"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="pendingreq"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-clock mr-2"></i>
                         <span className="font-medium">Pending Requests</span>
-                      </Link>
+                      </NavLink>
                     </li>
                     <li>
-                      <Link
-                        to="/incharge/activereq"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="activereq"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-verified mr-2"></i>
                         <span className="font-medium">Active Requests</span>
-                      </Link>
+                      </NavLink>
                     </li>
                     <li>
-                      <Link
-                        to="/incharge/arrivedreq"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="arrivedreq"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-list-check mr-2"></i>
                         <span className="font-medium">Arrived Requests</span>
-                      </Link>
+                      </NavLink>
                     </li>
 
                     <li>
-                      <Link
-                        to="/incharge/history"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="history"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-history mr-2"></i>
                         <span className="font-medium">History</span>
-                      </Link>
+                      </NavLink>
                     </li>
                     <li>
-                      <Link
-                        to="/incharge/inchargelist"
-                        className="p-ripple flex align-items-center text-white hover:text-primary cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full no-underline"
-                      >
+                      <NavLink
+                        to="inchargelist"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
                         <i className="pi pi-users mr-2"></i>
                         <span className="font-medium">Incharge List</span>
-                      </Link>
+                      </NavLink>
                     </li>
                       </ul>
                     </div>

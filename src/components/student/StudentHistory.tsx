@@ -45,7 +45,7 @@ function History() {
       .catch((err) => {
         console.log(err);
       });
-  },[selectionOption]);
+  },[student]);
 
   const renderHeader = () => {
     return (

@@ -40,6 +40,14 @@ export const formatTime = (date:Date)=>{
 }
 
 
+export const parseDate = (dateString: string): Date => {
+  // Split the date string into [day, month, year]
+  const [day, month, year] = dateString.split('-').map(Number);
+
+  // Create and return the Date object
+  return new Date(year, month - 1, day); // month is zero-based
+};
+
 
 export function getDateBeforeDays(date:Date, daysBefore:number) {
 

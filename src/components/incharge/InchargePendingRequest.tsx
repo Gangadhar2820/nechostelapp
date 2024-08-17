@@ -17,8 +17,11 @@ import {
 } from "../../services/InchargeService";
 import { InchargeContext } from "./InchargeHome";
 
+
 function InchargePendingRequest() {
   const incharge = useContext(InchargeContext);
+
+
 
   const [selectionOption, setSelectionOption] = useState<
     "Permissions" | "Leaves"
@@ -30,6 +33,7 @@ function InchargePendingRequest() {
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
   const pendingRequestToast = useRef<Toast>(null);
+
 
   useEffect(() => {
     if (incharge?.hostelId) {
@@ -220,6 +224,8 @@ function InchargePendingRequest() {
       acceptClassName: "p-button-danger",
       accept,
       reject,
+      id:"inchargependingrequestdialog"
+
     });
   };
   const handleRequestAccept = (id: string, rollNo: string, type: any) => {
@@ -286,12 +292,13 @@ function InchargePendingRequest() {
       acceptClassName: "p-button-success",
       accept,
       reject,
+      id:"inchargependingrequestdialog"
     });
   };
 
   return (
     <>
-      <ConfirmDialog />
+      <ConfirmDialog id="inchargependingrequestdialog"/>
       <Toast ref={pendingRequestToast} position="center" />
 
       <div

@@ -18,6 +18,9 @@ import { applyRequest } from "../../services/StudentService";
 function StudentLeave() {
   const [selectionOption, setSelectionOption] = useState<string>("Permission");
 
+
+
+
   //permission
   const [date, setDate] = useState<Nullable<Date>>(null);
   const [fromTime, setFromTime] = useState<Nullable<Date>>(null);
@@ -118,7 +121,6 @@ function StudentLeave() {
 
     applyRequest(request).then((data)=>{
       setIsApplying(false);
-
       if(data.success){
       if (selectionOption === "Leave") {
         if (PermissionLeaveToast.current) {

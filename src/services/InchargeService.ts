@@ -1,9 +1,11 @@
 import axios from "axios"
 import { updateStudentProfile } from "./StudentService";
 
-const server = "http://192.168.14.124:5000";
+// const server = "http://192.168.14.124:5000";
+// const server = "http://192.168.129.51:5000"
 
-// const server = "https://hostelportal-backend.onrender.com"
+
+const server = "https://hostelportal-backend.onrender.com"
 
 
 export const getIncharge = async (eid:string)=>{
@@ -39,7 +41,7 @@ export const getPendingRequests = async (hostelId:string)=>{
 }
 
 export const AcceptORRejectRequest = async (id:string,data:any)=>{
-    await updateStudentProfile(data.rollNo,{lastRequest:data,currentStatus:(data.status==="ACCEPTED"?data.type.toUpperCase():"HOSTEL")})
+    await updateStudentProfile(data.rollNo,data,(data.status==="ACCEPTED"?data.type.toUpperCase():"HOSTEL"))
     try{
         const response =await  axios.post(`${server}/requests/approve/${id}`,data,{
             headers:{
@@ -63,7 +65,7 @@ export const getActiveRequests = async (hostelId:string)=>{
 }
 
 export const ArriveRequest = async (id:string,data:any)=>{
-    await updateStudentProfile(data.rollNo,{lastRequest:data,currentStatus:"HOSTEL"})
+    await updateStudentProfile(data.rollNo,data,"HOSTEL")
 
     try{
         const response =await  axios.post(`${server}/requests/arrive/${id}`,data,{
@@ -89,6 +91,15 @@ export const getArrivedRequests = async (hostelId:string,startDate:Date,endDate:
         console.log("Error : while getting Arrive Requests",error)
     }
 
+}
+
+export const getTotalHostelStats = async (hostelId:string)=>{
+    try{
+        const response = await axios.get(`${server}/student/get/counts/${hostelId}`);
+        return response.data;
+    }catch(error){
+        console.log("Error : while getting hostel statistics",error)
+    }
 }
 
 
