@@ -27,6 +27,8 @@ function InchargeActiveRequest() {
 
   const activeRequestToast = useRef<Toast>(null);
 
+  const [isArriving,setIsArriving] = useState<boolean>(false);
+
   useEffect(() => {
     if (incharge?.hostelId) {
       getActiveRequests(incharge?.hostelId)
@@ -126,18 +128,22 @@ function InchargeActiveRequest() {
   const ArrivedButton = (request: Permission | Leave) => {
     return (
       <Button
-        label="Arrived"
+        label={isArriving?"Arriving":"Arrived"}
         icon="pi pi-sign-in"
         severity="info"
         onClick={() => {
           handleRequestArrive(request?.id,request?.rollNo, request?.type);
         }}
-      />
+      >&nbsp;&nbsp;
+      {isArriving && <i className="pi pi-spin pi-spinner"></i>}
+
+      </Button>
     );
   };
 
   const handleRequestArrive = (id:string,rollNo: string, type: string) => {
     const accept = () => {
+      setIsArriving(true);
 
       if(type==="LEAVE"){
         let arrRequest = leaves.filter(request=>request.id===id)[0];
@@ -150,6 +156,7 @@ function InchargeActiveRequest() {
 
         ArriveRequest(id,arrRequest).then((data)=>{
           setLeaves(newLeaves);
+          setIsArriving(false)
           if (data.updated) {
             if (activeRequestToast?.current) {
               activeRequestToast?.current.show({
@@ -176,6 +183,7 @@ function InchargeActiveRequest() {
 
         ArriveRequest(id,arrRequest).then((data)=>{
           setPermissions(newPermissions);
+          setIsArriving(false);
           if (data.updated) {
             if (activeRequestToast?.current) {
               activeRequestToast?.current.show({
@@ -308,6 +316,7 @@ function InchargeActiveRequest() {
               rows={5}
               rowsPerPageOptions={[5, 10, 25, 50]}
               tableStyle={{ minWidth: "50rem" }}
+              selectionMode={"single"}
             >
               <Column
                 field="rollNo"

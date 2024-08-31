@@ -6,11 +6,11 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import React, { useContext, useEffect, useState } from "react";
-import { InchargeContext } from "./InchargeHome";
 import { Nullable } from "primereact/ts-helpers";
 import { Calendar } from "primereact/calendar";
 import { FloatLabel } from "primereact/floatlabel";
 import { Permission,Leave } from "../interfaces/Request";
+import { AdminContext } from "./AdminHome";
 import {
   formatDate,
   formatDateWithTime,
@@ -21,9 +21,9 @@ import {
 import { getArrivedRequests } from "../../services/InchargeService";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 
-function InchargeArrivedRequest() {
+function AdminArrivedRequests() {
 
-  const incharge = useContext(InchargeContext);
+  const admin = useContext(AdminContext);
   const [selectionOption, setSelectionOption] = useState<string>("Permissions");
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [leaves, setLeaves] = useState<Leave[]>([]);
@@ -60,7 +60,7 @@ function InchargeArrivedRequest() {
       enddDate = getDateAfterDays(toDate as Date, 1);
     }
 
-    getArrivedRequests(incharge?.hostelId, starttDate as Date, enddDate as Date)
+    getArrivedRequests("all", starttDate as Date, enddDate as Date)
       .then((data) => {
         setIsSearching(false);
         let leaves: any = [];
@@ -87,7 +87,7 @@ function InchargeArrivedRequest() {
         <Button
           type="button"
           icon="pi pi-filter-slash"
-          label=""
+          label="Clear"
           outlined
           onClick={() => {
             setGlobalFilterValue("");
@@ -127,14 +127,7 @@ function InchargeArrivedRequest() {
     return "";
   };
 
-  const rejectedTime = (data: any) => {
-    if (data.rejected) {
-      const date = data?.rejected?.time;
-      const formatDate = data ? formatDateWithTime(new Date(date)) : "";
-      return formatDate;
-    }
-    return "";
-  };
+
 
   const arrivedTime = (data: any) => {
     if (data.arrived) {
@@ -153,13 +146,7 @@ function InchargeArrivedRequest() {
     return "";
   };
 
-  const rejectedName = (data: any) => {
-    if (data.rejected) {
-      const name = data?.rejected?.name;
-      return name;
-    }
-    return "";
-  };
+ 
 
   const arrivedName = (data: any) => {
     if (data.arrived) {
@@ -334,11 +321,20 @@ function InchargeArrivedRequest() {
               selectionMode="single"
             >
               <Column
+                field="hostelId"
+                className="font-bold"
+                header="Hostel ID"
+                sortable
+                frozen
+              ></Column>
+              <Column
                 field="rollNo"
                 className="font-bold"
                 header="Roll Number"
                 sortable
+                frozen
               ></Column>
+              
               <Column
                 header="From Date"
                 field="fromDate"
@@ -399,12 +395,21 @@ function InchargeArrivedRequest() {
               tableStyle={{ minWidth: "50rem" }}
               selectionMode="single"
             >
+               <Column
+                field="hostelId"
+                className="font-bold"
+                header="Hostel ID"
+                sortable
+                frozen
+              ></Column>
               <Column
                 field="rollNo"
                 className="font-bold"
                 header="Roll Number"
                 sortable
+                frozen
               ></Column>
+             
               <Column
                 header="Date"
                 field="date"
@@ -464,4 +469,4 @@ function InchargeArrivedRequest() {
   );
 }
 
-export default InchargeArrivedRequest;
+export default AdminArrivedRequests;

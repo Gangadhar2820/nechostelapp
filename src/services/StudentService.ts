@@ -70,7 +70,7 @@ export const getStudentAllRequests = async (rollNumber: string) => {
 };
 
 
-export const getAllIncharges = async (hostelId:"BH1"|"GH1")=>{
+export const getAllIncharges = async (hostelId:"BH1"|"GH1"|string)=>{
   try{
     const response = await axios.get(`${server}/incharge/getIncharges/${hostelId}`);
     return response.data;

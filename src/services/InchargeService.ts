@@ -102,5 +102,14 @@ export const getTotalHostelStats = async (hostelId:string)=>{
     }
 }
 
+export const getTodayHostelStats = async (hostelId:string)=>{
+    try{
+        const response = await axios.get(`${server}/requests/getTodayrequests/${hostelId}`);
+        return response.data;
+    }catch(error){
+        console.log("Error : while getting Today hostel statistics",error)
+    }
+}
+
 
 export {}

@@ -27,7 +27,7 @@ function StudentIncharge() {
   return (
     <>
       <div
-        className="p-2 w-12 mt-2"
+        className=" w-12 mt-2"
         style={{
           position: "absolute",
           left: "50%",
@@ -37,7 +37,7 @@ function StudentIncharge() {
         <Card title="Hostel Incharges" className="pt-2 pb-2">
           <div className="grid">
           {incharges.map((incharge)=>{return (
-            <div key={incharge.eid} className="col-12 sm:col-6">
+            <div key={incharge.eid} className="col-12 " >
             <InchargeCard  incharge={incharge} showId={false}/>
             </div>
             )

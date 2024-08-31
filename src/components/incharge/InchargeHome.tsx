@@ -43,18 +43,19 @@ function InchargeHome() {
 
       <InchargeProvider value={incharge}>
         <div className={styles.container}>
-          <div className={`${styles.header} flex p-1 align-items-center justify-content-between`}>
+          <div className={`${styles.header} p-card flex p-1 align-items-center justify-content-between`}>
           
+          <img
+              src="/images/logo-no-background.png"
+              alt="Nec logo"
+              className="ml-3 mr-3 h-full hidden sm:block"
+            />
             <img
               src="/images/Nec.png"
               alt="Nec logo"
               className="ml-3 mr-3 h-full"
             />
-            <img
-              src="/images/logo-no-background.png"
-              alt="Nec logo"
-              className="ml-3 mr-3 h-full hidden sm:block"
-            />
+            
 
             <Button
               icon="pi pi-bars"
@@ -168,7 +169,7 @@ function InchargeHome() {
                         }
                         }                      >
                         <i className="pi pi-list-check mr-2"></i>
-                        <span className="font-medium">Arrived Requests</span>
+                        <span className="font-medium">Arrived Students</span>
                       </NavLink>
                     </li>
 
@@ -181,7 +182,7 @@ function InchargeHome() {
                         }
                         }                      >
                         <i className="pi pi-history mr-2"></i>
-                        <span className="font-medium">History</span>
+                        <span className="font-medium">Student History</span>
                       </NavLink>
                     </li>
                     <li>
@@ -294,7 +295,7 @@ function InchargeHome() {
                         }
                         }                      >
                         <i className="pi pi-list-check mr-2"></i>
-                        <span className="font-medium">Arrived Requests</span>
+                        <span className="font-medium">Arrived Students</span>
                       </NavLink>
                     </li>
 
@@ -307,7 +308,7 @@ function InchargeHome() {
                         }
                         }                      >
                         <i className="pi pi-history mr-2"></i>
-                        <span className="font-medium">History</span>
+                        <span className="font-medium">Student History</span>
                       </NavLink>
                     </li>
                     <li>

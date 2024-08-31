@@ -26,7 +26,7 @@ interface CustomInchargeJwtPayload {
 }
 
 interface CustomAdminJwtPayload {
-  username: string;
+  eid: string;
   id: string;
 }
 
@@ -71,7 +71,7 @@ function Login() {
       const decoded = jwtDecode<CustomAdminJwtPayload>(
         localStorage.getItem("adminToken") as string
       );
-      const eid = decoded.username;
+      const eid = decoded.eid;
       Navigate(`admin/${eid}`, { replace: true });
     }
   }, [Navigate]);

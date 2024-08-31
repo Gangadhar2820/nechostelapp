@@ -11,41 +11,29 @@ import { Leave, Permission } from "../interfaces/Request";
 import { formatDate, formatDateWithTime, formatTime } from "../interfaces/Date";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
-import {
-  AcceptORRejectRequest,
-  getPendingRequests,
-} from "../../services/InchargeService";
-import { InchargeContext } from "./InchargeHome";
+import { ArriveRequest, getActiveRequests } from "../../services/InchargeService";
+import { AdminContext } from "./AdminHome";
 
+function AdminActiveRequests() {
 
-function InchargePendingRequest() {
-  const incharge = useContext(InchargeContext);
+  const admin = useContext(AdminContext);
 
-
-
-  const [selectionOption, setSelectionOption] = useState<
-    "Permissions" | "Leaves"
-  >("Permissions");
+  const [selectionOption, setSelectionOption] = useState<"Permissions" | "Leaves">("Permissions");
 
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [leaves, setLeaves] = useState<Leave[]>([]);
 
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
-  const pendingRequestToast = useRef<Toast>(null);
-
-  const [isAccepting,setIsAccepting] = useState<boolean>(false);
-  const [isRejecting,setIsRejecting] = useState<boolean>(false);
-
+  const activeRequestToast = useRef<Toast>(null);
 
   useEffect(() => {
-    if (incharge?.hostelId) {
-      getPendingRequests(incharge?.hostelId)
+    if (admin) {
+      getActiveRequests("all")
         .then((data) => {
           let leaves: any = [];
           let permissions: any = [];
 
-          if(data.length > 0){
           data.forEach((request: any) => {
             if (request.type === "LEAVE") {
               leaves = [...leaves, request];
@@ -53,7 +41,6 @@ function InchargePendingRequest() {
               permissions = [...permissions, request];
             }
           });
-        }
           setLeaves(leaves);
           setPermissions(permissions);
         })
@@ -61,8 +48,9 @@ function InchargePendingRequest() {
           console.log(err);
         });
     }
-  }, [incharge]);
+  }, [admin]);
 
+  
 
   const renderHeader = () => {
     return (
@@ -135,190 +123,92 @@ function InchargePendingRequest() {
     return "";
   };
 
-
-  const RejectRequestButton = (request: Permission | Leave) => {
+  const ArrivedButton = (request: Permission | Leave) => {
     return (
       <Button
-        label={isRejecting ? "Rejecting" : "Reject"}
-        icon="pi pi-ban"
-        severity="danger"
+        label="Arrived"
+        icon="pi pi-sign-in"
+        severity="info"
         onClick={() => {
-          handleRequestReject(request?.id, request?.rollNo, request?.type);
+          handleRequestArrive(request?.id,request?.rollNo, request?.type);
         }}
-      >
-        &nbsp;&nbsp;
-        {isRejecting && <i className="pi pi-spin pi-spinner"></i>}
-      </Button>
+      />
     );
   };
 
-  const AcceptRequestButton = (request: Permission | Leave) => {
-    return (
-      <Button
-        label={isAccepting ? "Accepting" : "Accept"}
-        icon="pi pi-verified"
-        severity="success"
-        onClick={() => {
-          handleRequestAccept(request?.id, request?.rollNo, request?.type);
-        }}
-      >
-        &nbsp;&nbsp;
-        {isAccepting && <i className="pi pi-spin pi-spinner"></i>}
-      </Button>
-    );
-  };
-
-  const handleRequestReject = (
-    id: string,
-    rollNo: string,
-    type: "LEAVE" | "PERMISSION"
-  ) => {
+  const handleRequestArrive = (id:string,rollNo: string, type: string) => {
     const accept = () => {
-      setIsRejecting(true)
-      if (type === "LEAVE") {
-        let rejRequest = leaves.filter((request) => request.id === id)[0];
-        let newLeaves = leaves.filter((request) => request.id !== id);
-        rejRequest = {
-          ...rejRequest,
-          status: "REJECTED",
-          rejected: {
-            time: new Date(),
-            name: incharge.name,
-            eid: incharge.eid,
-          },
-          isActive: false,
-        };
-        AcceptORRejectRequest(id, rejRequest).then((data) => {
+
+      if(type==="LEAVE"){
+        let arrRequest = leaves.filter(request=>request.id===id)[0];
+        let newLeaves = leaves.filter(request=>request.id!==id);
+        arrRequest = {...arrRequest,status:"ARRIVED",isActive:false,arrived:{
+          time:new Date(),
+          name:admin.name,
+          eid:admin.eid
+        }}
+
+        ArriveRequest(id,arrRequest).then((data)=>{
           setLeaves(newLeaves);
-          setIsRejecting(false);
           if (data.updated) {
-            if (pendingRequestToast?.current) {
-              pendingRequestToast?.current.show({
-                severity: "error",
-                summary: `${rollNo} ${type} is Rejected`,
+            if (activeRequestToast?.current) {
+              activeRequestToast?.current.show({
+                severity: "info",
+                summary: `${rollNo} is Arrived from ${type}`,
                 detail: "",
               });
             }
           }
-        });
-      } else if (type === "PERMISSION") {
-        let rejRequest = permissions.filter((request) => request.id === id)[0];
-        let newPermissions = permissions.filter((request) => request.id !== id);
-        rejRequest = {
-          ...rejRequest,
-          status: "REJECTED",
-          rejected: {
-            time: new Date(),
-            name: incharge.name,
-            eid: incharge.eid,
-          },
-          isActive: false,
-        };
-        AcceptORRejectRequest(id, rejRequest).then((data) => {
+        }).catch(err=>{
+          console.log(err)
+        })
+
+      }else if(type==="PERMISSION"){
+
+        let arrRequest = permissions.filter(request=>request.id===id)[0];
+        let newPermissions = permissions.filter(request=>request.id!==id);
+
+        arrRequest = {...arrRequest,status:"ARRIVED",isActive:false,arrived:{
+          time:new Date(),
+          name:admin.name,
+          eid:admin.eid
+        }}
+
+        ArriveRequest(id,arrRequest).then((data)=>{
           setPermissions(newPermissions);
-          setIsRejecting(false);
           if (data.updated) {
-            if (pendingRequestToast?.current) {
-              pendingRequestToast?.current.show({
-                severity: "error",
-                summary: `${rollNo} ${type} is Rejected`,
+            if (activeRequestToast?.current) {
+              activeRequestToast?.current.show({
+                severity: "info",
+                summary: `${rollNo} is Arrived from ${type}`,
                 detail: "",
               });
             }
           }
-        });
+        }).catch(err=>{
+          console.log(err)
+        })
       }
+
     };
     const reject = () => {
     };
 
     confirmDialog({
-      message: `Do you want to Reject \`${rollNo}\` ${type} ?`,
-      header: "Reject Confirmation",
-      icon: "pi pi-info-circle",
-      defaultFocus: "reject",
-      acceptClassName: "p-button-danger",
-      accept,
-      reject,
-      id:"inchargependingrequestdialog"
-
-    });
-  };
-  const handleRequestAccept = (id: string, rollNo: string, type: any) => {
-    const accept = () => {
-      setIsAccepting(true)
-      if (type === "LEAVE") {
-        let accRequest = leaves.filter((request) => request.id === id)[0];
-        let newLeaves = leaves.filter((request) => request.id !== id);
-        accRequest = {
-          ...accRequest,
-          status: "ACCEPTED",
-          accepted: {
-            time: new Date(),
-            name: incharge.name,
-            eid: incharge.eid,
-          },
-          isActive: true,
-        };
-        AcceptORRejectRequest(id, accRequest).then((data) => {
-          setLeaves(newLeaves);
-          setIsAccepting(false);
-          if (data.updated) {
-            if (pendingRequestToast?.current) {
-              pendingRequestToast?.current.show({
-                severity: "success",
-                summary: `${rollNo} ${type} is Accepted`,
-                detail: "",
-              });
-            }
-          }
-        });
-      } else if (type === "PERMISSION") {
-        let accRequest = permissions.filter((request) => request.id === id)[0];
-        let newPermissions = permissions.filter((request) => request.id !== id);
-        accRequest = {
-          ...accRequest,
-          status: "ACCEPTED",
-          accepted: {
-            time: new Date(),
-            name: incharge.name,
-            eid: incharge.eid,
-          },
-          isActive: true,
-        };
-
-        AcceptORRejectRequest(id, accRequest).then((data) => {
-          setPermissions(newPermissions);
-          setIsAccepting(false);
-          if (pendingRequestToast?.current) {
-            pendingRequestToast?.current.show({
-              severity: "success",
-              summary: `${rollNo} ${type} is Accepted`,
-              detail: "",
-            });
-          }
-        });
-      }
-    };
-    const reject = () => {
-    };
-
-    confirmDialog({
-      message: `Do you want to Accept \`${rollNo}\` ${type} ?`,
-      header: "Accept Confirmation",
+      message: `Is \`${rollNo}\` Arrived from ${type} ?`,
+      header: "Arrived Confirmation",
       icon: "pi pi-info-circle",
       defaultFocus: "reject",
       acceptClassName: "p-button-success",
       accept,
       reject,
-      id:"inchargependingrequestdialog"
     });
   };
 
   return (
     <>
-      <ConfirmDialog id="inchargependingrequestdialog"/>
-      <Toast ref={pendingRequestToast} position="center" />
+      <ConfirmDialog />
+      <Toast ref={activeRequestToast} position="center" />
 
       <div
         className="w-full"
@@ -328,12 +218,12 @@ function InchargePendingRequest() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Pending Requests">
+        <Card title="Active Requests">
           <div className="card flex justify-content-center">
             <div className="flex flex-wrap gap-3">
               <div className="flex align-items-center">
                 <RadioButton
-                  inputId="inc-pend-req-permissions"
+                  inputId="inc-act-req-permissions"
                   name="Permissions"
                   value="Permissions"
                   onChange={(e: RadioButtonChangeEvent) =>
@@ -341,13 +231,13 @@ function InchargePendingRequest() {
                   }
                   checked={selectionOption === "Permissions"}
                 />
-                <label htmlFor="inc-pend-req-permissions" className="ml-2">
+                <label htmlFor="inc-act-req-permissions" className="ml-2">
                   Permissions
                 </label>
               </div>
               <div className="flex align-items-center">
                 <RadioButton
-                  inputId="inc-pend-req-leaves"
+                  inputId="inc-Act-req-leaves"
                   name="Leaves"
                   value="Leaves"
                   onChange={(e: RadioButtonChangeEvent) =>
@@ -355,7 +245,7 @@ function InchargePendingRequest() {
                   }
                   checked={selectionOption === "Leaves"}
                 />
-                <label htmlFor="inc-pend-req-leaves" className="ml-2">
+                <label htmlFor="inc-Act-req-leaves" className="ml-2">
                   Leaves
                 </label>
               </div>
@@ -380,12 +270,20 @@ function InchargePendingRequest() {
               selectionMode="single"
             >
               <Column
+                field="hostelId"
+                className="font-bold"
+                header="Hostel ID"
+                sortable
+                frozen
+              ></Column>
+              <Column
                 field="rollNo"
                 className="font-bold"
                 header="Roll Number"
                 sortable
                 frozen
               ></Column>
+              
               <Column field="name" header="Name"></Column>
 
               <Column
@@ -403,8 +301,7 @@ function InchargePendingRequest() {
               <Column field="reason" header="Reason"></Column>
               <Column field="phoneNo" header="Phone No"></Column>
               <Column field="parentPhoneNo" header="Parent PhoneNo"></Column>
-              <Column body={AcceptRequestButton}></Column>
-              <Column body={RejectRequestButton}></Column>
+              <Column body={ArrivedButton}></Column>
             </DataTable>
           ) : (
             <DataTable
@@ -419,8 +316,14 @@ function InchargePendingRequest() {
               rows={5}
               rowsPerPageOptions={[5, 10, 25, 50]}
               tableStyle={{ minWidth: "50rem" }}
-              selectionMode="single"
             >
+              <Column
+                field="hostelId"
+                className="font-bold"
+                header="Hostel Id"
+                sortable
+                frozen
+              ></Column>
               <Column
                 field="rollNo"
                 className="font-bold"
@@ -428,6 +331,7 @@ function InchargePendingRequest() {
                 sortable
                 frozen
               ></Column>
+              
               <Column field="name" header="Name"></Column>
 
               <Column
@@ -451,8 +355,7 @@ function InchargePendingRequest() {
               <Column field="reason" header="Reason"></Column>
               <Column field="phoneNo" header="Phone No"></Column>
               <Column field="parentPhoneNo" header="Parent PhoneNo"></Column>
-              <Column body={AcceptRequestButton}></Column>
-              <Column body={RejectRequestButton}></Column>
+              <Column body={ArrivedButton}></Column>
             </DataTable>
           )}
         </Card>
@@ -461,4 +364,5 @@ function InchargePendingRequest() {
   );
 }
 
-export default InchargePendingRequest;
+export default AdminActiveRequests;
+

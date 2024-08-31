@@ -72,17 +72,18 @@ function StudentHome() {
       <StudentProvider value={{ student, updateStudent }}>
         <div className={styles.container}>
           <div
-            className={`${styles.header} flex p-1 align-items-center justify-content-between `}
+            className={`${styles.header} p-card flex p-1 align-items-center justify-content-between `}
           >
-            <img
-              src="/images/Nec.png"
-              alt="Nec logo"
-              className="ml-3 mr-3 h-full"
-            />
+            
             <img
               src="/images/logo-no-background.png"
               alt="Nec logo"
               className="ml-3 mr-3 h-full hidden sm:block"
+            />
+            <img
+              src="/images/Nec.png"
+              alt="Nec logo"
+              className="ml-3 mr-3 h-full"
             />
 
             <Button
@@ -162,7 +163,7 @@ function StudentHome() {
                       >
                         <i className="pi pi-envelope mr-2"></i>
                         <span className="font-medium">
-                          Apply Leave/Permission
+                          Apply Leave/ Permission
                         </span>
                       </NavLink>
                     </li>
@@ -198,6 +199,7 @@ function StudentHome() {
                         <span className="font-medium">Incharge</span>
                       </NavLink>
                     </li>
+              
                   </ul>
                 </div>
               </div>
@@ -259,7 +261,7 @@ function StudentHome() {
                           >
                             <i className="pi pi-envelope mr-2"></i>
                             <span className="font-medium">
-                              Apply Leave/Permission
+                              Apply Leave/ Permission
                             </span>
                           </NavLink>
                         </li>

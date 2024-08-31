@@ -35,7 +35,7 @@ function InchargeList() {
           <div className="grid">
             
             {incharges.map((incharge)=>{return (
-            <div key={incharge.eid} className="col-12 sm:col-6">
+            <div key={incharge.eid} className="col-12">
             <InchargeCard  incharge={incharge} showId={false}/>
             </div>
             )

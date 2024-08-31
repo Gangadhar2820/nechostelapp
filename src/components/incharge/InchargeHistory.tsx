@@ -13,6 +13,8 @@ import { formatDate, formatDateWithTime, formatTime } from "../interfaces/Date";
 
 import { getStudentAllRequests } from "../../services/StudentService";
 import { FloatLabel } from "primereact/floatlabel";
+import { Dialog } from "primereact/dialog";
+import ReqCard from "../student/ReqCard";
 
 function History() {
   const [permissions, setPermissions] = useState<Permission[]>([]);
@@ -21,6 +23,12 @@ function History() {
   const [selectionOption, setSelectionOption] = useState<string>("Permissions");
 
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
+
+  const [showRequestCard, setShowRequestCard] = useState<boolean>(false);
+
+  const [selectedRequest, setSelectedRequest] = useState<
+    Permission | Leave | null
+  >(null);
 
   const tableFooter = `Total : ${
     selectionOption === "Leaves" ? leaves.length : permissions.length
@@ -164,7 +172,7 @@ function History() {
     event.preventDefault();
     setIsSearching(true);
 
-    getStudentAllRequests("21471A05K4")
+    getStudentAllRequests(stuRollNumber)
       .then((data) => {
         setIsSearching(false);
         let leaves: any = [];
@@ -197,24 +205,50 @@ function History() {
     validateSearchForm();
   }, [stuRollNumber]);
 
+  const requestIDTemplate = (request: Permission | Leave) => {
+    return (
+      <Button
+        link
+        label={request.id}
+        onClick={() => {
+          setShowRequestCard(true);
+          setSelectedRequest(request);
+        }}
+      />
+    );
+  };
+
   return (
     <>
       <div
-        className="p-1 w-11"
+        className=" w-full"
         style={{
           position: "absolute",
           left: "50%",
           transform: "translatex(-50%)",
         }}
       >
+        <Dialog
+          header="Request Details"
+          visible={showRequestCard}
+          position="top"
+          style={{ width: "50vw" }}
+          onHide={() => {
+            setShowRequestCard(false);
+            setSelectedRequest(null);
+          }}
+          className="w-11 lg:w-8"
+        >
+          <ReqCard request={selectedRequest} />
+        </Dialog>
         <Card title="Student Request History">
           <form onSubmit={handleSearchFormSubmit} className="grid">
-            <div className="col-12 md:col-6 lg:col-4 mt-3 ">
+            <div className="col-12 sm:col-6  mt-3 ">
               <FloatLabel>
                 <InputText
                   id="ad-view-rollno"
                   type="text"
-                  className="w-12 md:w-8"
+                  className="w-12"
                   value={stuRollNumber}
                   onChange={(e) => {
                     setStuRollNumber(e.target.value.toUpperCase());
@@ -224,14 +258,16 @@ function History() {
                 <label htmlFor="ad-view-rollno">Roll Number</label>
               </FloatLabel>
             </div>
-            <div className="col-12 md:col-6 lg:col-4 mt-3">
+            <div className="col-12 sm:col-6  mt-3">
               <Button
+              label={isSearching?"Searching":"Search"}
+              className="text-center w-full sm:w-auto"
                 type="submit"
                 disabled={!isSearchFormValid || isSearching}
               >
-                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
                 &nbsp;&nbsp;
-                {isSearching ? "Searching" : "Search"}
+                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
+                
               </Button>
             </div>
           </form>
@@ -291,6 +327,7 @@ function History() {
                 field="id"
                 className="font-bold"
                 header="Request Id"
+                body={requestIDTemplate}
                 sortable
               ></Column>
               <Column
@@ -370,6 +407,8 @@ function History() {
                 className="font-bold"
                 header="Request Id"
                 sortable
+                body={requestIDTemplate}
+
               ></Column>
               <Column
                 header="Date"

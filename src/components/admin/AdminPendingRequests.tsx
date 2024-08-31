@@ -15,13 +15,12 @@ import {
   AcceptORRejectRequest,
   getPendingRequests,
 } from "../../services/InchargeService";
-import { InchargeContext } from "./InchargeHome";
 
+import { AdminContext } from "./AdminHome";
 
-function InchargePendingRequest() {
-  const incharge = useContext(InchargeContext);
+function AdminPendingRequests() {
 
-
+  const admin = useContext(AdminContext);
 
   const [selectionOption, setSelectionOption] = useState<
     "Permissions" | "Leaves"
@@ -34,18 +33,14 @@ function InchargePendingRequest() {
 
   const pendingRequestToast = useRef<Toast>(null);
 
-  const [isAccepting,setIsAccepting] = useState<boolean>(false);
-  const [isRejecting,setIsRejecting] = useState<boolean>(false);
-
 
   useEffect(() => {
-    if (incharge?.hostelId) {
-      getPendingRequests(incharge?.hostelId)
+    if (admin) {
+      getPendingRequests("all")
         .then((data) => {
           let leaves: any = [];
           let permissions: any = [];
 
-          if(data.length > 0){
           data.forEach((request: any) => {
             if (request.type === "LEAVE") {
               leaves = [...leaves, request];
@@ -53,7 +48,6 @@ function InchargePendingRequest() {
               permissions = [...permissions, request];
             }
           });
-        }
           setLeaves(leaves);
           setPermissions(permissions);
         })
@@ -61,8 +55,7 @@ function InchargePendingRequest() {
           console.log(err);
         });
     }
-  }, [incharge]);
-
+  }, [admin]);
 
   const renderHeader = () => {
     return (
@@ -135,36 +128,29 @@ function InchargePendingRequest() {
     return "";
   };
 
-
   const RejectRequestButton = (request: Permission | Leave) => {
     return (
       <Button
-        label={isRejecting ? "Rejecting" : "Reject"}
+        label="Reject"
         icon="pi pi-ban"
         severity="danger"
         onClick={() => {
           handleRequestReject(request?.id, request?.rollNo, request?.type);
         }}
-      >
-        &nbsp;&nbsp;
-        {isRejecting && <i className="pi pi-spin pi-spinner"></i>}
-      </Button>
+      />
     );
   };
 
   const AcceptRequestButton = (request: Permission | Leave) => {
     return (
       <Button
-        label={isAccepting ? "Accepting" : "Accept"}
+        label="Accept"
         icon="pi pi-verified"
         severity="success"
         onClick={() => {
           handleRequestAccept(request?.id, request?.rollNo, request?.type);
         }}
-      >
-        &nbsp;&nbsp;
-        {isAccepting && <i className="pi pi-spin pi-spinner"></i>}
-      </Button>
+      />
     );
   };
 
@@ -174,7 +160,6 @@ function InchargePendingRequest() {
     type: "LEAVE" | "PERMISSION"
   ) => {
     const accept = () => {
-      setIsRejecting(true)
       if (type === "LEAVE") {
         let rejRequest = leaves.filter((request) => request.id === id)[0];
         let newLeaves = leaves.filter((request) => request.id !== id);
@@ -183,15 +168,14 @@ function InchargePendingRequest() {
           status: "REJECTED",
           rejected: {
             time: new Date(),
-            name: incharge.name,
-            eid: incharge.eid,
+            name: admin.name,
+            eid: admin.eid,
           },
           isActive: false,
         };
         AcceptORRejectRequest(id, rejRequest).then((data) => {
           setLeaves(newLeaves);
-          setIsRejecting(false);
-          if (data.updated) {
+          if (data.updates) {
             if (pendingRequestToast?.current) {
               pendingRequestToast?.current.show({
                 severity: "error",
@@ -209,15 +193,14 @@ function InchargePendingRequest() {
           status: "REJECTED",
           rejected: {
             time: new Date(),
-            name: incharge.name,
-            eid: incharge.eid,
+            name: admin.name,
+            eid: admin.eid,
           },
           isActive: false,
         };
         AcceptORRejectRequest(id, rejRequest).then((data) => {
           setPermissions(newPermissions);
-          setIsRejecting(false);
-          if (data.updated) {
+          if (data.updates) {
             if (pendingRequestToast?.current) {
               pendingRequestToast?.current.show({
                 severity: "error",
@@ -246,7 +229,6 @@ function InchargePendingRequest() {
   };
   const handleRequestAccept = (id: string, rollNo: string, type: any) => {
     const accept = () => {
-      setIsAccepting(true)
       if (type === "LEAVE") {
         let accRequest = leaves.filter((request) => request.id === id)[0];
         let newLeaves = leaves.filter((request) => request.id !== id);
@@ -255,15 +237,14 @@ function InchargePendingRequest() {
           status: "ACCEPTED",
           accepted: {
             time: new Date(),
-            name: incharge.name,
-            eid: incharge.eid,
+            name: admin.name,
+            eid: admin.eid,
           },
           isActive: true,
         };
         AcceptORRejectRequest(id, accRequest).then((data) => {
           setLeaves(newLeaves);
-          setIsAccepting(false);
-          if (data.updated) {
+          if (data.updates) {
             if (pendingRequestToast?.current) {
               pendingRequestToast?.current.show({
                 severity: "success",
@@ -281,15 +262,14 @@ function InchargePendingRequest() {
           status: "ACCEPTED",
           accepted: {
             time: new Date(),
-            name: incharge.name,
-            eid: incharge.eid,
+            name: admin.name,
+            eid: admin.eid,
           },
           isActive: true,
         };
 
         AcceptORRejectRequest(id, accRequest).then((data) => {
           setPermissions(newPermissions);
-          setIsAccepting(false);
           if (pendingRequestToast?.current) {
             pendingRequestToast?.current.show({
               severity: "success",
@@ -380,12 +360,20 @@ function InchargePendingRequest() {
               selectionMode="single"
             >
               <Column
+                field="hostelId"
+                className="font-bold"
+                header="Hostel ID"
+                sortable
+                frozen
+              ></Column>
+              <Column
                 field="rollNo"
                 className="font-bold"
                 header="Roll Number"
                 sortable
                 frozen
               ></Column>
+              
               <Column field="name" header="Name"></Column>
 
               <Column
@@ -419,8 +407,14 @@ function InchargePendingRequest() {
               rows={5}
               rowsPerPageOptions={[5, 10, 25, 50]}
               tableStyle={{ minWidth: "50rem" }}
-              selectionMode="single"
             >
+              <Column
+                field="hostelId"
+                className="font-bold"
+                header="Hostel ID"
+                sortable
+                frozen
+              ></Column>
               <Column
                 field="rollNo"
                 className="font-bold"
@@ -428,6 +422,7 @@ function InchargePendingRequest() {
                 sortable
                 frozen
               ></Column>
+              
               <Column field="name" header="Name"></Column>
 
               <Column
@@ -461,4 +456,4 @@ function InchargePendingRequest() {
   );
 }
 
-export default InchargePendingRequest;
+export default AdminPendingRequests;

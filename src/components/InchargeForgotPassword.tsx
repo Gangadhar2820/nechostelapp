@@ -33,6 +33,21 @@ function InchargeForgotPassword() {
 
   const [phoneNo,setPhoneNo] = useState<string>("");
 
+  const [resendOTPTime, setResendOTPTime] = useState<number>(0);
+
+
+  useEffect(() => {
+    if (resendOTPTime > 0) {
+      setDisableResendOTP(true);
+      const interval = setInterval(() => {
+        setResendOTPTime((prevValue)=>prevValue-1)
+      }, 1000);
+      return ()=>clearInterval(interval)
+    } else{
+      setDisableResendOTP(false);
+    }
+  }, [resendOTPTime]);
+
   useEffect(() => {
     if (otpToken) {
       if (otpToken.toString().length === 4) {
@@ -69,9 +84,10 @@ function InchargeForgotPassword() {
           FPassToast.current.show({
             severity: "success",
             summary: "OTP Send Successfully !",
-            detail: "OTP has been send to your registered email",
+            detail: "OTP has been send to your registered phone number",
           });
         }
+        setResendOTPTime(90)
       } else {
         setIsInchargeExist(false);
         if (FPassToast.current) {
@@ -121,13 +137,22 @@ function InchargeForgotPassword() {
   };
 
   const handleResendOTP = ()=>{
-    if(FPassToast.current){
-      FPassToast.current.show({ severity: 'success', summary: 'OTP Resend Successfully !', detail: 'You can resend OTP again after 02:30 minutes' });
-    }
-    setDisableResendOTP(true);
-    setTimeout(() => {
-      setDisableResendOTP(false);
-    }, 150000);
+    setDisableResendOTP(true)
+
+    VerifyINCFPassMail(EID)
+      .then((data) => {
+        if (FPassToast.current) {
+          FPassToast.current.show({
+            severity: "success",
+            summary: "OTP Resend Successfully !",
+            detail: "You can resend OTP again after 01:30 minutes",
+          });
+        }
+        setResendOTPTime(90);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   const handleNewPasswordForm = (event: React.FormEvent<HTMLFormElement>) => {
@@ -251,7 +276,10 @@ function InchargeForgotPassword() {
                         link
                         className="p-0"
                         onClick={handleResendOTP}
-                      ></Button>
+                      >
+                        &nbsp;&nbsp;{resendOTPTime>0 && (`0${Math.floor(resendOTPTime / 60)} : ${(resendOTPTime%60).toString().padStart(2,"0")} sec`)}
+                      
+                      </Button>
                       <Button
                         type="submit"
                         disabled={!isOTPvalid || isOTPsubmitting}

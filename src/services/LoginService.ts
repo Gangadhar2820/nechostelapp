@@ -125,7 +125,7 @@ export const AuthenticateAdminLogin = async (eid: string, password: string) => {
   try {
     const response = await axios.post(
       `${server}/admin-auth/login`,
-      { username: eid, password: password },
+      { eid: eid, password: password },
       {
         headers: {
           "Content-Type": "application/json",

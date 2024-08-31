@@ -3,17 +3,16 @@ import { Card } from "primereact/card";
 import { Chip } from "primereact/chip";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import React, { useContext, useEffect, useState } from "react";
-import { InchargeContext } from "./InchargeHome";
 import { getAllStudents } from "../../services/InchargeService";
 import { Student } from "../interfaces/Student";
 
-function InchargeStudentList() {
-  const incharge = useContext(InchargeContext);
+function AdminStudentList() {
+
+  const [hostelId,setHostelId] = useState<string>("label");
 
   const [college, setCollege] = useState<string>("label");
   const [year, setYear] = useState<string>("label");
@@ -27,14 +26,14 @@ function InchargeStudentList() {
 
   const validateForm = () => {
     setIsFormValid(false);
-    if (college !== "label" && year !== "label" && branch !== "label") {
+    if ( hostelId!== "label" && college !== "label" && year !== "label" && branch !== "label") {
       setIsFormValid(true);
     }
   };
 
   useEffect(() => {
     validateForm();
-  }, [college, year, branch]);
+  }, [hostelId,college, year, branch]);
 
   const tableFooter = `Total : ${
     studentsList ? studentsList.length : 0
@@ -44,7 +43,7 @@ function InchargeStudentList() {
     event.preventDefault();
     setIsListSearching(true);
     getAllStudents({
-      hostelId: incharge?.hostelId,
+      hostelId: hostelId,
       college: college,
       year: year,
       branch: branch,
@@ -64,7 +63,7 @@ function InchargeStudentList() {
         <Button
           type="button"
           icon="pi pi-filter-slash"
-          label=""
+          label="Clear"
           outlined
           onClick={() => {
             setGlobalFilterValue("");
@@ -85,17 +84,6 @@ function InchargeStudentList() {
   };
 
   const tableHeader = renderHeader();
-
-  const StudentListTitle = (
-    <div className="text-center">
-      <Chip
-        label={incharge?.hostelId}
-        className="bg-primary mt-2"
-        icon="pi pi-circle-fill"
-      />
-    </div>
-  );
-
   const StudentListHeader = <h2 className="m-0 pt-3 pl-3">List Students</h2>;
 
   return (
@@ -108,13 +96,31 @@ function InchargeStudentList() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title={StudentListTitle} header={StudentListHeader}>
+        <Card  header={StudentListHeader}>
           <form onSubmit={handleListStudentForm} className="grid">
+
+          <div className="col-12 sm:col-6  md:col-3 mt-3">
+              <div className="custom-select-container w-12">
+                <select
+                  className="custom-select"
+                  value={hostelId}
+                  onChange={(e) => {
+                    setHostelId(e.target.value)
+                  }}
+                >
+                  <option value="label" disabled>
+                    Hostel ID
+                  </option>
+                  <option value="all">All</option>
+                  <option value="BH1">BH1</option>
+                  <option value="GH1">GH1</option>
+                </select>
+              </div>
+            </div>
             
-            <div className="col-12 sm:col-6 md:col-4 mt-3">
+            <div className="col-12 sm:col-6  md:col-3 mt-3">
               <div className="custom-select-container w-full">
                 <select
-                id="inc-stu-list-college"
                   className="custom-select"
                   value={college}
                   onChange={(e) => {
@@ -126,13 +132,12 @@ function InchargeStudentList() {
                   </option>
                   <option value="ALL">All</option>
                   <option value="NEC">NEC</option>
-                  <option value="NIT">NIT</option>
                   <option value="NIPS">NIPS</option>
                 </select>
               </div>
             </div>
 
-            <div className="col-12 sm:col-6 md:col-4 mt-3">
+            <div className="col-12 sm:col-6  md:col-3 mt-3">
               <div className="custom-select-container w-full">
                 <select
                   className="custom-select"
@@ -153,7 +158,7 @@ function InchargeStudentList() {
               </div>
             </div>
 
-            <div className="col-12 sm:col-6 md:col-4 mt-3">
+            <div className="col-12 sm:col-6  md:col-3 mt-3">
               <div className="custom-select-container w-full">
                 <select
                   className="custom-select"
@@ -199,8 +204,6 @@ function InchargeStudentList() {
               rows={5}
               rowsPerPageOptions={[5, 10, 25, 50]}
               tableStyle={{ minWidth: "50rem" }}
-              selectionMode="single"
-
             >
               <Column
                 field="rollNo"
@@ -226,4 +229,4 @@ function InchargeStudentList() {
   );
 }
 
-export default InchargeStudentList;
+export default AdminStudentList;

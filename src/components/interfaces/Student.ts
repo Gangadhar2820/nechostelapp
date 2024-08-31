@@ -6,7 +6,7 @@ export interface Student{
     rollNo:string,
     name:string,
     college:"NEC" | "NIPS" | string,
-    year:1|2|3|4|number,
+    year:1|2|3|4|number|string,
     branch:"CSE" | "ECE" | "EEE" | "MECH" | "CIVIL" | "MBA" | string,
     gender:"MALE" | "FEMALE" | "OTHER" | string,
     dob:Date,
@@ -17,6 +17,7 @@ export interface Student{
     currentStatus:"HOSTEL" | "PERMISSION" | "LEAVE",
     requestCount:number,
     lastRequest:Permission|Leave|null,
+    
 }
 
 export  {}

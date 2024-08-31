@@ -1,11 +1,10 @@
-import  { useContext } from "react";
+import { useContext } from "react";
 import ReqCard from "./ReqCard";
 import { Card } from "primereact/card";
 import { StudentContext } from "./StudentHome";
 
 function StudentDashboard() {
   const { student } = useContext(StudentContext);
-  
 
   return (
     <>
@@ -17,8 +16,12 @@ function StudentDashboard() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Last Request" className="mt-3">
-          {(student?.lastRequest) ? <ReqCard request={student?.lastRequest} /> : "no data found"}
+        <Card title="Last Request" className="mt-1">
+          {student?.lastRequest ? (
+            <ReqCard request={student?.lastRequest} />
+          ) : (
+            "No Data Found"
+          )}
         </Card>
       </div>
     </>

@@ -13,6 +13,8 @@ import { formatDate, formatDateWithTime, formatTime } from "../interfaces/Date";
 
 import { StudentContext } from "./StudentHome";
 import { getStudentAllRequests } from "../../services/StudentService";
+import { Dialog } from "primereact/dialog";
+import ReqCard from "./ReqCard";
 
 function History() {
   const { student, updateStudent } = useContext(StudentContext);
@@ -24,7 +26,15 @@ function History() {
 
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
-  const tableFooter = `Total : ${selectionOption==="Leaves"?leaves.length:permissions.length} ${selectionOption}`;
+  const tableFooter = `Total : ${
+    selectionOption === "Leaves" ? leaves.length : permissions.length
+  } ${selectionOption}`;
+
+  const [showRequestCard, setShowRequestCard] = useState<boolean>(false);
+
+  const [selectedRequest, setSelectedRequest] = useState<
+    Permission | Leave | null
+  >(null);
 
   useEffect(() => {
     getStudentAllRequests(student?.rollNo)
@@ -45,7 +55,7 @@ function History() {
       .catch((err) => {
         console.log(err);
       });
-  },[student]);
+  }, [student]);
 
   const renderHeader = () => {
     return (
@@ -175,16 +185,42 @@ function History() {
     return "";
   };
 
+  const requestIDTemplate = (request: Permission | Leave) => {
+    return (
+      <Button
+        link
+        label={request.id}
+        onClick={() => {
+          setShowRequestCard(true);
+          setSelectedRequest(request);
+        }}
+      />
+    );
+  };
+
   return (
     <>
       <div
-        className="p-1 w-11"
+        className="p-1 w-full"
         style={{
           position: "absolute",
           left: "50%",
           transform: "translatex(-50%)",
         }}
       >
+        <Dialog
+          header="Request Details"
+          visible={showRequestCard}
+          position="top"
+          style={{ width: "50vw" }}
+          onHide={() => {
+            setShowRequestCard(false);
+            setSelectedRequest(null);
+          }}
+          className="w-11 lg:w-8"
+        >
+          <ReqCard request={selectedRequest} />
+        </Dialog>
         <Card title="Request History">
           <div className="card flex justify-content-center">
             <div className="flex flex-wrap gap-3">
@@ -240,6 +276,7 @@ function History() {
                 field="id"
                 className="font-bold"
                 header="Request Id"
+                body={requestIDTemplate}
                 sortable
               ></Column>
               <Column
@@ -318,6 +355,7 @@ function History() {
                 field="id"
                 className="font-bold"
                 header="Request Id"
+                body={requestIDTemplate}
                 sortable
               ></Column>
               <Column

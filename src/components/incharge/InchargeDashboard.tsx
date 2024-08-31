@@ -1,6 +1,6 @@
 import { Card } from "primereact/card";
 import React, { useContext, useEffect, useState } from "react";
-import { getTotalHostelStats } from "../../services/InchargeService";
+import { getTodayHostelStats, getTotalHostelStats } from "../../services/InchargeService";
 import { InchargeContext } from "./InchargeHome";
 
 interface TotalCount{
@@ -10,11 +10,18 @@ interface TotalCount{
   total:number
 }
 
+interface TodayStats{
+  leaves:number,
+  permissions:number,
+  total:number
+}
+
 function InchargeDashboard() {
 
   const incharge = useContext(InchargeContext);
 
   const [totalHostelStats,setTotalHostelStats] = useState<TotalCount|null>(null);
+  const [todayHostelStats,setTodayHostelStats] = useState<TodayStats|null>(null);
 
   useEffect(()=>{
     if(incharge){
@@ -22,6 +29,9 @@ function InchargeDashboard() {
       setTotalHostelStats({hostel:data.hostel,permissions:data.permission,leaves:data.leave,total:data.total})
     }).catch((err)=>{
       console.log("something went wrong",err);
+    })
+    getTodayHostelStats(incharge?.hostelId).then((data)=>{
+      setTodayHostelStats({leaves:data.leave,permissions:data.permission,total:data.total})
     })
     }
   },[incharge])
@@ -51,19 +61,19 @@ function InchargeDashboard() {
               <div className="text-500 font-bold font-medium m-1">
                 Permissions
               </div>
-              <div className="text-900 font-bold m-1">10</div>
+              <div className="text-900 font-bold m-1">{todayHostelStats?.permissions}</div>
             </div>
             <div className="flex align-items-center  justify-content-between">
               <div className="text-500 font-bold font-medium m-1">
                 Leaves
               </div>
-              <div className="text-900 font-bold m-1">20</div>
+              <div className="text-900 font-bold m-1">{todayHostelStats?.leaves}</div>
             </div>
             <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
               <div className="text-500 font-bold font-medium m-1">
                 Total
               </div>
-              <div className="text-900 font-bold m-1">30</div>
+              <div className="text-900 font-bold m-1">{todayHostelStats?.total}</div>
             </div>
           </Card>
           <Card header={studentCardHeader} className="m-1 w-12 sm:w-6 lg:w-4">

@@ -1,163 +1,158 @@
 import "./App.css";
-import Login from "./components/Login";
-
 import "primereact/resources/primereact.min.css";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import StudentHome from "./components/student/StudentHome";
+
+import Login from "./components/Login";
 import StudentRegister from "./components/StudentRegister";
 import StudentForgotPassword from "./components/StudentForgotPassword";
-import AdminHome from "./components/AdminHome";
-import AdminInchargeRegister from "./components/AdminInchargeRegister";
-import AdminDashboard from "./components/AdminDashboard";
-import AdminStudentRegister from "./components/AdminStudentRegister";
-import AdminNotReported from "./components/AdminNotReported";
-import AdminNotApproved from "./components/AdminNotApproved";
-import AdminAllReports from "./components/AdminAllReports";
-import StudentPermissionAndLeaves from "./components/StudentPermissionAndLeaves";
-import StudentHistory from "./components/student/StudentHistory";
-import AdminViewStudent from "./components/AdminViewStudent";
+import InchargeForgotPassword from "./components/InchargeForgotPassword";
+
+// student components
+import StudentHome from "./components/student/StudentHome";
 import StudentDashboard from "./components/student/StudentDashboard";
 import StudentProfile from "./components/student/StudentProfile";
 import StudentLeave from "./components/student/StudentLeave";
 import StudentIncharge from "./components/student/StudentIncharge";
+import StudentHistory from "./components/student/StudentHistory";
 
+import StudentProtectedRoutes from "./utils/StudentProtectedRoutes";
+import { StudentAuthProvider } from "./utils/StudentAuth";
+
+// incharge components
 import InchargeHome from "./components/incharge/InchargeHome";
-import InchargeProfile from "./components/incharge/InchargeProfile";
 import InchargeDashboard from "./components/incharge/InchargeDashboard";
-import InchargeHistory from "./components/incharge/InchargeHistory";
-import InchargeList from "./components/incharge/InchargeList";
+import InchargeProfile from "./components/incharge/InchargeProfile";
 import InchargeViewStudent from "./components/incharge/InchargeViewStudent";
 import InchargeStudentList from "./components/incharge/InchargeStudentList";
 import InchargePendingRequest from "./components/incharge/InchargePendingRequest";
 import InchargeActiveRequest from "./components/incharge/InchargeActiveRequest";
 import InchargeArrivedRequest from "./components/incharge/InchargeArrivedRequest";
-import StudentProtectedRoutes from "./utils/StudentProtectedRoutes";
-import { StudentAuthProvider } from "./utils/StudentAuth";
+import InchargeHistory from "./components/incharge/InchargeHistory";
+import InchargeList from "./components/incharge/InchargeList";
+
 import InchargeAuthProvider from "./utils/InchargeAuth";
 import InchargeProtectedRoutes from "./utils/InchargeProtectedRoutes";
-import InchargeForgotPassword from "./components/InchargeForgotPassword";
+
+// admin components
+import AdminHome from "./components/admin/AdminHome";
+import AdminDashboard from "./components/admin/AdminDashboard";
+import AdminProfile from "./components/admin/AdminProfile";
+import AdminAddIncharge from "./components/admin/AdminAddIncharge";
+import AdminViewIncharge from "./components/admin/AdminViewIncharge";
+import AdminInchargeList from "./components/admin/AdminInchargeList";
+import AdminAddStudent from "./components/admin/AdminAddStudent";
+import AdminViewStudent from "./components/admin/AdminViewStudent";
+import AdminStudentList from "./components/admin/AdminStudentList";
+import AdminPendingRequests from "./components/admin/AdminPendingRequests";
+import AdminActiveRequests from "./components/admin/AdminActiveRequests";
+import AdminArrivedRequests from "./components/admin/AdminArrivedRequests";
+
 import AdminProtectedRoutes from "./utils/AdminProtectedRoutes";
 import AdminAuthProvider from "./utils/AdminAuth";
 
 function App() {
   return (
     <>
-
-
       <StudentAuthProvider>
         <InchargeAuthProvider>
           <AdminAuthProvider>
-          <BrowserRouter>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="/studentregister"  element={<StudentRegister />}></Route>
+                <Route path="/studentfpassword"  element={<StudentForgotPassword />}></Route>
+                <Route path="/inchargefpassword" element={<InchargeForgotPassword />}></Route>
+             
 
-            <Routes>
-              <Route path="/" element={<Login />} />
-
-              <Route element={<StudentProtectedRoutes />}>
-                <Route path="/student/:rollNo" element={<StudentHome />}>
-                  <Route index element={<StudentDashboard />}></Route>
-                  <Route path="profile" element={<StudentProfile />} />
-                  <Route path="dashboard" element={<StudentDashboard />} />
-                  <Route path="leave" element={<StudentLeave />} />
-                  <Route path="history" element={<StudentHistory />} />
-                  <Route path="incharge" element={<StudentIncharge />} />
+                {/* student routes start */}
+                <Route element={<StudentProtectedRoutes />}>
+                  <Route path="/student/:rollNo" element={<StudentHome />}>
+                    <Route index element={<StudentDashboard />}></Route>
+                    <Route path="profile" element={<StudentProfile />} />
+                    <Route path="dashboard" element={<StudentDashboard />} />
+                    <Route path="leave" element={<StudentLeave />} />
+                    <Route path="history" element={<StudentHistory />} />
+                    <Route path="incharge" element={<StudentIncharge />} />
+                  </Route>
                 </Route>
-              </Route>
+                {/* student routes end */}
 
-              <Route element={<InchargeProtectedRoutes />}>
-                <Route path="/incharge/:eid" element={<InchargeHome />}>
-                  <Route index element={<InchargeDashboard />} />
-                  <Route path="profile" element={<InchargeProfile />} />
-                  <Route path="dashboard" element={<InchargeDashboard />} />
-                  <Route path="history" element={<InchargeHistory />} />
-                  <Route path="inchargelist" element={<InchargeList />} />
-                  <Route path="viewstudent" element={<InchargeViewStudent />} />
-                  <Route path="studentlist" element={<InchargeStudentList />} />
-                  <Route
-                    path="pendingreq"
-                    element={<InchargePendingRequest />}
-                  />
-                  <Route path="activereq" element={<InchargeActiveRequest />} />
-                  <Route
-                    path="arrivedreq"
-                    element={<InchargeArrivedRequest />}
-                  />
+                {/* incharge routes start */}
+                <Route element={<InchargeProtectedRoutes />}>
+                  <Route path="/incharge/:eid" element={<InchargeHome />}>
+                    <Route index element={<InchargeDashboard />} />
+                    <Route path="profile" element={<InchargeProfile />} />
+                    <Route path="dashboard" element={<InchargeDashboard />} />
+                    <Route path="history" element={<InchargeHistory />} />
+                    <Route path="inchargelist" element={<InchargeList />} />
+                    <Route path="viewstudent" element={<InchargeViewStudent />}/>
+                    <Route path="studentlist" element={<InchargeStudentList />}/>
+                    <Route path="pendingreq" element={<InchargePendingRequest />}/>
+                    <Route path="activereq" element={<InchargeActiveRequest />}/>
+                    <Route path="arrivedreq" element={<InchargeArrivedRequest />}/>
+                  </Route>
                 </Route>
-              </Route>
+                {/* incharge routes end */}
 
-              <Route
-                path="/studentregister"
-                element={<StudentRegister />}
-              ></Route>
-              <Route
-                path="/studentfpassword"
-                element={<StudentForgotPassword />}
-              ></Route>
-
-              <Route
-                path="/inchargefpassword"
-                element={<InchargeForgotPassword />}
-              ></Route>
-
-              <Route element={<AdminProtectedRoutes/>}>
-              <Route path="/admin/:eid" element={<AdminHome />}>
-              <Route path="dashboard" element={<AdminDashboard />}></Route>
-                <Route
-                  path="inchargeregister"
-                  element={<AdminInchargeRegister />}
-                ></Route>
-                <Route
-                  path="studentregister"
-                  element={<AdminStudentRegister />}
-                ></Route>
-              </Route>
-              </Route>
-
-
-              <Route path="/adminhome" element={<AdminHome />}>
-                <Route path="dashboard" element={<AdminDashboard />}></Route>
-                <Route
-                  path="inchargeregister"
-                  element={<AdminInchargeRegister />}
-                ></Route>
-                <Route
-                  path="studentregister"
-                  element={<AdminStudentRegister />}
-                ></Route>
-                <Route
-                  path="notreported"
-                  element={<AdminNotReported />}
-                ></Route>
-                <Route
-                  path="notapproved"
-                  element={<AdminNotApproved />}
-                ></Route>
-                <Route path="allreports" element={<AdminAllReports />}></Route>
-                <Route
-                  path="viewstudent"
-                  element={<AdminViewStudent />}
-                ></Route>
-              </Route>
-
-              <Route path="/studenthome" element={<StudentHome />}>
-                <Route path="dashboard" element={<StudentDashboard />}></Route>
-                <Route
-                  path="permissionleaves"
-                  element={<StudentPermissionAndLeaves />}
-                ></Route>
-                <Route path="history" element={<StudentHistory />}></Route>
-              </Route>
-            </Routes>
-
-          </BrowserRouter>
+                {/* admin routes starts */}
+                <Route element={<AdminProtectedRoutes />}>
+                  <Route path="/admin/:eid" element={<AdminHome />}>
+                  <Route
+                  index
+                      element={<AdminDashboard />}
+                    ></Route>
+                    <Route
+                      path="dashboard"
+                      element={<AdminDashboard />}
+                    ></Route>
+                    <Route path="profile" element={<AdminProfile />}></Route>
+                    <Route
+                      path="addincharge"
+                      element={<AdminAddIncharge />}
+                    ></Route>
+                    <Route
+                      path="viewincharge"
+                      element={<AdminViewIncharge />}
+                    ></Route>
+                    <Route
+                      path="inchargelist"
+                      element={<AdminInchargeList />}
+                    ></Route>
+                    <Route
+                      path="addstudent"
+                      element={<AdminAddStudent />}
+                    ></Route>
+                    <Route
+                      path="viewstudent"
+                      element={<AdminViewStudent />}
+                    ></Route>
+                    <Route
+                      path="studentlist"
+                      element={<AdminStudentList />}
+                    ></Route>
+                    <Route
+                      path="pendingrequests"
+                      element={<AdminPendingRequests />}
+                    ></Route>
+                    <Route
+                      path="activerequests"
+                      element={<AdminActiveRequests />}
+                    ></Route>
+                    <Route
+                      path="arrivedrequests"
+                      element={<AdminArrivedRequests />}
+                    ></Route>
+                  </Route>
+                </Route>
+                {/* admin routes ends */}
+              </Routes>
+            </BrowserRouter>
           </AdminAuthProvider>
         </InchargeAuthProvider>
       </StudentAuthProvider>
-
-
     </>
   );
 }

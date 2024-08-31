@@ -125,7 +125,7 @@ function StudentRegister() {
         onHide={() => {
           Navigate("/", { replace: true });
         }}
-        className="w-11 lg:w-5"
+        className="w-11 lg:w-8"
       >
         <Card className="w-full mt-1">
           <form onSubmit={handleStuRegFormSubmit}>

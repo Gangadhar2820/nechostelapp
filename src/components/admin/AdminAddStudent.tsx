@@ -4,18 +4,16 @@ import { InputText } from "primereact/inputtext";
 import React, { useEffect, useRef, useState } from "react";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 import { Calendar } from "primereact/calendar";
-import { Nullable } from "primereact/ts-helpers";
-import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { Divider } from "primereact/divider";
-import AdminStudentDataUpload from "./AdminStudentDataUpload";
-import { AdminStudentRegisteration } from "../services/RegisterService";
-import { Student } from "./interfaces/Student";
+import { AdminStudentRegisteration } from "../../services/RegisterService";
+import { Student } from "../interfaces/Student";
+import AdminStudentBulkDataUpload from "./AdminStudentBulkDataUpload";
 
-function AdminStudentRegister() {
+function AdminAddStudent() {
   const [newStudent, setNewStudent] = useState<Student>({
-    hostelId: "",
+    hostelId: "label",
     rollNo: "",
     name: "",
     college: "label",
@@ -38,7 +36,7 @@ function AdminStudentRegister() {
   const ValidateForm = () => {
     setIsFormValid(false);
     const isRollValid = /^[a-zA-Z0-9]{10}$/.test(newStudent.rollNo);
-    const isHostelIdValid = newStudent.hostelId !== "";
+    const isHostelIdValid = newStudent.hostelId !== "label";
     const isFullNameValid = newStudent.name !== "";
     const isYearValid = newStudent.year !== 0;
     const isBranchValid = newStudent.branch !== "label";
@@ -173,22 +171,24 @@ function AdminStudentRegister() {
             </div>
 
             <div className="col-12 md:col-6 lg:col-4 mt-3">
-              <FloatLabel>
-                <InputText
-                  id="ad-stu-hostelid"
-                  type="text"
-                  className="w-12 "
-                  value={newStudent.hostelId}
+              <div className="custom-select-container w-12">
+                <select
+                  className="custom-select"
+                  value={newStudent?.hostelId}
                   onChange={(e) => {
                     setNewStudent({
                       ...newStudent,
                       hostelId: e.target.value.toUpperCase(),
                     } as Student);
                   }}
-                  required
-                />
-                <label htmlFor="ad-stu-hostelid">Hostel Id</label>
-              </FloatLabel>
+                >
+                  <option value="label" disabled>
+                    Hostel ID
+                  </option>
+                  <option value="BH1">BH1</option>
+                  <option value="GH1">GH1</option>
+                </select>
+              </div>
             </div>
             <div className="col-12 md:col-6 lg:col-4 mt-3">
               <FloatLabel>
@@ -463,11 +463,12 @@ function AdminStudentRegister() {
         </Divider>
 
         <Card title="Import Data (.xls / .xlsx)">
-          <AdminStudentDataUpload />
+        
+        <AdminStudentBulkDataUpload/>
         </Card>
       </div>
     </>
   );
 }
 
-export default AdminStudentRegister;
+export default AdminAddStudent;
