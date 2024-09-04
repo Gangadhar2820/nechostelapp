@@ -2,11 +2,7 @@ import axios from "axios";
 import { Leave, Permission } from "../components/interfaces/Request";
 import { Student } from "../components/interfaces/Student";
 
-// const server = "http://192.168.14.124:5000";
-// const server = "http://192.168.129.51:5000"
-
-const server = "https://hostelportal-backend.onrender.com"
-
+const server = process.env.REACT_APP_SERVER;
 
 // get current
 export const getStudent = async (rollNumber: string) => {

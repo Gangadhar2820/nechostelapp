@@ -37,6 +37,8 @@ function InchargePendingRequest() {
   const [isAccepting,setIsAccepting] = useState<boolean>(false);
   const [isRejecting,setIsRejecting] = useState<boolean>(false);
 
+  const [activeRID,setActiveRID] = useState<string>("");
+
 
   useEffect(() => {
     if (incharge?.hostelId) {
@@ -80,6 +82,7 @@ function InchargePendingRequest() {
           <InputIcon className="pi pi-search" />
           <InputText
             value={globalFilterValue}
+            id="inc-pending-req-filter"
             onChange={(e) => {
               setGlobalFilterValue(e.target.value);
             }}
@@ -139,7 +142,7 @@ function InchargePendingRequest() {
   const RejectRequestButton = (request: Permission | Leave) => {
     return (
       <Button
-        label={isRejecting ? "Rejecting" : "Reject"}
+        label={(isRejecting && activeRID===request.id) ? "Rejecting" : "Reject"}
         icon="pi pi-ban"
         severity="danger"
         onClick={() => {
@@ -147,7 +150,7 @@ function InchargePendingRequest() {
         }}
       >
         &nbsp;&nbsp;
-        {isRejecting && <i className="pi pi-spin pi-spinner"></i>}
+        {(isRejecting && activeRID===request.id) && <i className="pi pi-spin pi-spinner"></i>}
       </Button>
     );
   };
@@ -155,7 +158,7 @@ function InchargePendingRequest() {
   const AcceptRequestButton = (request: Permission | Leave) => {
     return (
       <Button
-        label={isAccepting ? "Accepting" : "Accept"}
+        label={(isAccepting && activeRID===request.id) ? "Accepting" : "Accept"}
         icon="pi pi-verified"
         severity="success"
         onClick={() => {
@@ -163,7 +166,7 @@ function InchargePendingRequest() {
         }}
       >
         &nbsp;&nbsp;
-        {isAccepting && <i className="pi pi-spin pi-spinner"></i>}
+        {(isAccepting && activeRID===request.id) && <i className="pi pi-spin pi-spinner"></i>}
       </Button>
     );
   };
@@ -174,6 +177,7 @@ function InchargePendingRequest() {
     type: "LEAVE" | "PERMISSION"
   ) => {
     const accept = () => {
+      setActiveRID(id);
       setIsRejecting(true)
       if (type === "LEAVE") {
         let rejRequest = leaves.filter((request) => request.id === id)[0];
@@ -191,7 +195,7 @@ function InchargePendingRequest() {
         AcceptORRejectRequest(id, rejRequest).then((data) => {
           setLeaves(newLeaves);
           setIsRejecting(false);
-          if (data.updated) {
+          if (data?.updated) {
             if (pendingRequestToast?.current) {
               pendingRequestToast?.current.show({
                 severity: "error",
@@ -217,7 +221,7 @@ function InchargePendingRequest() {
         AcceptORRejectRequest(id, rejRequest).then((data) => {
           setPermissions(newPermissions);
           setIsRejecting(false);
-          if (data.updated) {
+          if (data?.updated) {
             if (pendingRequestToast?.current) {
               pendingRequestToast?.current.show({
                 severity: "error",
@@ -246,6 +250,7 @@ function InchargePendingRequest() {
   };
   const handleRequestAccept = (id: string, rollNo: string, type: any) => {
     const accept = () => {
+      setActiveRID(id);
       setIsAccepting(true)
       if (type === "LEAVE") {
         let accRequest = leaves.filter((request) => request.id === id)[0];
@@ -263,7 +268,7 @@ function InchargePendingRequest() {
         AcceptORRejectRequest(id, accRequest).then((data) => {
           setLeaves(newLeaves);
           setIsAccepting(false);
-          if (data.updated) {
+          if (data?.updated) {
             if (pendingRequestToast?.current) {
               pendingRequestToast?.current.show({
                 severity: "success",

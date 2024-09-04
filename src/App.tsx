@@ -145,6 +145,7 @@ function App() {
                       path="arrivedrequests"
                       element={<AdminArrivedRequests />}
                     ></Route>
+                    <Route path="history" element={<InchargeHistory />} />
                   </Route>
                 </Route>
                 {/* admin routes ends */}

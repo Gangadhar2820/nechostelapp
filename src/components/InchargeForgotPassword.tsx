@@ -193,7 +193,7 @@ function InchargeForgotPassword() {
   return (
     <>
       <Toast ref={FPassToast} position="top-center" />
-      <Dialog
+      <Dialog 
         header="Incharge Forgot Password"
         visible={true}
         style={{ width: "50vw" }}
@@ -210,6 +210,7 @@ function InchargeForgotPassword() {
               </span>
               <InputText
                 placeholder="EID"
+                id="inc-fpass-eid"
                 value={EID}
                 onChange={(e) => {
                   setIsEIDValid(false);

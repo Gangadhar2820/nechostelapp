@@ -1,12 +1,11 @@
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
-import { Chip } from "primereact/chip";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
-import React, { useContext, useEffect, useState } from "react";
+import React, {  useCallback, useEffect, useState } from "react";
 import { getAllStudents } from "../../services/InchargeService";
 import { Student } from "../interfaces/Student";
 
@@ -24,16 +23,16 @@ function AdminStudentList() {
 
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
-  const validateForm = () => {
+  const validateForm = useCallback( () => {
     setIsFormValid(false);
     if ( hostelId!== "label" && college !== "label" && year !== "label" && branch !== "label") {
       setIsFormValid(true);
     }
-  };
+  },[hostelId,college,year,branch]);
 
   useEffect(() => {
     validateForm();
-  }, [hostelId,college, year, branch]);
+  }, [hostelId,college, year, branch,validateForm]);
 
   const tableFooter = `Total : ${
     studentsList ? studentsList.length : 0
@@ -73,6 +72,7 @@ function AdminStudentList() {
           <InputIcon className="pi pi-search" />
           <InputText
             value={globalFilterValue}
+            id="ad-stu-list-filter"
             onChange={(e) => {
               setGlobalFilterValue(e.target.value);
             }}
@@ -103,6 +103,7 @@ function AdminStudentList() {
               <div className="custom-select-container w-12">
                 <select
                   className="custom-select"
+                  id="ad-stu-list-hostelId"
                   value={hostelId}
                   onChange={(e) => {
                     setHostelId(e.target.value)
@@ -122,6 +123,7 @@ function AdminStudentList() {
               <div className="custom-select-container w-full">
                 <select
                   className="custom-select"
+                  id="ad-stu-list-college"
                   value={college}
                   onChange={(e) => {
                     setCollege(e.target.value);
@@ -133,6 +135,7 @@ function AdminStudentList() {
                   <option value="ALL">All</option>
                   <option value="NEC">NEC</option>
                   <option value="NIPS">NIPS</option>
+                  <option value="NIT">NIT</option>
                 </select>
               </div>
             </div>
@@ -141,6 +144,7 @@ function AdminStudentList() {
               <div className="custom-select-container w-full">
                 <select
                   className="custom-select"
+                  id="ad-stu-list-year"
                   value={year}
                   onChange={(e) => {
                     setYear(e.target.value);
@@ -162,6 +166,7 @@ function AdminStudentList() {
               <div className="custom-select-container w-full">
                 <select
                   className="custom-select"
+                  id="ad-stu-list-branch"
                   value={branch}
                   onChange={(e) => {
                     setBranch(e.target.value);
@@ -171,11 +176,20 @@ function AdminStudentList() {
                     Select Branch
                   </option>
                   <option value="ALL">All</option>
+                  <option value="AI&ML">AI & ML</option>
+                  <option value="CAI">CAI</option>
+                  <option value="CE">CIVIL</option>
+                  <option value="CS">CS (Cyber Security)</option>
                   <option value="CSE">CSE</option>
+                  <option value="CSE-AI">CSE-AI</option>
+                  <option value="CSM(AI&ML)">CSM(AI&ML)</option>
+                  <option value="DS">DS (Data Science)</option>
                   <option value="ECE">ECE</option>
                   <option value="EEE">EEE</option>
-                  <option value="MECH">MECH</option>
-                  <option value="CIVIL">CIVIL</option>
+                  <option value="IT">IT</option>
+                  <option value="MBA">MBA</option>
+                  <option value="MCA">MCA</option>
+                  <option value="ME">MECH</option>
                 </select>
               </div>
             </div>
@@ -204,6 +218,7 @@ function AdminStudentList() {
               rows={5}
               rowsPerPageOptions={[5, 10, 25, 50]}
               tableStyle={{ minWidth: "50rem" }}
+              selectionMode={"single"}
             >
               <Column
                 field="rollNo"

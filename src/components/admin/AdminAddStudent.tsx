@@ -1,7 +1,7 @@
 import { Card } from "primereact/card";
 import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 import { Calendar } from "primereact/calendar";
 import { Button } from "primereact/button";
@@ -33,7 +33,7 @@ function AdminAddStudent() {
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
-  const ValidateForm = () => {
+  const ValidateForm = useCallback( () => {
     setIsFormValid(false);
     const isRollValid = /^[a-zA-Z0-9]{10}$/.test(newStudent.rollNo);
     const isHostelIdValid = newStudent.hostelId !== "label";
@@ -71,11 +71,11 @@ function AdminAddStudent() {
     } else {
       setIsFormValid(false);
     }
-  };
+  },[newStudent]);
 
   useEffect(() => {
     ValidateForm();
-  }, [newStudent]);
+  }, [newStudent,ValidateForm]);
 
   const adminStudentToast = useRef<Toast>(null);
 
@@ -88,7 +88,7 @@ function AdminAddStudent() {
     AdminStudentRegisteration(newStudent)
       .then((data) => {
         setIsRegistering(false);
-        const { success, message } = data;
+        const { success } = data;
         if (success) {
           if (adminStudentToast.current) {
             adminStudentToast.current.show({
@@ -98,7 +98,7 @@ function AdminAddStudent() {
             });
           }
           setNewStudent({
-            hostelId: "",
+            hostelId: "label",
             rollNo: "",
             name: "",
             college: "label",
@@ -135,7 +135,7 @@ function AdminAddStudent() {
 
   return (
     <>
-      <Toast ref={adminStudentToast} position="bottom-center"></Toast>
+      <Toast ref={adminStudentToast} position="center"></Toast>
 
       <div
         className="p-2 w-10"
@@ -154,7 +154,7 @@ function AdminAddStudent() {
             <div className="col-12 md:col-6 lg:col-4 mt-3">
               <FloatLabel>
                 <InputText
-                  id="ad-stu-rollno"
+                  id="ad-add-stu-rollno"
                   type="text"
                   className="w-12"
                   value={newStudent.rollNo}
@@ -166,7 +166,7 @@ function AdminAddStudent() {
                   }}
                   required
                 />
-                <label htmlFor="ad-stu-rollno">Roll Number</label>
+                <label htmlFor="ad-add-stu-rollno">Roll Number</label>
               </FloatLabel>
             </div>
 
@@ -174,6 +174,7 @@ function AdminAddStudent() {
               <div className="custom-select-container w-12">
                 <select
                   className="custom-select"
+                  id="ad-add-stu-hostelId"
                   value={newStudent?.hostelId}
                   onChange={(e) => {
                     setNewStudent({
@@ -193,7 +194,7 @@ function AdminAddStudent() {
             <div className="col-12 md:col-6 lg:col-4 mt-3">
               <FloatLabel>
                 <InputText
-                  id="ad-stu-fullname"
+                  id="ad-add-stu-fullname"
                   type="text"
                   className="w-12"
                   value={newStudent.name}
@@ -205,7 +206,7 @@ function AdminAddStudent() {
                   }}
                   required
                 />
-                <label htmlFor="ad-stu-fullname">Full Name</label>
+                <label htmlFor="ad-add-stu-fullname">Full Name</label>
               </FloatLabel>
             </div>
 
@@ -214,52 +215,52 @@ function AdminAddStudent() {
               <div className="flex flex-wrap gap-3">
                 <div className="flex align-items-center">
                   <RadioButton
-                    inputId="ad-stu-male"
+                    inputId="ad-add-stu-male"
                     name="gender"
                     value="male"
                     onChange={(e: RadioButtonChangeEvent) =>
                       setNewStudent({
                         ...newStudent,
-                        gender: e.value,
+                        gender: e.value.toUpperCase(),
                       } as Student)
                     }
-                    checked={newStudent.gender === "male"}
+                    checked={newStudent.gender.toUpperCase() === "MALE"}
                   />
-                  <label htmlFor="ad-stu-male" className="ml-2">
+                  <label htmlFor="ad-add-stu-male" className="ml-2">
                     Male
                   </label>
                 </div>
                 <div className="flex align-items-center">
                   <RadioButton
-                    inputId="ad-stu-female"
+                    inputId="ad-add-stu-female"
                     name="gender"
                     value="female"
                     onChange={(e: RadioButtonChangeEvent) =>
                       setNewStudent({
                         ...newStudent,
-                        gender: e.value,
+                        gender: e.value.toUpperCase(),
                       } as Student)
                     }
-                    checked={newStudent.gender === "female"}
+                    checked={newStudent.gender.toUpperCase() === "FEMALE"}
                   />
-                  <label htmlFor="ad-stu-female" className="ml-2">
+                  <label htmlFor="ad-add-stu-female" className="ml-2">
                     Female
                   </label>
                 </div>
                 <div className="flex align-items-center">
                   <RadioButton
-                    inputId="ad-stu-other"
+                    inputId="ad-add-stu-other"
                     name="gender"
                     value="other"
                     onChange={(e: RadioButtonChangeEvent) =>
                       setNewStudent({
                         ...newStudent,
-                        gender: e.value,
+                        gender: e.value.toUpperCase(),
                       } as Student)
                     }
-                    checked={newStudent.gender === "other"}
+                    checked={newStudent.gender.toUpperCase() === "OTHER"}
                   />
-                  <label htmlFor="ad-stu-other" className="ml-2">
+                  <label htmlFor="ad-add-stu-other" className="ml-2">
                     Other
                   </label>
                 </div>
@@ -271,7 +272,7 @@ function AdminAddStudent() {
                 <Calendar
                   required
                   dateFormat="dd/mm/yy"
-                  inputId="ad-stu-birth_date"
+                  inputId="ad-add-stu-birth_date"
                   value={newStudent.dob}
                   onChange={(e) =>
                     setNewStudent({
@@ -281,14 +282,14 @@ function AdminAddStudent() {
                   }
                   className="w-12"
                 />
-                <label htmlFor="ad-stu-birth_date">Date of Birth</label>
+                <label htmlFor="ad-add-stu-birth_date">Date of Birth</label>
               </FloatLabel>
             </div>
 
             <div className="col-12 md:col-6 lg:col-4 mt-3">
               <FloatLabel>
                 <InputText
-                  id="ad-stu-phoneno"
+                  id="ad-add-stu-phoneno"
                   type="text"
                   className="w-12"
                   value={newStudent.phoneNo}
@@ -300,7 +301,7 @@ function AdminAddStudent() {
                   }}
                   required
                 />
-                <label htmlFor="ad-stu-phoneno">Phone Number</label>
+                <label htmlFor="ad-add-stu-phoneno">Phone Number</label>
               </FloatLabel>
               {!/^[0-9]{10}$/.test(newStudent.phoneNo) &&
                 newStudent.phoneNo !== "" && (
@@ -313,7 +314,7 @@ function AdminAddStudent() {
             <div className="col-12 md:col-6 lg:col-4 mt-3">
               <FloatLabel>
                 <InputText
-                  id="ad-stu-email"
+                  id="ad-add-stu-email"
                   type="text"
                   className="w-12"
                   value={newStudent.email}
@@ -325,7 +326,7 @@ function AdminAddStudent() {
                   }}
                   required
                 />
-                <label htmlFor="ad-stu-rollno">EMail</label>
+                <label htmlFor="ad-add-stu-rollno">EMail</label>
               </FloatLabel>
               {!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
                 newStudent.email
@@ -337,10 +338,12 @@ function AdminAddStudent() {
                 )}
             </div>
 
-            <div className="col-12 sm:col-6 md:col-4 mt-3">
+            <div className="col-12 md:col-6 lg:col-4 mt-3">
+            
               <div className="custom-select-container w-full">
                 <select
                   className="custom-select"
+                  id="ad-add-stu-college"
                   value={newStudent.college}
                   onChange={(e) => {
                     setNewStudent({
@@ -354,14 +357,16 @@ function AdminAddStudent() {
                   </option>
                   <option value="NEC">NEC</option>
                   <option value="NIPS">NIPS</option>
+                  <option value="NIT">NIT</option>
                 </select>
               </div>
             </div>
 
-            <div className="col-12 sm:col-6 md:col-4 mt-3">
+            <div className="col-12 md:col-6 lg:col-4 mt-3">
               <div className="custom-select-container w-full">
                 <select
                   className="custom-select"
+                  id="ad-add-stu-year"
                   value={newStudent.year}
                   onChange={(e) => {
                     setNewStudent({
@@ -381,10 +386,11 @@ function AdminAddStudent() {
               </div>
             </div>
 
-            <div className="col-12 sm:col-6 md:col-4 mt-3">
+            <div className="col-12 md:col-6 lg:col-4 mt-3">
               <div className="custom-select-container w-full">
                 <select
                   className="custom-select"
+                  id="ad-add-stu-branch"
                   value={newStudent.branch}
                   onChange={(e) => {
                     setNewStudent({
@@ -396,11 +402,20 @@ function AdminAddStudent() {
                   <option value="label" disabled>
                     Select Branch
                   </option>
+                  <option value="AI&ML">AI & ML</option>
+                  <option value="CAI">CAI</option>
+                  <option value="CE">CIVIL</option>
+                  <option value="CS">CS (Cyber Security)</option>
                   <option value="CSE">CSE</option>
+                  <option value="CSE-AI">CSE-AI</option>
+                  <option value="CSM(AI&ML)">CSM(AI&ML)</option>
+                  <option value="DS">DS (Data Science)</option>
                   <option value="ECE">ECE</option>
                   <option value="EEE">EEE</option>
-                  <option value="MECH">MECH</option>
-                  <option value="CIVIL">CIVIL</option>
+                  <option value="IT">IT</option>
+                  <option value="MBA">MBA</option>
+                  <option value="MCA">MCA</option>
+                  <option value="ME">MECH</option>
                 </select>
               </div>
             </div>
@@ -408,7 +423,7 @@ function AdminAddStudent() {
             <div className="col-12 md:col-6 lg:col-4 mt-3">
               <FloatLabel>
                 <InputText
-                  id="ad-stu-fathername"
+                  id="ad-add-stu-fathername"
                   type="text"
                   className="w-12"
                   value={newStudent.parentName}
@@ -420,14 +435,14 @@ function AdminAddStudent() {
                   }}
                   required
                 />
-                <label htmlFor="ad-stu-fathername">Father's Name</label>
+                <label htmlFor="ad-add-stu-fathername">Father's Name</label>
               </FloatLabel>
             </div>
 
             <div className="col-12 md:col-6 lg:col-4 mt-3">
               <FloatLabel>
                 <InputText
-                  id="ad-stu-fathermobile"
+                  id="ad-add-stu-fathermobile"
                   type="text"
                   className="w-12"
                   value={newStudent.parentPhoneNo}
@@ -439,7 +454,7 @@ function AdminAddStudent() {
                   }}
                   required
                 />
-                <label htmlFor="ad-stu-fathermobile">Father Mobile No</label>
+                <label htmlFor="ad-add-stu-fathermobile">Father Mobile No</label>
               </FloatLabel>
               {!/^[0-9]{10}$/.test(newStudent.parentPhoneNo) &&
                 newStudent.parentPhoneNo !== "" && (

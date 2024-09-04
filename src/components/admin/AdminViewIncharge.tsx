@@ -2,19 +2,17 @@ import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Incharge } from "../interfaces/Incharge";
-import { getIncharge } from "../../services/InchargeService";
 import { Toast } from "primereact/toast";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import InchargeCard from "../student/InchargeCard";
+import { deleteIncharge, updateIncharge } from "../../services/AdminService";
 
-function AdminViewIncharge() {
-  const [incEID, setIncEID] = useState<string>("");
+function AdminViewIncharge(props:any) {
 
-  const [isSearching, setIsSearching] = useState<boolean>(false);
-
-  const [incharge, setIncharge] = useState<Incharge | null>(null);
+  const [incharge, setIncharge] = useState<Incharge>(props.incharge as Incharge);
+  const [inchargeOldData, setInchargeOldData] = useState<Incharge>(props.incharge as Incharge);
 
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -26,52 +24,59 @@ function AdminViewIncharge() {
 
   const mytoast = useRef<Toast>(null);
 
+  const {closeDialog,updateIncharges} = props
 
-  const ValidateForm = () => {
+
+  const ValidateForm = useCallback( () => {
     setIsFormValid(false);
     if (
       incharge?.hostelId !== "label" &&
       incharge?.name !== "" &&
       /^[0-9]{10}$/.test(incharge?.phoneNo as string) &&
-      incharge?.eid != "" &&
+      incharge?.eid !== "" &&
       incharge?.designation !== ""
     ) {
       setIsFormValid(true);
     } else {
       setIsFormValid(false);
     }
-  };
+  },[incharge]);
 
   useEffect(() => {
     ValidateForm();
-  }, [incharge]);
+  }, [incharge,ValidateForm]);
 
-  const handleIncSearchForm = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsSearching(true);
-    getIncharge(incEID)
-      .then((data) => {
-        setIncharge(data);
-        setIsSearching(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
   const handleInchargeUpdate = () => {
     const accept = () => {
       setIsUpdating(true);
-      setTimeout(() => {
+      if(incharge){
+      updateIncharge(incharge).then((data)=>{
         setIsUpdating(false);
-        if (mytoast.current) {
-          mytoast.current.show({
-            severity: "success",
-            summary: "Updated Successfully !",
-            detail: "Incharge data has been updated",
-          });
-        }
-      }, 2000);
+        if(data.updated){
+          setInchargeOldData(incharge)
+          updateIncharges(incharge)
+          setEnableEdit(false);
+          if (mytoast.current) {
+            mytoast.current.show({
+              severity: "success",
+              summary: "Updated Successfully !",
+              detail: "Incharge data has been updated",
+            });
+          }
+        }else{
+          if (mytoast.current) {
+            mytoast.current.show({
+              severity: "error",
+              summary: "Update Failed !",
+              detail: "Failed to update incharge data.Try Again",
+            });
+          }
+          }
+      }).catch((err)=>{
+        console.log("something went wrong",err);
+      })
+      }
     };
     const reject = () => {};
 
@@ -89,16 +94,23 @@ function AdminViewIncharge() {
   const handleInchargeDelete = () => {
     const accept = () => {
       setIsDeleting(true);
-      setTimeout(() => {
+      let deleteEID = incharge.eid;
+      deleteIncharge(incharge.eid).then((data)=>{
         setIsDeleting(false);
-        if (mytoast.current) {
-          mytoast.current.show({
-            severity: "error",
-            summary: "Deleted Successfully !",
-            detail: "Incharge has been removed",
-          });
+        if(data.deleted){
+          closeDialog(deleteEID)
+          
+        }else{
+          if (mytoast.current) {
+            mytoast.current.show({
+              severity: "warn",
+              summary: "Delete Failed !",
+              detail: "Failed to delete Incharge.Try Again",
+            });
+          }
         }
-      }, 2000);
+      })
+
     };
     const reject = () => {};
 
@@ -115,58 +127,25 @@ function AdminViewIncharge() {
 
   return (
     <>
-      <Toast ref={mytoast} position="center"></Toast>
+      <Toast ref={mytoast} position="center" ></Toast>
       <ConfirmDialog />
+        <div>
+        
 
+          <div className="flex align-items-center justify-content-end">
 
-      <div
-        className="p-2 w-full"
-        style={{
-          position: "absolute",
-          left: "50%",
-          transform: "translatex(-50%)",
-        }}
-      >
-        <Card title="Search Incharge">
-          <form onSubmit={handleIncSearchForm} className="grid">
-            <div className="col-12 sm:col-6 mt-3 ">
-              <FloatLabel>
-                <InputText
-                  id="ad-view-rollno"
-                  type="text"
-                  className="w-full"
-                  value={incEID}
-                  onChange={(e) => {
-                    setIncEID(e.target.value.toUpperCase());
-                  }}
-                  required
-                />
-                <label htmlFor="ad-view-rollno">EID</label>
-              </FloatLabel>
-            </div>
-
-            <div className="col-12 sm:col-6 mt-3 ">
-              <Button
-                type="submit"
-                label={isSearching ? "Searching" : "Search"}
-                className="w-full sm:w-auto text-center"
-                disabled={isSearching}
-              >
-                &nbsp;&nbsp;
-                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
-              </Button>
-            </div>
-          </form>
-
-          {incharge && 
           <Button className="m-2" icon={ enableEdit?"pi pi-times": "pi pi-pen-to-square"}
            severity={ enableEdit ? "warning" : "info" }
            label={enableEdit ? "Cancel" : "Edit"}
            onClick={()=>{
+            if(!enableEdit){
+              setIncharge(inchargeOldData)
+            }
             setEnableEdit(prevValue=>!prevValue)
-           }} style={{float:"right"}}></Button>}
-
-          {incharge ? ((enableEdit ? 
+           }}></Button>
+          </div>
+           {/* } */}
+ {(enableEdit ? 
             <form action="" className="grid mt-6">
               <div className="col-12 md:col-6 lg:col-4  mt-3">
                 <FloatLabel>
@@ -187,6 +166,7 @@ function AdminViewIncharge() {
                   <select
                     className="custom-select"
                     value={incharge?.hostelId}
+                    id="ad-view-inc-hostelId"
                     onChange={(e) => {
                       setIncharge({
                         ...incharge,
@@ -288,10 +268,12 @@ function AdminViewIncharge() {
               </div>
             </form>
           :
-          <InchargeCard  incharge={incharge} showId={true}/>
-          )) : <p>No Data Found</p>}
-        </Card>
-      </div>
+          <div className="">
+
+            <InchargeCard  incharge={inchargeOldData} showId={true}/>
+          </div>
+          )}
+        </div>
     </>
   );
 }

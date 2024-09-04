@@ -207,6 +207,7 @@ function StudentForgotPassword() {
               </span>
               <InputText
                 placeholder="Roll Number"
+                id="stu-fpass-rollno"
                 value={rollNo}
                 onChange={(e) => {
                   setIsRollNoValid(false);

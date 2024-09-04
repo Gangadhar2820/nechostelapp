@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
 import { Card } from "primereact/card";
@@ -23,7 +23,7 @@ function AdminAddIncharge() {
 
   const adminInchargeToast = useRef<Toast>(null);
 
-  const ValidateForm = () => {
+  const ValidateForm = useCallback(() => {
     setIsFormValid(false);
     if (
       newIncharge?.hostelId !== null &&
@@ -38,11 +38,11 @@ function AdminAddIncharge() {
     } else {
       setIsFormValid(false);
     }
-  };
+  },[newIncharge,password,CPassword]);
 
   useEffect(() => {
     ValidateForm();
-  }, [newIncharge, password, CPassword]);
+  }, [newIncharge, password, CPassword,ValidateForm]);
 
   const handleAdminInchargeRegister = (
     event: React.FormEvent<HTMLFormElement>
@@ -73,7 +73,7 @@ function AdminAddIncharge() {
         } else {
           if (adminInchargeToast.current) {
             adminInchargeToast.current.show({
-              severity: "error",
+              severity: "error", 
               summary: "Register Failed",
               detail: "Incharge already exist",
             });
@@ -103,10 +103,11 @@ function AdminAddIncharge() {
             onSubmit={handleAdminInchargeRegister}
           >
             <div className="col-12 md:col-6 mt-3">
-              <div className="custom-select-container w-12 sm:w-8">
+              <div className="custom-select-container w-full">
                 <select
                   className="custom-select"
                   value={newIncharge?.hostelId}
+                  id="ad-add-inc-hostelId"
                   onChange={(e) => {
                     setNewIncharge({
                       ...newIncharge,
@@ -129,7 +130,7 @@ function AdminAddIncharge() {
                 <InputText
                   id="inc-name"
                   type="text"
-                  className="w-12 sm:w-8"
+                  className="w-full"
                   value={newIncharge?.name}
                   onChange={(e) => {
                     setNewIncharge({
@@ -147,7 +148,7 @@ function AdminAddIncharge() {
                 <InputText
                   id="inc-phoneno"
                   type="text"
-                  className="w-12 sm:w-8"
+                  className="w-full"
                   value={newIncharge?.phoneNo}
                   onChange={(e) => {
                     setNewIncharge({
@@ -172,7 +173,7 @@ function AdminAddIncharge() {
                 <InputText
                   id="inc-username"
                   type="text"
-                  className="w-12 sm:w-8"
+                  className="w-full"
                   value={newIncharge?.eid}
                   onChange={(e) => {
                     setNewIncharge({
@@ -191,7 +192,7 @@ function AdminAddIncharge() {
                 <InputText
                   id="inc-designation"
                   type="text"
-                  className="w-12 sm:w-8"
+                  className="w-full"
                   value={newIncharge?.designation}
                   onChange={(e) => {
                     setNewIncharge({
@@ -211,7 +212,7 @@ function AdminAddIncharge() {
                   <InputText
                     id="inc-password"
                     type="password"
-                    className="w-12 sm:w-8"
+                    className="w-full"
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
@@ -227,9 +228,9 @@ function AdminAddIncharge() {
                       "inc-password"
                     ) as HTMLInputElement | null;
                     if (ele) {
-                      if (ele.type == "text") {
+                      if (ele.type === "text") {
                         ele.type = "password";
-                      } else if (ele.type == "password") {
+                      } else if (ele.type === "password") {
                         ele.type = "text";
                       }
                     }
@@ -246,7 +247,7 @@ function AdminAddIncharge() {
                   <InputText
                     id="inc-cpassword"
                     type="password"
-                    className="w-12 sm:w-8"
+                    className="w-full"
                     value={CPassword}
                     onChange={(e) => {
                       setCPassword(e.target.value);
@@ -262,9 +263,9 @@ function AdminAddIncharge() {
                       "inc-cpassword"
                     ) as HTMLInputElement | null;
                     if (ele) {
-                      if (ele.type == "text") {
+                      if (ele.type === "text") {
                         ele.type = "password";
-                      } else if (ele.type == "password") {
+                      } else if (ele.type === "password") {
                         ele.type = "text";
                       }
                     }

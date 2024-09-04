@@ -301,6 +301,7 @@ function StudentLeave() {
                         showButtonBar
                         showTime
                         hourFormat="12"
+                        dateFormat="dd/mm/yy"
                       />
                       <label htmlFor="stu-pl-fromDate">From Date</label>
                     </FloatLabel>
@@ -317,6 +318,7 @@ function StudentLeave() {
                         showButtonBar
                         showTime
                         hourFormat="12"
+                        dateFormat="dd/mm/yy"
                       />
                       <label htmlFor="stu-pl-toDate">To Date</label>
                     </FloatLabel>

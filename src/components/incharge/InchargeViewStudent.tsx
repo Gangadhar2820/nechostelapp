@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Student } from "../interfaces/Student";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
@@ -23,25 +23,29 @@ function InchargeViewStudent() {
 
     getStudent(stuRollNumber)
       .then((data) => {
-        setStudent(data);
         setIsSearching(false);
+        if(data.isExist){
+          setStudent(data.hosteler);
+        }else{
+          setStudent(null)
+        }
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  const validateSearchForm = () => {
+  const validateSearchForm = useCallback(() => {
     setIsSearchFormValid(false);
     const isRollValid = /^[a-zA-Z0-9]{10}$/.test(stuRollNumber);
     if (isRollValid) {
       setIsSearchFormValid(true);
     }
-  };
+  }, [stuRollNumber]);
 
   useEffect(() => {
     validateSearchForm();
-  }, [stuRollNumber]);
+  }, [stuRollNumber,validateSearchForm]);
 
   return (
     <>
@@ -58,7 +62,7 @@ function InchargeViewStudent() {
             <div className="col-12 sm:col-6 mt-3 ">
               <FloatLabel>
                 <InputText
-                  id="ad-view-rollno"
+                  id="inc-view-rollno"
                   type="text"
                   className="w-full"
                   value={stuRollNumber}
@@ -67,7 +71,7 @@ function InchargeViewStudent() {
                   }}
                   required
                 />
-                <label htmlFor="ad-view-rollno">Roll Number</label>
+                <label htmlFor="inc-view-rollno">Roll Number</label>
               </FloatLabel>
             </div>
             <div className="col-12 sm:col-6 mt-3">

@@ -5,12 +5,11 @@ import { DataTable } from "primereact/datatable";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
-import React, { useContext, useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { Nullable } from "primereact/ts-helpers";
 import { Calendar } from "primereact/calendar";
 import { FloatLabel } from "primereact/floatlabel";
 import { Permission,Leave } from "../interfaces/Request";
-import { AdminContext } from "./AdminHome";
 import {
   formatDate,
   formatDateWithTime,
@@ -23,7 +22,6 @@ import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 
 function AdminArrivedRequests() {
 
-  const admin = useContext(AdminContext);
   const [selectionOption, setSelectionOption] = useState<string>("Permissions");
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [leaves, setLeaves] = useState<Leave[]>([]);
@@ -50,11 +48,11 @@ function AdminArrivedRequests() {
       starttDate = getDateBeforeDays(new Date(), 1);
       enddDate = new Date();
     } else if (timePeriod === "last3days") {
-      starttDate = getDateBeforeDays(new Date(), 3);
-      enddDate = getDateBeforeDays(new Date(), 1);
+      starttDate = getDateBeforeDays(new Date(), 2);
+      enddDate = getDateBeforeDays(new Date(), 0);
     } else if (timePeriod === "lastweek") {
-      starttDate = getDateBeforeDays(new Date(), 7);
-      enddDate = getDateBeforeDays(new Date(), 1);
+      starttDate = getDateBeforeDays(new Date(), 6);
+      enddDate = getDateBeforeDays(new Date(), 0);
     } else if (timePeriod === "custom") {
       starttDate = fromDate;
       enddDate = getDateAfterDays(toDate as Date, 1);
@@ -97,6 +95,7 @@ function AdminArrivedRequests() {
           <InputIcon className="pi pi-search" />
           <InputText
             value={globalFilterValue}
+            id="ad-arr-req-filter"
             onChange={(e) => {
               setGlobalFilterValue(e.target.value);
             }}
@@ -212,6 +211,7 @@ function AdminArrivedRequests() {
               <div className="custom-select-container w-full">
                 <select
                   className="custom-select"
+                  id="ad-arr-req-timestamp"
                   value={timePeriod}
                   onChange={(e) => {
                     setTimePeriod(e.target.value);

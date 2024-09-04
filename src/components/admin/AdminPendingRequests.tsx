@@ -19,7 +19,6 @@ import {
 import { AdminContext } from "./AdminHome";
 
 function AdminPendingRequests() {
-
   const admin = useContext(AdminContext);
 
   const [selectionOption, setSelectionOption] = useState<
@@ -33,6 +32,10 @@ function AdminPendingRequests() {
 
   const pendingRequestToast = useRef<Toast>(null);
 
+  const [isAccepting,setIsAccepting] = useState<boolean>(false);
+  const [isRejecting,setIsRejecting] = useState<boolean>(false);
+  const [activeRID,setActiveRID] = useState<string>("");
+
 
   useEffect(() => {
     if (admin) {
@@ -41,13 +44,15 @@ function AdminPendingRequests() {
           let leaves: any = [];
           let permissions: any = [];
 
-          data.forEach((request: any) => {
-            if (request.type === "LEAVE") {
-              leaves = [...leaves, request];
-            } else if (request.type === "PERMISSION") {
-              permissions = [...permissions, request];
-            }
-          });
+          if (data.length > 0) {
+            data.forEach((request: any) => {
+              if (request.type === "LEAVE") {
+                leaves = [...leaves, request];
+              } else if (request.type === "PERMISSION") {
+                permissions = [...permissions, request];
+              }
+            });
+          }
           setLeaves(leaves);
           setPermissions(permissions);
         })
@@ -73,6 +78,7 @@ function AdminPendingRequests() {
           <InputIcon className="pi pi-search" />
           <InputText
             value={globalFilterValue}
+            id="ad-pen-req-filter"
             onChange={(e) => {
               setGlobalFilterValue(e.target.value);
             }}
@@ -131,26 +137,32 @@ function AdminPendingRequests() {
   const RejectRequestButton = (request: Permission | Leave) => {
     return (
       <Button
-        label="Reject"
+        label={(isRejecting && activeRID===request.id) ? "Rejecting" : "Reject"}
         icon="pi pi-ban"
         severity="danger"
         onClick={() => {
           handleRequestReject(request?.id, request?.rollNo, request?.type);
         }}
-      />
+      >
+        &nbsp;&nbsp;
+        {(isRejecting && activeRID===request.id) && <i className="pi pi-spin pi-spinner"></i>}
+      </Button>
     );
   };
 
   const AcceptRequestButton = (request: Permission | Leave) => {
     return (
       <Button
-        label="Accept"
+        label={(isAccepting && activeRID===request.id) ? "Accepting" : "Accept"}
         icon="pi pi-verified"
         severity="success"
         onClick={() => {
           handleRequestAccept(request?.id, request?.rollNo, request?.type);
         }}
-      />
+      >
+        &nbsp;&nbsp;
+        {(isAccepting && activeRID===request.id) && <i className="pi pi-spin pi-spinner"></i>}
+      </Button>
     );
   };
 
@@ -160,6 +172,8 @@ function AdminPendingRequests() {
     type: "LEAVE" | "PERMISSION"
   ) => {
     const accept = () => {
+      setActiveRID(id);
+      setIsRejecting(true)
       if (type === "LEAVE") {
         let rejRequest = leaves.filter((request) => request.id === id)[0];
         let newLeaves = leaves.filter((request) => request.id !== id);
@@ -175,6 +189,8 @@ function AdminPendingRequests() {
         };
         AcceptORRejectRequest(id, rejRequest).then((data) => {
           setLeaves(newLeaves);
+          setIsRejecting(false);
+
           if (data.updates) {
             if (pendingRequestToast?.current) {
               pendingRequestToast?.current.show({
@@ -200,6 +216,7 @@ function AdminPendingRequests() {
         };
         AcceptORRejectRequest(id, rejRequest).then((data) => {
           setPermissions(newPermissions);
+          setIsRejecting(false)
           if (data.updates) {
             if (pendingRequestToast?.current) {
               pendingRequestToast?.current.show({
@@ -212,8 +229,7 @@ function AdminPendingRequests() {
         });
       }
     };
-    const reject = () => {
-    };
+    const reject = () => {};
 
     confirmDialog({
       message: `Do you want to Reject \`${rollNo}\` ${type} ?`,
@@ -223,12 +239,13 @@ function AdminPendingRequests() {
       acceptClassName: "p-button-danger",
       accept,
       reject,
-      id:"inchargependingrequestdialog"
-
+      id: "inchargependingrequestdialog",
     });
   };
   const handleRequestAccept = (id: string, rollNo: string, type: any) => {
     const accept = () => {
+      setActiveRID(id);
+      setIsAccepting(true);
       if (type === "LEAVE") {
         let accRequest = leaves.filter((request) => request.id === id)[0];
         let newLeaves = leaves.filter((request) => request.id !== id);
@@ -244,6 +261,7 @@ function AdminPendingRequests() {
         };
         AcceptORRejectRequest(id, accRequest).then((data) => {
           setLeaves(newLeaves);
+          setIsAccepting(false);
           if (data.updates) {
             if (pendingRequestToast?.current) {
               pendingRequestToast?.current.show({
@@ -270,6 +288,7 @@ function AdminPendingRequests() {
 
         AcceptORRejectRequest(id, accRequest).then((data) => {
           setPermissions(newPermissions);
+          setIsAccepting(false);
           if (pendingRequestToast?.current) {
             pendingRequestToast?.current.show({
               severity: "success",
@@ -280,8 +299,7 @@ function AdminPendingRequests() {
         });
       }
     };
-    const reject = () => {
-    };
+    const reject = () => {};
 
     confirmDialog({
       message: `Do you want to Accept \`${rollNo}\` ${type} ?`,
@@ -291,13 +309,13 @@ function AdminPendingRequests() {
       acceptClassName: "p-button-success",
       accept,
       reject,
-      id:"inchargependingrequestdialog"
+      id: "inchargependingrequestdialog",
     });
   };
 
   return (
     <>
-      <ConfirmDialog id="inchargependingrequestdialog"/>
+      <ConfirmDialog id="inchargependingrequestdialog" />
       <Toast ref={pendingRequestToast} position="center" />
 
       <div
@@ -373,7 +391,7 @@ function AdminPendingRequests() {
                 sortable
                 frozen
               ></Column>
-              
+
               <Column field="name" header="Name"></Column>
 
               <Column
@@ -422,7 +440,7 @@ function AdminPendingRequests() {
                 sortable
                 frozen
               ></Column>
-              
+
               <Column field="name" header="Name"></Column>
 
               <Column

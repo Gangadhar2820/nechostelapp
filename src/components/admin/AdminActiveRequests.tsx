@@ -27,6 +27,10 @@ function AdminActiveRequests() {
 
   const activeRequestToast = useRef<Toast>(null);
 
+  const [isArriving,setIsArriving] = useState<boolean>(false);
+
+  const [activeRID,setActiveRID] = useState<string>("");
+
   useEffect(() => {
     if (admin) {
       getActiveRequests("all")
@@ -68,6 +72,7 @@ function AdminActiveRequests() {
           <InputIcon className="pi pi-search" />
           <InputText
             value={globalFilterValue}
+            id="ad-act-req-filter"
             onChange={(e) => {
               setGlobalFilterValue(e.target.value);
             }}
@@ -125,19 +130,24 @@ function AdminActiveRequests() {
 
   const ArrivedButton = (request: Permission | Leave) => {
     return (
-      <Button
-        label="Arrived"
+<Button
+        label={(isArriving && activeRID === request.id)?"Arriving":"Arrived"}
         icon="pi pi-sign-in"
         severity="info"
         onClick={() => {
           handleRequestArrive(request?.id,request?.rollNo, request?.type);
         }}
-      />
+      >&nbsp;&nbsp;
+      {(isArriving && activeRID=== request.id) && <i className="pi pi-spin pi-spinner"></i>}
+
+      </Button>
     );
   };
 
   const handleRequestArrive = (id:string,rollNo: string, type: string) => {
     const accept = () => {
+      setActiveRID(id);
+      setIsArriving(true);
 
       if(type==="LEAVE"){
         let arrRequest = leaves.filter(request=>request.id===id)[0];
@@ -150,6 +160,7 @@ function AdminActiveRequests() {
 
         ArriveRequest(id,arrRequest).then((data)=>{
           setLeaves(newLeaves);
+          setIsArriving(false);
           if (data.updated) {
             if (activeRequestToast?.current) {
               activeRequestToast?.current.show({
@@ -176,6 +187,7 @@ function AdminActiveRequests() {
 
         ArriveRequest(id,arrRequest).then((data)=>{
           setPermissions(newPermissions);
+          setIsArriving(false);
           if (data.updated) {
             if (activeRequestToast?.current) {
               activeRequestToast?.current.show({

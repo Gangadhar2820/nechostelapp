@@ -2,10 +2,7 @@ import axios from "axios";
 import { Student } from "../components/interfaces/Student";
 import { Incharge } from "../components/interfaces/Incharge";
 
-// const server = "http://192.168.14.124:5000";
-// const server = "http://192.168.129.51:5000"
-
-const server = "https://hostelportal-backend.onrender.com";
+const server = process.env.REACT_APP_SERVER;
 
 export {};
 

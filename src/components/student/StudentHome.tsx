@@ -28,7 +28,7 @@ function StudentHome() {
     // in first render cycle get the student data
     getStudent(params.rollNo as string)
       .then((data) => {
-        setStudent(data);
+        setStudent(data.hosteler);
       })
       .catch((err) => {
         console.log(err);

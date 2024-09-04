@@ -5,7 +5,7 @@ import { DataTable } from "primereact/datatable";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { InchargeContext } from "./InchargeHome";
 import { Nullable } from "primereact/ts-helpers";
 import { Calendar } from "primereact/calendar";
@@ -28,7 +28,7 @@ function InchargeArrivedRequest() {
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [leaves, setLeaves] = useState<Leave[]>([]);
 
-  const [timePeriod, setTimePeriod] = useState<string>("last24hrs");
+  const [timePeriod, setTimePeriod] = useState<string>("label");
 
   const [fromDate, setFromDate] = useState<Nullable<Date>>(null);
   const [toDate, setToDate] = useState<Nullable<Date>>(null);
@@ -50,11 +50,11 @@ function InchargeArrivedRequest() {
       starttDate = getDateBeforeDays(new Date(), 1);
       enddDate = new Date();
     } else if (timePeriod === "last3days") {
-      starttDate = getDateBeforeDays(new Date(), 3);
-      enddDate = getDateBeforeDays(new Date(), 1);
+      starttDate = getDateBeforeDays(new Date(), 2);
+      enddDate = getDateBeforeDays(new Date(), 0);
     } else if (timePeriod === "lastweek") {
-      starttDate = getDateBeforeDays(new Date(), 7);
-      enddDate = getDateBeforeDays(new Date(), 1);
+      starttDate = getDateBeforeDays(new Date(), 6);
+      enddDate = getDateBeforeDays(new Date(), 0);
     } else if (timePeriod === "custom") {
       starttDate = fromDate;
       enddDate = getDateAfterDays(toDate as Date, 1);
@@ -97,6 +97,7 @@ function InchargeArrivedRequest() {
           <InputIcon className="pi pi-search" />
           <InputText
             value={globalFilterValue}
+            id="inc-arr-req-filter"
             onChange={(e) => {
               setGlobalFilterValue(e.target.value);
             }}
@@ -127,14 +128,7 @@ function InchargeArrivedRequest() {
     return "";
   };
 
-  const rejectedTime = (data: any) => {
-    if (data.rejected) {
-      const date = data?.rejected?.time;
-      const formatDate = data ? formatDateWithTime(new Date(date)) : "";
-      return formatDate;
-    }
-    return "";
-  };
+ 
 
   const arrivedTime = (data: any) => {
     if (data.arrived) {
@@ -153,13 +147,6 @@ function InchargeArrivedRequest() {
     return "";
   };
 
-  const rejectedName = (data: any) => {
-    if (data.rejected) {
-      const name = data?.rejected?.name;
-      return name;
-    }
-    return "";
-  };
 
   const arrivedName = (data: any) => {
     if (data.arrived) {
@@ -225,6 +212,7 @@ function InchargeArrivedRequest() {
               <div className="custom-select-container w-full">
                 <select
                   className="custom-select"
+                  id="inc-arr-req-timestamp"
                   value={timePeriod}
                   onChange={(e) => {
                     setTimePeriod(e.target.value);

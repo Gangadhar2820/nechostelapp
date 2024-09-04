@@ -327,7 +327,6 @@ function StudentRegister() {
                         } as Student);
                       }}
                       required
-                      disabled
                     >
                       <option value="label" disabled>
                         Select College
@@ -352,7 +351,7 @@ function StudentRegister() {
                       }}
                       required
                     >
-                      <option value="label" disabled>
+                      <option value="label" >
                         Select Year
                       </option>
                       <option value="1">I Year</option>
@@ -376,7 +375,7 @@ function StudentRegister() {
                         } as Student);
                       }}
                       required
-                      disabled
+                      
                     >
                       <option value="label" disabled>
                         Select Branch

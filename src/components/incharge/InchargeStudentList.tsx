@@ -3,11 +3,10 @@ import { Card } from "primereact/card";
 import { Chip } from "primereact/chip";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { InchargeContext } from "./InchargeHome";
 import { getAllStudents } from "../../services/InchargeService";
 import { Student } from "../interfaces/Student";
@@ -25,16 +24,16 @@ function InchargeStudentList() {
 
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
-  const validateForm = () => {
+  const validateForm = useCallback(() => {
     setIsFormValid(false);
     if (college !== "label" && year !== "label" && branch !== "label") {
       setIsFormValid(true);
     }
-  };
+  },[college,year,branch]);
 
   useEffect(() => {
     validateForm();
-  }, [college, year, branch]);
+  }, [college, year, branch,validateForm]);
 
   const tableFooter = `Total : ${
     studentsList ? studentsList.length : 0
@@ -73,6 +72,7 @@ function InchargeStudentList() {
         <IconField iconPosition="left">
           <InputIcon className="pi pi-search" />
           <InputText
+          id="inc-stu-list-filter"
             value={globalFilterValue}
             onChange={(e) => {
               setGlobalFilterValue(e.target.value);
@@ -89,7 +89,7 @@ function InchargeStudentList() {
   const StudentListTitle = (
     <div className="text-center">
       <Chip
-        label={incharge?.hostelId}
+        label={incharge?.hostelId==="BH1"?"Boys Hostel (BH1)":(incharge?.hostelId==="GH1" ? "Girls Hostel (GH1)":"")}
         className="bg-primary mt-2"
         icon="pi pi-circle-fill"
       />
@@ -126,8 +126,8 @@ function InchargeStudentList() {
                   </option>
                   <option value="ALL">All</option>
                   <option value="NEC">NEC</option>
-                  <option value="NIT">NIT</option>
                   <option value="NIPS">NIPS</option>
+                  <option value="NIT">NIT</option>
                 </select>
               </div>
             </div>
@@ -135,6 +135,8 @@ function InchargeStudentList() {
             <div className="col-12 sm:col-6 md:col-4 mt-3">
               <div className="custom-select-container w-full">
                 <select
+                id="inc-stu-list-year"
+
                   className="custom-select"
                   value={year}
                   onChange={(e) => {
@@ -157,6 +159,8 @@ function InchargeStudentList() {
               <div className="custom-select-container w-full">
                 <select
                   className="custom-select"
+                id="inc-stu-list-branch"
+
                   value={branch}
                   onChange={(e) => {
                     setBranch(e.target.value);
@@ -166,11 +170,20 @@ function InchargeStudentList() {
                     Select Branch
                   </option>
                   <option value="ALL">All</option>
+                  <option value="AI&ML">AI & ML</option>
+                  <option value="CAI">CAI</option>
+                  <option value="CE">CIVIL</option>
+                  <option value="CS">CS (Cyber Security)</option>
                   <option value="CSE">CSE</option>
+                  <option value="CSE-AI">CSE-AI</option>
+                  <option value="CSM(AI&ML)">CSM(AI&ML)</option>
+                  <option value="DS">DS (Data Science)</option>
                   <option value="ECE">ECE</option>
                   <option value="EEE">EEE</option>
-                  <option value="MECH">MECH</option>
-                  <option value="CIVIL">CIVIL</option>
+                  <option value="IT">IT</option>
+                  <option value="MBA">MBA</option>
+                  <option value="MCA">MCA</option>
+                  <option value="ME">MECH</option>
                 </select>
               </div>
             </div>

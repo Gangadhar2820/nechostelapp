@@ -1,11 +1,6 @@
 import axios from "axios";
 
-// const server = "http://192.168.14.124:5000";
-
-const server = "https://hostelportal-backend.onrender.com"
-
-// const server = "http://192.168.129.51:5000"
-
+const server = process.env.REACT_APP_SERVER;
 
 export {};
 

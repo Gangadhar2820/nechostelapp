@@ -1,12 +1,8 @@
 import axios from "axios"
 import { updateStudentProfile } from "./StudentService";
 
-// const server = "http://192.168.14.124:5000";
-// const server = "http://192.168.129.51:5000"
 
-
-const server = "https://hostelportal-backend.onrender.com"
-
+const server = process.env.REACT_APP_SERVER;
 
 export const getIncharge = async (eid:string)=>{
     try{
@@ -102,12 +98,21 @@ export const getTotalHostelStats = async (hostelId:string)=>{
     }
 }
 
-export const getTodayHostelStats = async (hostelId:string)=>{
+export const getTodayAcceptedHostelStats = async (hostelId:string)=>{
     try{
-        const response = await axios.get(`${server}/requests/getTodayrequests/${hostelId}`);
+        const response = await axios.get(`${server}/requests/getTodayAcceptedRequests/${hostelId}`);
         return response.data;
     }catch(error){
-        console.log("Error : while getting Today hostel statistics",error)
+        console.log("Error : while getting Today Accepted hostel statistics",error)
+    }
+}
+
+export const getTodayArrivedHostelStats = async (hostelId:string)=>{
+    try{
+        const response = await axios.get(`${server}/requests/getTodayArrivedRequests/${hostelId}`);
+        return response.data;
+    }catch(error){
+        console.log("Error : while getting Today Arrived hostel statistics",error)
     }
 }
 

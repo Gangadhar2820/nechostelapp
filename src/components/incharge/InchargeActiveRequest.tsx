@@ -29,6 +29,9 @@ function InchargeActiveRequest() {
 
   const [isArriving,setIsArriving] = useState<boolean>(false);
 
+  const [activeRID,setActiveRID] = useState<string>("");
+
+
   useEffect(() => {
     if (incharge?.hostelId) {
       getActiveRequests(incharge?.hostelId)
@@ -70,6 +73,7 @@ function InchargeActiveRequest() {
           <InputIcon className="pi pi-search" />
           <InputText
             value={globalFilterValue}
+            id="inc-act-req-filter"
             onChange={(e) => {
               setGlobalFilterValue(e.target.value);
             }}
@@ -128,14 +132,14 @@ function InchargeActiveRequest() {
   const ArrivedButton = (request: Permission | Leave) => {
     return (
       <Button
-        label={isArriving?"Arriving":"Arrived"}
+        label={(isArriving && activeRID === request.id)?"Arriving":"Arrived"}
         icon="pi pi-sign-in"
         severity="info"
         onClick={() => {
           handleRequestArrive(request?.id,request?.rollNo, request?.type);
         }}
       >&nbsp;&nbsp;
-      {isArriving && <i className="pi pi-spin pi-spinner"></i>}
+      {(isArriving && activeRID=== request.id) && <i className="pi pi-spin pi-spinner"></i>}
 
       </Button>
     );
@@ -144,7 +148,7 @@ function InchargeActiveRequest() {
   const handleRequestArrive = (id:string,rollNo: string, type: string) => {
     const accept = () => {
       setIsArriving(true);
-
+      setActiveRID(id);
       if(type==="LEAVE"){
         let arrRequest = leaves.filter(request=>request.id===id)[0];
         let newLeaves = leaves.filter(request=>request.id!==id);
