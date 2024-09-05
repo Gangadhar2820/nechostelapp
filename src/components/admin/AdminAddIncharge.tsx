@@ -63,7 +63,7 @@ function AdminAddIncharge() {
           }
           setNewIncharge({
             eid: "",
-            hostelId: "",
+            hostelId: "label",
             designation: "",
             name: "",
             phoneNo: "",

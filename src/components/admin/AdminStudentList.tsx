@@ -62,7 +62,7 @@ function AdminStudentList() {
         <Button
           type="button"
           icon="pi pi-filter-slash"
-          label="Clear"
+          label=""
           outlined
           onClick={() => {
             setGlobalFilterValue("");

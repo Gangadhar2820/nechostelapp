@@ -85,7 +85,6 @@ function AdminArrivedRequests() {
         <Button
           type="button"
           icon="pi pi-filter-slash"
-          label="Clear"
           outlined
           onClick={() => {
             setGlobalFilterValue("");
@@ -325,14 +324,12 @@ function AdminArrivedRequests() {
                 className="font-bold"
                 header="Hostel ID"
                 sortable
-                frozen
               ></Column>
               <Column
                 field="rollNo"
                 className="font-bold"
                 header="Roll Number"
                 sortable
-                frozen
               ></Column>
               
               <Column
@@ -400,14 +397,12 @@ function AdminArrivedRequests() {
                 className="font-bold"
                 header="Hostel ID"
                 sortable
-                frozen
               ></Column>
               <Column
                 field="rollNo"
                 className="font-bold"
                 header="Roll Number"
                 sortable
-                frozen
               ></Column>
              
               <Column
