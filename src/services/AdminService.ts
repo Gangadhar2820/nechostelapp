@@ -97,6 +97,18 @@ export const createLog = async (newLog:LOG)=>{
   }
 }
 
+export const getLogs = async (date: Date) => {
+  try {
+    const response = await axios.post(`${server}/logs/getLogs`,{date:date},{
+      headers:{
+        "Content-Type":"application/json"
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error : while getting Log data", error);
+  }
+};
 
 
 export {};

@@ -13,6 +13,7 @@ import { InputIcon } from 'primereact/inputicon'
 import { InputText } from 'primereact/inputtext'
 
 import {LOG} from "../interfaces/Log"
+import { getLogs } from '../../services/AdminService'
 
 function AdminLogs() {
 
@@ -27,16 +28,13 @@ function AdminLogs() {
   const handleLogsFormSubmit = (event:React.FormEvent<HTMLFormElement>)=>{
     event.preventDefault();
     setIsSearching(true);
-    setTimeout(() => {
-      const mylogs:LOG[] = [{date:new Date(),username:"Gangadhar",userId:"521",action:"added new student 21471a0520"},
-        {date:new Date(),username:"Gangadhar",userId:"521",action:"added new student 21471a0520"},
-        {date:new Date(),username:"Gangadhar",userId:"522",action:"added new student 21471a0520"},
-        {date:new Date(),username:"Gangadhar",userId:"523",action:"added new student 21471a0520"},
-      ]
+    getLogs(date as Date).then((data)=>{
       setIsSearching(false);
-      setLogs(mylogs);
-      
-    }, 2000);
+      setLogs(data)
+    }).catch((err)=>{
+      console.log("something went wrong",err)
+    })
+
   }
 
   const renderHeader = ()=>{
@@ -106,10 +104,12 @@ function AdminLogs() {
                 </div> 
 
             <div className="col-12 sm:col-6 md:col-4 mt-3">
-              <Button type="submit" disabled={isSearching}>
-                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
+              <Button type="submit" disabled={isSearching}
+                className="w-full sm:w-auto text-center"
+                label={isSearching ? "Searching" : "Search"}
+             >
                 &nbsp;&nbsp;
-                {isSearching ? "Searching" : "Search"}
+                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
               </Button>
             </div>
           </form>
@@ -129,12 +129,12 @@ function AdminLogs() {
                 header="Logged Time"
                 field="date"
                 body={dateTemplate}
-                style={{ minWidth: "120px" }}
+                // style={{ minWidth: "120px" }}
                 sortable
               ></Column>
 
         <Column field="userId" header="User ID" sortable></Column>
-        <Column field="userName" header="User Name"></Column>
+        <Column field="username" header="Username"></Column>
         <Column field="action" header="Action" className='w-auto'></Column>
 
       </DataTable>

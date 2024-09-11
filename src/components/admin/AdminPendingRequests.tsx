@@ -34,10 +34,9 @@ function AdminPendingRequests() {
 
   const pendingRequestToast = useRef<Toast>(null);
 
-  const [isAccepting,setIsAccepting] = useState<boolean>(false);
-  const [isRejecting,setIsRejecting] = useState<boolean>(false);
-  const [activeRID,setActiveRID] = useState<string>("");
-
+  const [isAccepting, setIsAccepting] = useState<boolean>(false);
+  const [isRejecting, setIsRejecting] = useState<boolean>(false);
+  const [activeRID, setActiveRID] = useState<string>("");
 
   useEffect(() => {
     if (admin) {
@@ -139,7 +138,7 @@ function AdminPendingRequests() {
   const RejectRequestButton = (request: Permission | Leave) => {
     return (
       <Button
-        label={(isRejecting && activeRID===request.id) ? "Rejecting" : "Reject"}
+        label={isRejecting && activeRID === request.id ? "Rejecting" : "Reject"}
         icon="pi pi-ban"
         severity="danger"
         onClick={() => {
@@ -147,7 +146,9 @@ function AdminPendingRequests() {
         }}
       >
         &nbsp;&nbsp;
-        {(isRejecting && activeRID===request.id) && <i className="pi pi-spin pi-spinner"></i>}
+        {isRejecting && activeRID === request.id && (
+          <i className="pi pi-spin pi-spinner"></i>
+        )}
       </Button>
     );
   };
@@ -155,7 +156,7 @@ function AdminPendingRequests() {
   const AcceptRequestButton = (request: Permission | Leave) => {
     return (
       <Button
-        label={(isAccepting && activeRID===request.id) ? "Accepting" : "Accept"}
+        label={isAccepting && activeRID === request.id ? "Accepting" : "Accept"}
         icon="pi pi-verified"
         severity="success"
         onClick={() => {
@@ -163,7 +164,9 @@ function AdminPendingRequests() {
         }}
       >
         &nbsp;&nbsp;
-        {(isAccepting && activeRID===request.id) && <i className="pi pi-spin pi-spinner"></i>}
+        {isAccepting && activeRID === request.id && (
+          <i className="pi pi-spin pi-spinner"></i>
+        )}
       </Button>
     );
   };
@@ -175,7 +178,7 @@ function AdminPendingRequests() {
   ) => {
     const accept = () => {
       setActiveRID(id);
-      setIsRejecting(true)
+      setIsRejecting(true);
       if (type === "LEAVE") {
         let rejRequest = leaves.filter((request) => request.id === id)[0];
         let newLeaves = leaves.filter((request) => request.id !== id);
@@ -194,15 +197,13 @@ function AdminPendingRequests() {
           setIsRejecting(false);
 
           if (data?.updated) {
-
-              let myLog: LOG = {
-                date: new Date(),
-                userId: admin.eid,
-                username: admin.name as string,
-                action: `Rejected ${rejRequest.rollNo} Leave`,
-              }
-              createLog(myLog);
-
+            let myLog: LOG = {
+              date: new Date(),
+              userId: admin.eid,
+              username: admin.name as string,
+              action: `Rejected ${rejRequest.rollNo} Leave`,
+            };
+            createLog(myLog);
 
             if (pendingRequestToast?.current) {
               pendingRequestToast?.current.show({
@@ -228,14 +229,14 @@ function AdminPendingRequests() {
         };
         AcceptORRejectRequest(id, rejRequest).then((data) => {
           setPermissions(newPermissions);
-          setIsRejecting(false)
+          setIsRejecting(false);
           if (data.updated) {
             let myLog: LOG = {
               date: new Date(),
               userId: admin.eid,
               username: admin.name as string,
               action: `Rejected ${rejRequest.rollNo} Permission`,
-            }
+            };
             createLog(myLog);
             if (pendingRequestToast?.current) {
               pendingRequestToast?.current.show({
@@ -287,7 +288,7 @@ function AdminPendingRequests() {
               userId: admin.eid,
               username: admin.name as string,
               action: `Accepted ${accRequest.rollNo} Leave`,
-            }
+            };
             createLog(myLog);
 
             if (pendingRequestToast?.current) {
@@ -317,20 +318,22 @@ function AdminPendingRequests() {
           setPermissions(newPermissions);
           setIsAccepting(false);
 
-          let myLog: LOG = {
-            date: new Date(),
-            userId: admin.eid,
-            username: admin.name as string,
-            action: `Accepted ${accRequest.rollNo} Permission`,
-          }
-          createLog(myLog);
-          
-          if (pendingRequestToast?.current) {
-            pendingRequestToast?.current.show({
-              severity: "success",
-              summary: `${rollNo} ${type} is Accepted`,
-              detail: "",
-            });
+          if (data.updated) {
+            let myLog: LOG = {
+              date: new Date(),
+              userId: admin.eid,
+              username: admin.name as string,
+              action: `Accepted ${accRequest.rollNo} Permission`,
+            };
+            createLog(myLog);
+
+            if (pendingRequestToast?.current) {
+              pendingRequestToast?.current.show({
+                severity: "success",
+                summary: `${rollNo} ${type} is Accepted`,
+                detail: "",
+              });
+            }
           }
         });
       }
