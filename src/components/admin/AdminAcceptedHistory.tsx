@@ -5,8 +5,7 @@ import { DataTable } from "primereact/datatable";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
-import React, { useContext, useState } from "react";
-import { InchargeContext } from "./InchargeHome";
+import React, {  useState } from "react";
 import { Nullable } from "primereact/ts-helpers";
 import { Calendar } from "primereact/calendar";
 import { FloatLabel } from "primereact/floatlabel";
@@ -18,12 +17,11 @@ import {
   getDateAfterDays,
   getDateBeforeDays,
 } from "../interfaces/Date";
-import { getArrivedRequests } from "../../services/InchargeService";
+import { AcceptedHistory } from "../../services/InchargeService";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 
-function InchargeArrivedRequest() {
+function AdminAcceptedHistory() {
 
-  const incharge = useContext(InchargeContext);
   const [selectionOption, setSelectionOption] = useState<string>("Permissions");
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [leaves, setLeaves] = useState<Leave[]>([]);
@@ -60,7 +58,7 @@ function InchargeArrivedRequest() {
       enddDate = getDateAfterDays(toDate as Date, 1);
     }
 
-    getArrivedRequests(incharge?.hostelId, starttDate as Date, enddDate as Date)
+    AcceptedHistory("all", starttDate as Date, enddDate as Date)
       .then((data) => {
         setIsSearching(false);
         let leaves: any = [];
@@ -87,7 +85,6 @@ function InchargeArrivedRequest() {
         <Button
           type="button"
           icon="pi pi-filter-slash"
-          label=""
           outlined
           onClick={() => {
             setGlobalFilterValue("");
@@ -97,7 +94,7 @@ function InchargeArrivedRequest() {
           <InputIcon className="pi pi-search" />
           <InputText
             value={globalFilterValue}
-            id="inc-arr-req-filter"
+            id="ad-arr-req-filter"
             onChange={(e) => {
               setGlobalFilterValue(e.target.value);
             }}
@@ -128,7 +125,7 @@ function InchargeArrivedRequest() {
     return "";
   };
 
- 
+
 
   const arrivedTime = (data: any) => {
     if (data.arrived) {
@@ -206,13 +203,13 @@ function InchargeArrivedRequest() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Arrived Students">
+        <Card title="Accepted History">
           <form onSubmit={handleListStudentForm} className="grid">
             <div className="col-12 sm:col-6 md:col-4 mt-3">
               <div className="custom-select-container w-full">
                 <select
                   className="custom-select"
-                  id="inc-arr-req-timestamp"
+                  id="ad-arr-req-timestamp"
                   value={timePeriod}
                   onChange={(e) => {
                     setTimePeriod(e.target.value);
@@ -241,7 +238,7 @@ function InchargeArrivedRequest() {
                       className="w-12 md:w-8"
                       showButtonBar
                       hourFormat="12"
-                      dateFormat="dd-mm-yy"
+                      dateFormat="dd/mm/yy"
                     />
                     <label htmlFor="inc-arr-req-fromDate">From Date</label>
                   </FloatLabel>
@@ -256,8 +253,7 @@ function InchargeArrivedRequest() {
                       className="w-12 md:w-8"
                       showButtonBar
                       hourFormat="12"
-                      dateFormat="dd-mm-yy"
-
+                      dateFormat="dd/mm/yy"
                     />
                     <label htmlFor="inc-arr-req-toDate">To Date</label>
                   </FloatLabel>
@@ -325,11 +321,18 @@ function InchargeArrivedRequest() {
               selectionMode="single"
             >
               <Column
+                field="hostelId"
+                className="font-bold"
+                header="Hostel ID"
+                sortable
+              ></Column>
+              <Column
                 field="rollNo"
                 className="font-bold"
                 header="Roll Number"
                 sortable
               ></Column>
+              
               <Column
                 header="From Date"
                 field="fromDate"
@@ -390,12 +393,19 @@ function InchargeArrivedRequest() {
               tableStyle={{ minWidth: "50rem" }}
               selectionMode="single"
             >
+               <Column
+                field="hostelId"
+                className="font-bold"
+                header="Hostel ID"
+                sortable
+              ></Column>
               <Column
                 field="rollNo"
                 className="font-bold"
                 header="Roll Number"
                 sortable
               ></Column>
+             
               <Column
                 header="Date"
                 field="date"
@@ -455,4 +465,4 @@ function InchargeArrivedRequest() {
   );
 }
 
-export default InchargeArrivedRequest;
+export default AdminAcceptedHistory;

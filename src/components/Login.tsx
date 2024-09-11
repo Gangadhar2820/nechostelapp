@@ -9,16 +9,11 @@ import { jwtDecode } from "jwt-decode";
 import {
   AuthenticateAdminLogin,
   AuthenticateInchargeLogin,
-  AuthenticateStudentLogin,
 } from "../services/LoginService";
-import { useStudentAuth } from "../utils/StudentAuth";
 import { useInchargeAuth } from "../utils/InchargeAuth";
 import { useAdminAuth } from "../utils/AdminAuth";
+import { useFacultyAuth } from "../utils/FacultyAuth";
 
-interface CustomStudentJwtPayload {
-  rollNo: string;
-  id: string;
-}
 
 interface CustomInchargeJwtPayload {
   eid: string;
@@ -31,18 +26,18 @@ interface CustomAdminJwtPayload {
 }
 
 function Login() {
-  const [stuUsername, setStuUsername] = useState<string>("");
-  const [stuPassword, setStuPassword] = useState<string>("");
+  const [facUsername, setFacUsername] = useState<string>("");
+  const [facPassword, setFacPassword] = useState<string>("");
   const [incUsername, setIncUsername] = useState<string>("");
   const [incPassword, setIncPassword] = useState<string>("");
   const [adminUsername, setAdminUsername] = useState<string>("");
   const [adminPassword, setAdminPassword] = useState<string>("");
 
-  const [showStuLoading, setShowStuLoading] = useState<boolean>(false);
+  const [showFacLoading, setShowFacLoading] = useState<boolean>(false);
   const [showIncLoading, setShowIncLoading] = useState<boolean>(false);
   const [showAdminLoading, setShowAdminLoading] = useState<boolean>(false);
 
-  const { studentLogin, studentLogout } = useStudentAuth();
+  const { facultyLogin, facultyLogout } = useFacultyAuth();
   const { inchargeLogin, inchargeLogout } = useInchargeAuth();
   const { adminLogin, adminLogout } = useAdminAuth();
 
@@ -51,64 +46,57 @@ function Login() {
   const Navigate = useNavigate();
 
   useEffect(() => {
-    const studentExist = localStorage.getItem("studentExist");
+    const facultyExist = localStorage.getItem("facultyExist");
     const inchargeExist = localStorage.getItem("inchargeExist");
     const adminExist = localStorage.getItem("adminExist");
 
-    if (studentExist && localStorage.getItem("studentToken")) {
-      const decoded = jwtDecode<CustomStudentJwtPayload>(
-        localStorage.getItem("studentToken") as string
-      );
-      const rollNo = decoded.rollNo;
-      Navigate(`student/${rollNo}`, { replace: true });
+    if (facultyExist) {
+      Navigate(`/faculty`, { replace: true });
     } else if (inchargeExist && localStorage.getItem("inchargeToken")) {
       const decoded = jwtDecode<CustomInchargeJwtPayload>(
         localStorage.getItem("inchargeToken") as string
       );
       const eid = decoded.eid;
-      Navigate(`incharge/${eid}`, { replace: true });
+      Navigate(`/incharge/${eid}`, { replace: true });
     } else if (adminExist && localStorage.getItem("adminToken")) {
       const decoded = jwtDecode<CustomAdminJwtPayload>(
         localStorage.getItem("adminToken") as string
       );
       const eid = decoded.eid;
-      Navigate(`admin/${eid}`, { replace: true });
+      Navigate(`/admin/${eid}`, { replace: true });
     }
   }, [Navigate]);
 
-  const handleStudentSigninForm = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFacultySigninForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setShowStuLoading(true);
-
-    AuthenticateStudentLogin(stuUsername, stuPassword)
-      .then((data) => {
-        setShowStuLoading(false);
-        const { success, token } = data;
-        if (success) {
-          if (loginToast.current) {
-            loginToast.current.show({
-              severity: "success",
-              summary: "Login Successful !",
-              detail: "Welcome, User",
-            });
-          }
-
-          studentLogin(token);
-          Navigate(`/student/${stuUsername}`, { replace: true });
-        } else {
-          if (loginToast.current) {
-            loginToast.current.show({
-              severity: "warn",
-              summary: "Invalid Credentials",
-              detail: "Check Username or Password",
-            });
-          }
-          studentLogout();
+    setShowFacLoading(true);
+    setTimeout(() => {
+      setShowFacLoading(false);
+      if(facUsername==="111" && facPassword==="111"){
+        if (loginToast.current) {
+          loginToast.current.show({
+            severity: "success",
+            summary: "Login Successful !",
+            detail: "Welcome, User",
+          });
         }
-      })
-      .catch((err) => {
-        console.log("there is error", err);
-      });
+        facultyLogin();
+        Navigate(`/faculty`, { replace: true });
+      }else{
+        if (loginToast.current) {
+          loginToast.current.show({
+            severity: "warn",
+            summary: "Invalid Credentials",
+            detail: "Check Username or Password",
+          });
+        }
+        facultyLogout();
+
+      }
+      
+    }, 2000);
+
+       
   };
 
   const handleInchargeSigninForm = (
@@ -131,7 +119,7 @@ function Login() {
             });
           }
           inchargeLogin(token);
-          Navigate(`incharge/${incUsername}`, { replace: true });
+          Navigate(`/incharge/${incUsername}`, { replace: true });
         } else {
           if (loginToast.current) {
             loginToast.current.show({
@@ -166,7 +154,7 @@ function Login() {
             });
           }
           adminLogin(token);
-          Navigate(`admin/${adminUsername}`, { replace: true });
+          Navigate(`/admin/${adminUsername}`, { replace: true });
         } else {
           if (loginToast.current) {
             loginToast.current.show({
@@ -203,29 +191,19 @@ function Login() {
             className="mr-4 h-4rem hidden sm:block"
           />
       </div>
-
       <div className="flex align-items-center justify-content-center mt-3">
         <div className="surface-card p-4 shadow-2 border-round w-full lg:w-5">
           <TabView>
-            <TabPanel header="Student">
+            <TabPanel header="Faculty">
               <div className="text-center mb-5">
                 <div className="text-900 text-2xl font-medium mb-2">
-                  Student Sign In
+                  Faculty Sign In
                 </div>
-                <span className="text-600 font-medium line-height-2">
-                  Don't have an account?
-                </span>
-                <Link
-                  className="font-medium no-underline ml-2 text-blue-500  cursor-pointer mt-2"
-                  to="/studentregister"
-                >
-                  Register
-                </Link>
               </div>
               <div>
-                <form onSubmit={handleStudentSigninForm}>
+                <form onSubmit={handleFacultySigninForm}>
                   <label
-                    htmlFor="stu-username"
+                    htmlFor="fac-username"
                     className="block text-900 font-medium mb-1"
                   >
                     Username
@@ -236,10 +214,10 @@ function Login() {
                       <i className="pi pi-user"></i>
                     </span>
                     <InputText
-                      id="stu-username"
-                      value={stuUsername}
+                      id="fac-username"
+                      value={facUsername}
                       onChange={(e) => {
-                        setStuUsername(e.target.value.toUpperCase());
+                        setFacUsername(e.target.value);
                       }}
                       placeholder="Username"
                       required
@@ -247,7 +225,7 @@ function Login() {
                   </div>
 
                   <label
-                    htmlFor="stu-password"
+                    htmlFor="fac-password"
                     className="block text-900 font-medium mb-1"
                   >
                     Password
@@ -257,12 +235,12 @@ function Login() {
                       <i className="pi pi-lock"></i>
                     </span>
                     <InputText
-                      id="stu-password"
+                      id="fac-password"
                       type="password"
                       placeholder="Password"
-                      value={stuPassword}
+                      value={facPassword}
                       onChange={(e) => {
-                        setStuPassword(e.target.value);
+                        setFacPassword(e.target.value);
                       }}
                       required
                     />
@@ -270,7 +248,7 @@ function Login() {
                       className="p-inputgroup-addon"
                       onClick={() => {
                         const ele = document.getElementById(
-                          "stu-password"
+                          "fac-password"
                         ) as HTMLInputElement | null;
                         if (ele) {
                           if (ele.type == "text") {
@@ -285,24 +263,16 @@ function Login() {
                     </span>
                   </div>
                   <Button
-                    label={`${showStuLoading ? `Signing` : "Sign in"}`}
-                    disabled={showStuLoading}
+                    label={`${showFacLoading ? `Signing` : "Sign in"}`}
+                    disabled={showFacLoading}
                     type="submit"
                     className="w-full"
                   >
-                    {showStuLoading && (
+                    {showFacLoading && (
                       <i className="pi pi-spin pi-spinner"></i>
                     )}
                   </Button>
                 </form>
-              </div>
-              <div className="flex align-items-center justify-content-end">
-                <Link
-                  className="font-medium no-underline ml-2 text-blue-500  cursor-pointer mt-2"
-                  to="/studentfpassword"
-                >
-                  Forgot your password ?
-                </Link>
               </div>
             </TabPanel>
 

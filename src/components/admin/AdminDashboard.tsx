@@ -1,6 +1,6 @@
 import { Card } from "primereact/card";
 import React, {  useEffect, useState } from "react";
-import { getTodayAcceptedHostelStats, getTotalHostelStats,getTodayArrivedHostelStats } from "../../services/InchargeService";
+import { getTodayAcceptedHostelStats, getTotalHostelStats,getTodayArrivedHostelStats, getCollegeYearWiseData } from "../../services/InchargeService";
 import { Chip } from "primereact/chip";
 import { Button } from "primereact/button";
 import { Leave, Permission } from "../interfaces/Request";
@@ -23,6 +23,32 @@ interface TodayStats{
   permissionsList:[]
 }
 
+interface NEC{
+  Iyear:number;
+  IIyear:number;
+  IIIyear:number;
+  IVyear:number;
+  total:number;
+}
+
+interface NIT{
+  Iyear:number;
+  IIyear:number;
+  IIIyear:number;
+  IVyear:number;
+  total:number;
+}
+
+interface NIPS{
+  Iyear:number;
+  IIyear:number;
+  IIIyear:number;
+  IVyear:number;
+  Vyear:number;
+  VIyear:number;
+  total:number;
+}
+
 function AdminDashboard() {
 
  
@@ -41,6 +67,15 @@ function AdminDashboard() {
   const [activeLeaveList,setActiveLeaveList] = useState<Leave[]>([]);
 
   const [title,setTitle] = useState<string>("");
+
+  const [BH1NECTotalData,setBH1NECTotalData] = useState<NEC | null>(null);
+  const [BH1NITTotalData,setBH1NITTotalData] = useState<NIT | null>(null);
+  const [BH1NIPSTotalData,setBH1NIPSTotalData] = useState<NIPS | null>(null);
+
+  const [GH1NECTotalData,setGH1NECTotalData] = useState<NEC | null>(null);
+  const [GH1NITTotalData,setGH1NITTotalData] = useState<NIT | null>(null);
+  const [GH1NIPSTotalData,setGH1NIPSTotalData] = useState<NIPS | null>(null);
+
 
   useEffect(() => {
     getTotalHostelStats("BH1")
@@ -83,6 +118,40 @@ function AdminDashboard() {
 
       getTodayArrivedHostelStats("GH1").then((data)=>{
         setGH1TodayArrivedStats({leaves:data.leave,permissions:data.permission,total:data.total,permissionsList:data.permissionArray,leavesList:data.leaveArray})
+      })
+
+      getCollegeYearWiseData("BH1").then((data)=>{
+        const {NEC,NIT,NIPS} = data;
+        setBH1NECTotalData({Iyear:NEC.IYear,IIyear:NEC.IIYear,IIIyear:NEC.IIIYear,
+          IVyear:NEC.IVYear,total:(NEC.IYear+NEC.IIYear+NEC.IIIYear+NEC.IVYear)
+        })
+        setBH1NITTotalData({Iyear:NIT.IYear,IIyear:NIT.IIYear,IIIyear:NIT.IIIYear,
+          IVyear:NIT.IVYear,total:(NIT.IYear+NIT.IIYear+NIT.IIIYear+NIT.IVYear)
+        })
+        setBH1NIPSTotalData({Iyear:NIPS.IYear,IIyear:NIPS.IIYear,IIIyear:NIPS.IIIYear,
+          IVyear:NIPS.IVYear,
+          total:(NIPS.IYear+NIPS.IIYear+NIPS.IIIYear+NIPS.IVYear+NIPS.VYear+NIPS.VIYear),
+          Vyear:NIPS.VYear,VIyear:NIPS.VIYear
+        })
+      }).catch((err)=>{
+        console.log("something went wrong",err)
+      })
+
+      getCollegeYearWiseData("GH1").then((data)=>{
+        const {NEC,NIT,NIPS} = data;
+        setGH1NECTotalData({Iyear:NEC.IYear,IIyear:NEC.IIYear,IIIyear:NEC.IIIYear,
+          IVyear:NEC.IVYear,total:(NEC.IYear+NEC.IIYear+NEC.IIIYear+NEC.IVYear)
+        })
+        setGH1NITTotalData({Iyear:NIT.IYear,IIyear:NIT.IIYear,IIIyear:NIT.IIIYear,
+          IVyear:NIT.IVYear,total:(NIT.IYear+NIT.IIYear+NIT.IIIYear+NIT.IVYear)
+        })
+        setGH1NIPSTotalData({Iyear:NIPS.IYear,IIyear:NIPS.IIYear,IIIyear:NIPS.IIIYear,
+          IVyear:NIPS.IVYear,
+          total:(NIPS.IYear+NIPS.IIYear+NIPS.IIIYear+NIPS.IVYear+NIPS.VYear+NIPS.VIYear),
+          Vyear:NIPS.VYear,VIyear:NIPS.VIYear
+        })
+      }).catch((err)=>{
+        console.log("something went wrong",err)
       })
 
       
@@ -137,6 +206,20 @@ function AdminDashboard() {
   const studentCardHeader = () => {
     return <h4 className="text-center">Students</h4>;
   };
+
+  const NECCardHeader = () => {
+    return <h4 className="text-center">NEC</h4>;
+  };
+
+  const NITCardHeader = () => {
+    return <h4 className="text-center">NIT</h4>;
+  };
+
+  const NIPSCardHeader = () => {
+    return <h4 className="text-center">NIPS</h4>;
+  };
+
+
   return (
     <>
             <Dialog
@@ -237,6 +320,140 @@ function AdminDashboard() {
               </div>
             </div>
           </Card>
+
+          <Card
+            header={NECCardHeader}
+            className="col-12 sm:col-6 lg:col-4 mt-2"
+          >
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                I Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {BH1NECTotalData?.Iyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                II Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {BH1NECTotalData?.IIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">III Year</div>
+              <div className="text-900 font-bold m-1">
+                {BH1NECTotalData?.IIIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">IV Year</div>
+              <div className="text-900 font-bold m-1">
+                {BH1NECTotalData?.IVyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
+              <div className="text-500 font-bold font-medium m-1">Total</div>
+              <div className="text-900 font-bold m-1">
+                {BH1NECTotalData?.total}
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            header={NITCardHeader}
+            className="col-12 sm:col-6 lg:col-4 mt-2"
+          >
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                I Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {BH1NITTotalData?.Iyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                II Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {BH1NITTotalData?.IIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">III Year</div>
+              <div className="text-900 font-bold m-1">
+                {BH1NITTotalData?.IIIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">IV Year</div>
+              <div className="text-900 font-bold m-1">
+                {BH1NITTotalData?.IVyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
+              <div className="text-500 font-bold font-medium m-1">Total</div>
+              <div className="text-900 font-bold m-1">
+                {BH1NITTotalData?.total}
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            header={NIPSCardHeader}
+            className="col-12 sm:col-6 lg:col-4 mt-2"
+          >
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                I Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {BH1NIPSTotalData?.Iyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                II Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {BH1NIPSTotalData?.IIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">III Year</div>
+              <div className="text-900 font-bold m-1">
+                {BH1NIPSTotalData?.IIIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">IV Year</div>
+              <div className="text-900 font-bold m-1">
+                {BH1NIPSTotalData?.IVyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">V Year</div>
+              <div className="text-900 font-bold m-1">
+                {BH1NIPSTotalData?.Vyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">VI Year</div>
+              <div className="text-900 font-bold m-1">
+                {BH1NIPSTotalData?.VIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
+              <div className="text-500 font-bold font-medium m-1">Total</div>
+              <div className="text-900 font-bold m-1">
+                {BH1NIPSTotalData?.total}
+              </div>
+            </div>
+          </Card>
+
+
         </div>
 
         <div className="p-card grid mt-2 p-0">
@@ -313,6 +530,138 @@ function AdminDashboard() {
               <div className="text-500 font-bold font-medium m-1">Total</div>
               <div className="text-900 font-bold m-1">
                 {GH1TodayArrivedStats?.total}
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            header={NECCardHeader}
+            className="col-12 sm:col-6 lg:col-4 mt-2"
+          >
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                I Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {GH1NECTotalData?.Iyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                II Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {GH1NECTotalData?.IIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">III Year</div>
+              <div className="text-900 font-bold m-1">
+                {GH1NECTotalData?.IIIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">IV Year</div>
+              <div className="text-900 font-bold m-1">
+                {GH1NECTotalData?.IVyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
+              <div className="text-500 font-bold font-medium m-1">Total</div>
+              <div className="text-900 font-bold m-1">
+                {GH1NECTotalData?.total}
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            header={NITCardHeader}
+            className="col-12 sm:col-6 lg:col-4 mt-2"
+          >
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                I Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {GH1NITTotalData?.Iyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                II Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {GH1NITTotalData?.IIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">III Year</div>
+              <div className="text-900 font-bold m-1">
+                {GH1NITTotalData?.IIIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">IV Year</div>
+              <div className="text-900 font-bold m-1">
+                {GH1NITTotalData?.IVyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
+              <div className="text-500 font-bold font-medium m-1">Total</div>
+              <div className="text-900 font-bold m-1">
+                {GH1NITTotalData?.total}
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            header={NIPSCardHeader}
+            className="col-12 sm:col-6 lg:col-4 mt-2"
+          >
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                I Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {GH1NIPSTotalData?.Iyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                II Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {GH1NIPSTotalData?.IIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">III Year</div>
+              <div className="text-900 font-bold m-1">
+                {GH1NIPSTotalData?.IIIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">IV Year</div>
+              <div className="text-900 font-bold m-1">
+                {GH1NIPSTotalData?.IVyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">V Year</div>
+              <div className="text-900 font-bold m-1">
+                {GH1NIPSTotalData?.Vyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">VI Year</div>
+              <div className="text-900 font-bold m-1">
+                {GH1NIPSTotalData?.VIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
+              <div className="text-500 font-bold font-medium m-1">Total</div>
+              <div className="text-900 font-bold m-1">
+                {GH1NIPSTotalData?.total}
               </div>
             </div>
           </Card>

@@ -14,6 +14,8 @@ import { StudentContext } from "./StudentHome";
 import { Permission , Leave } from "../interfaces/Request";
 import { Link } from "react-router-dom";
 import { applyRequest } from "../../services/StudentService";
+import { createLog } from "../../services/AdminService";
+import { LOG } from "../interfaces/Log";
 
 function StudentLeave() {
   const [selectionOption, setSelectionOption] = useState<string>("Permission");
@@ -120,6 +122,8 @@ function StudentLeave() {
       setIsApplying(false);
       if(data.success){
       if (selectionOption === "Leave") {
+        let myLog:LOG = {date:new Date(),userId:student.rollNo,username:student.name as string,action:"Applied Leave"}
+        createLog(myLog)
         if (PermissionLeaveToast.current) {
           PermissionLeaveToast.current.show({
             severity: "success",
@@ -128,6 +132,8 @@ function StudentLeave() {
           });
         }
     } else if (selectionOption === "Permission"){
+      let myLog:LOG = {date:new Date(),userId:student.rollNo,username:student.name as string,action:"Applied Permission"}
+        createLog(myLog)
         if (PermissionLeaveToast.current) {
           PermissionLeaveToast.current.show({
             severity: "success",

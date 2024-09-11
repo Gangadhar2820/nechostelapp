@@ -172,6 +172,18 @@ function InchargeHome() {
                         <span className="font-medium">Arrived Students</span>
                       </NavLink>
                     </li>
+                    <li>
+                      <NavLink
+                        to="acceptedhistory"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
+                        <i className="pi pi-check mr-2"></i>
+                        <span className="font-medium">Accepted History</span>
+                      </NavLink>
+                    </li>
 
                     <li>
                       <NavLink
@@ -296,6 +308,19 @@ function InchargeHome() {
                         }                      >
                         <i className="pi pi-list-check mr-2"></i>
                         <span className="font-medium">Arrived Students</span>
+                      </NavLink>
+                    </li>
+
+                    <li>
+                      <NavLink
+                        to="acceptedhistory"
+                        className={({ isActive }) =>{
+                          let result =`p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${isActive ? 'text-primary surface-100 text-primary' : 'text-white'}`;
+                          return result
+                        }
+                        }                      >
+                        <i className="pi pi-check mr-2"></i>
+                        <span className="font-medium">Accepted History</span>
                       </NavLink>
                     </li>
 

@@ -13,6 +13,8 @@ import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
 import { InchargeContext } from "./InchargeHome";
 import { ArriveRequest, getActiveRequests } from "../../services/InchargeService";
+import { createLog } from "../../services/AdminService";
+import { LOG } from "../interfaces/Log";
 
 function InchargeActiveRequest() {
 
@@ -162,6 +164,14 @@ function InchargeActiveRequest() {
           setLeaves(newLeaves);
           setIsArriving(false)
           if (data.updated) {
+              let myLog: LOG = {
+                date: new Date(),
+                userId: incharge.eid,
+                username: incharge.name as string,
+                action: `Arrived ${arrRequest.rollNo} from Leave`,
+              };
+              createLog(myLog);
+              
             if (activeRequestToast?.current) {
               activeRequestToast?.current.show({
                 severity: "info",
@@ -189,6 +199,15 @@ function InchargeActiveRequest() {
           setPermissions(newPermissions);
           setIsArriving(false);
           if (data.updated) {
+
+            let myLog: LOG = {
+              date: new Date(),
+              userId: incharge.eid,
+              username: incharge.name as string,
+              action: `Arrived ${arrRequest.rollNo} from Permission`,
+            };
+            createLog(myLog);
+
             if (activeRequestToast?.current) {
               activeRequestToast?.current.show({
                 severity: "info",

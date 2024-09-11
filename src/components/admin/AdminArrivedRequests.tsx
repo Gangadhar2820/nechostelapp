@@ -26,7 +26,7 @@ function AdminArrivedRequests() {
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [leaves, setLeaves] = useState<Leave[]>([]);
 
-  const [timePeriod, setTimePeriod] = useState<string>("last24hrs");
+  const [timePeriod, setTimePeriod] = useState<string>("label");
 
   const [fromDate, setFromDate] = useState<Nullable<Date>>(null);
   const [toDate, setToDate] = useState<Nullable<Date>>(null);
@@ -239,6 +239,8 @@ function AdminArrivedRequests() {
                       className="w-12 md:w-8"
                       showButtonBar
                       hourFormat="12"
+                      dateFormat="dd/mm/yy"
+
                     />
                     <label htmlFor="inc-arr-req-fromDate">From Date</label>
                   </FloatLabel>
@@ -253,6 +255,8 @@ function AdminArrivedRequests() {
                       className="w-12 md:w-8"
                       showButtonBar
                       hourFormat="12"
+                      dateFormat="dd/mm/yy"
+
                     />
                     <label htmlFor="inc-arr-req-toDate">To Date</label>
                   </FloatLabel>

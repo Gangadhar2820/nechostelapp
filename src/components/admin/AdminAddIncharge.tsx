@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
 import { Card } from "primereact/card";
@@ -6,6 +12,9 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { AdminInchargeRegisteration } from "../../services/RegisterService";
 import { Incharge } from "../interfaces/Incharge";
+import { createLog } from "../../services/AdminService";
+import { LOG } from "../interfaces/Log";
+import { AdminContext } from "./AdminHome";
 
 function AdminAddIncharge() {
   const [newIncharge, setNewIncharge] = useState<Incharge>({
@@ -15,6 +24,7 @@ function AdminAddIncharge() {
     name: "",
     phoneNo: "",
   });
+  const admin = useContext(AdminContext);
 
   const [password, setPassword] = useState<string>("");
   const [CPassword, setCPassword] = useState<string>("");
@@ -26,7 +36,7 @@ function AdminAddIncharge() {
   const ValidateForm = useCallback(() => {
     setIsFormValid(false);
     if (
-      newIncharge?.hostelId !== null &&
+      newIncharge?.hostelId !== "label" &&
       newIncharge?.name !== "" &&
       /^[0-9]{10}$/.test(newIncharge?.phoneNo as string) &&
       newIncharge?.eid !== "" &&
@@ -38,11 +48,11 @@ function AdminAddIncharge() {
     } else {
       setIsFormValid(false);
     }
-  },[newIncharge,password,CPassword]);
+  }, [newIncharge, password, CPassword]);
 
   useEffect(() => {
     ValidateForm();
-  }, [newIncharge, password, CPassword,ValidateForm]);
+  }, [newIncharge, password, CPassword, ValidateForm]);
 
   const handleAdminInchargeRegister = (
     event: React.FormEvent<HTMLFormElement>
@@ -54,6 +64,14 @@ function AdminAddIncharge() {
         setIsRegistering(false);
         const { success } = data;
         if (success) {
+          let myLog: LOG = {
+            date: new Date(),
+            userId: admin.eid,
+            username: admin.name as string,
+            action: `Added New Incharge ${newIncharge.eid}`,
+          };
+          createLog(myLog);
+
           if (adminInchargeToast.current) {
             adminInchargeToast.current.show({
               severity: "success",
@@ -73,7 +91,7 @@ function AdminAddIncharge() {
         } else {
           if (adminInchargeToast.current) {
             adminInchargeToast.current.show({
-              severity: "error", 
+              severity: "error",
               summary: "Register Failed",
               detail: "Incharge already exist",
             });
@@ -123,7 +141,6 @@ function AdminAddIncharge() {
                 </select>
               </div>
             </div>
-          
 
             <div className="col-12 md:col-6 mt-3">
               <FloatLabel>

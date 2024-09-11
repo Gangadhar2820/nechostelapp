@@ -84,7 +84,7 @@ function AdminStudentList() {
   };
 
   const tableHeader = renderHeader();
-  const StudentListHeader = <h2 className="m-0 pt-3 pl-3">List Students</h2>;
+  const StudentListHeader = <h2 className="m-0 pt-3 pl-3">Students List</h2>;
 
   return (
     <>
@@ -158,6 +158,8 @@ function AdminStudentList() {
                   <option value="2">II Year</option>
                   <option value="3">III Year</option>
                   <option value="4">IV Year</option>
+                  <option value="5">V Year</option>
+                  <option value="6">VI Year</option>
                 </select>
               </div>
             </div>
@@ -177,6 +179,7 @@ function AdminStudentList() {
                   </option>
                   <option value="ALL">All</option>
                   <option value="AI&ML">AI & ML</option>
+                  <option value="BPHARMACY">B Pharmacy</option>
                   <option value="CAI">CAI</option>
                   <option value="CE">CIVIL</option>
                   <option value="CS">CS (Cyber Security)</option>
@@ -190,6 +193,7 @@ function AdminStudentList() {
                   <option value="MBA">MBA</option>
                   <option value="MCA">MCA</option>
                   <option value="ME">MECH</option>
+                  <option value="PHARMD">Pharm D</option>
                 </select>
               </div>
             </div>

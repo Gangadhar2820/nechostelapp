@@ -6,7 +6,13 @@ import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 import { Toast } from "primereact/toast";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Student } from "../interfaces/Student";
 import { getStudent } from "../../services/StudentService";
 import ReqCard from "../student/ReqCard";
@@ -14,13 +20,16 @@ import { formatDate, parseDate } from "../interfaces/Date";
 import { Chip } from "primereact/chip";
 import {
   adminUpdateStudentProfile,
+  createLog,
   deleteStudent,
 } from "../../services/AdminService";
+import { LOG } from "../interfaces/Log";
+import { AdminContext } from "./AdminHome";
 
 function AdminViewStudent() {
   const [rollNumber, setRollNumber] = useState<string>("");
   const [student, setStudent] = useState<Student | null>(null);
-  const [studentOldData,setStudentOldData] = useState<Student|null>(null);
+  const [studentOldData, setStudentOldData] = useState<Student | null>(null);
 
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [isSearchFormValid, setIsSearchFormValid] = useState<boolean>(false);
@@ -33,6 +42,8 @@ function AdminViewStudent() {
   const ViewStudentToast = useRef<Toast>(null);
 
   const [enableEdit, setEnableEdit] = useState<boolean>(false);
+
+  const admin = useContext(AdminContext);
 
   const validateSearchForm = useCallback(() => {
     setIsSearchFormValid(false);
@@ -73,7 +84,16 @@ function AdminViewStudent() {
         adminUpdateStudentProfile(student)
           .then((data) => {
             setIsUpdating(false);
+
             if (data.updated) {
+              let myLog: LOG = {
+                date: new Date(),
+                userId: admin.eid,
+                username: admin.name as string,
+                action: `Updated Student  ${student.rollNo}`,
+              };
+              createLog(myLog);
+
               setStudentOldData(student);
               setEnableEdit(false);
               if (ViewStudentToast.current) {
@@ -116,6 +136,14 @@ function AdminViewStudent() {
       deleteStudent(rollNumber).then((data) => {
         setIsDeleting(false);
         if (data.deleted) {
+          let myLog: LOG = {
+            date: new Date(),
+            userId: admin.eid,
+            username: admin.name as string,
+            action: `Deleted Student  ${rollNumber}`,
+          };
+          createLog(myLog);
+
           setRollNumber("");
           setStudent(null);
           if (ViewStudentToast.current) {
@@ -243,8 +271,8 @@ function AdminViewStudent() {
                 severity={enableEdit ? "warning" : "info"}
                 label={enableEdit ? "Cancel" : "Edit"}
                 onClick={() => {
-                  if(!enableEdit){
-                    setStudent(studentOldData)
+                  if (!enableEdit) {
+                    setStudent(studentOldData);
                   }
                   setEnableEdit((prevValue) => !prevValue);
                 }}
@@ -506,19 +534,21 @@ function AdminViewStudent() {
                         Select Branch
                       </option>
                       <option value="AI&ML">AI & ML</option>
-                  <option value="CAI">CAI</option>
-                  <option value="CE">CIVIL</option>
-                  <option value="CS">CS (Cyber Security)</option>
-                  <option value="CSE">CSE</option>
-                  <option value="CSE-AI">CSE-AI</option>
-                  <option value="CSM(AI&ML)">CSM(AI&ML)</option>
-                  <option value="DS">DS (Data Science)</option>
-                  <option value="ECE">ECE</option>
-                  <option value="EEE">EEE</option>
-                  <option value="IT">IT</option>
-                  <option value="MBA">MBA</option>
-                  <option value="MCA">MCA</option>
-                  <option value="ME">MECH</option>
+                      <option value="BPHARMACY">B Pharmacy</option>
+                      <option value="CAI">CAI</option>
+                      <option value="CE">CIVIL</option>
+                      <option value="CS">CS (Cyber Security)</option>
+                      <option value="CSE">CSE</option>
+                      <option value="CSE-AI">CSE-AI</option>
+                      <option value="CSM(AI&ML)">CSM(AI&ML)</option>
+                      <option value="DS">DS (Data Science)</option>
+                      <option value="ECE">ECE</option>
+                      <option value="EEE">EEE</option>
+                      <option value="IT">IT</option>
+                      <option value="MBA">MBA</option>
+                      <option value="MCA">MCA</option>
+                      <option value="ME">MECH</option>
+                      <option value="PHARMD">Pharm D</option>
                     </select>
                   </div>
                 </div>
@@ -624,13 +654,17 @@ function AdminViewStudent() {
                       <li className="grid py-3 px-2 border-top-1 border-300">
                         <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
                           <div className="text-500 font-medium w-6">Name</div>
-                          <div className="text-900 w-6">{studentOldData?.name}</div>
+                          <div className="text-900 w-6">
+                            {studentOldData?.name}
+                          </div>
                         </div>
                         <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
                           <div className="text-500 font-medium w-6">
                             Roll Number
                           </div>
-                          <div className="text-900 w-6">{studentOldData?.rollNo}</div>
+                          <div className="text-900 w-6">
+                            {studentOldData?.rollNo}
+                          </div>
                         </div>
                       </li>
 
@@ -656,18 +690,24 @@ function AdminViewStudent() {
                       <li className="grid py-3 px-2 border-top-1 border-300">
                         <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
                           <div className="text-500 w-6 font-medium">Year</div>
-                          <div className="text-900 w-6">{studentOldData?.year}</div>
+                          <div className="text-900 w-6">
+                            {studentOldData?.year}
+                          </div>
                         </div>
                         <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
                           <div className="text-500 font-medium w-6">Branch</div>
-                          <div className="text-900 w-6">{studentOldData?.branch}</div>
+                          <div className="text-900 w-6">
+                            {studentOldData?.branch}
+                          </div>
                         </div>
                       </li>
 
                       <li className="grid py-3 px-2 border-top-1 border-300">
                         <div className="flex mt-1 mb-1  w-12 md:w-6 align-items-center justify-content-start">
                           <div className="text-500 w-6 font-medium">Gender</div>
-                          <div className="text-900 w-6">{studentOldData?.gender}</div>
+                          <div className="text-900 w-6">
+                            {studentOldData?.gender}
+                          </div>
                         </div>
                         <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
                           <div className="text-500 font-medium w-6">
@@ -684,11 +724,15 @@ function AdminViewStudent() {
                           <div className="text-500 w-6 font-medium">
                             Phone No
                           </div>
-                          <div className="text-900 w-6">{studentOldData?.phoneNo}</div>
+                          <div className="text-900 w-6">
+                            {studentOldData?.phoneNo}
+                          </div>
                         </div>
                         <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
                           <div className="text-500 font-medium w-6">Email</div>
-                          <div className="text-900 w-6">{studentOldData?.email}</div>
+                          <div className="text-900 w-6">
+                            {studentOldData?.email}
+                          </div>
                         </div>
                       </li>
 

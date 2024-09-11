@@ -116,5 +116,28 @@ export const getTodayArrivedHostelStats = async (hostelId:string)=>{
     }
 }
 
+export const AcceptedHistory = async (hostelId:string,startDate:Date,endDate:Date)=>{
+    try{
+        const response =await  axios.post(`${server}/requests/getAcceptedRequests/${hostelId}`,{startDate:startDate,endDate:endDate},{
+            headers:{
+                "Content-Type":"application/json"
+            }
+        });
+        return response.data
+    }catch(error){
+        console.log("Error : while getting Accepted History",error)
+    }
+}
+
+
+export const getCollegeYearWiseData = async (hostelId:string)=>{
+    try{
+        const response = await axios.get(`${server}/student/get/countsByClg/${hostelId}`);
+        return response.data;
+    }catch(error){
+        console.log("Error : while getting Colleges  year wise data",error)
+    }
+}
+
 
 export {}

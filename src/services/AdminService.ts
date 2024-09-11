@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Incharge } from "../components/interfaces/Incharge";
 import { Student } from "../components/interfaces/Student";
+import { LOG } from "../components/interfaces/Log";
 
 const server = process.env.REACT_APP_SERVER;
 
@@ -81,6 +82,20 @@ export const deleteStudent = async (rollNo: string) => {
     console.log("Error : while Deleting Student details", error);
   }
 };
+
+export const createLog = async (newLog:LOG)=>{
+  try{
+    const response = await axios.post(`${server}/logs/add-log`,newLog,        {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    return response.data;
+  }catch(error){
+    console.log("Error : while creating a log",error)
+
+  }
+}
 
 
 

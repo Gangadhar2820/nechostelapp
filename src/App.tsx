@@ -52,6 +52,14 @@ import AdminArrivedRequests from "./components/admin/AdminArrivedRequests";
 
 import AdminProtectedRoutes from "./utils/AdminProtectedRoutes";
 import AdminAuthProvider from "./utils/AdminAuth";
+import AdminAcceptedHistory from "./components/admin/AdminAcceptedHistory";
+import InchargeAcceptedHistory from "./components/incharge/InchargeAcceptedHistory";
+import AdminLogs from "./components/admin/AdminLogs";
+import FacultyHome from "./components/faculty/FacultyHome";
+import FacultyInchargeList from "./components/faculty/FacultyInchargeList";
+import FacultyProtectedRoutes from "./utils/FacultyProtectedRoutes";
+import StudentLogin from "./components/StudentLogin";
+import { FacultyAuthProvider } from "./utils/FacultyAuth";
 
 function App() {
   return (
@@ -59,13 +67,23 @@ function App() {
       <StudentAuthProvider>
         <InchargeAuthProvider>
           <AdminAuthProvider>
+            <FacultyAuthProvider>
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/studentregister"  element={<StudentRegister />}></Route>
-                <Route path="/studentfpassword"  element={<StudentForgotPassword />}></Route>
-                <Route path="/inchargefpassword" element={<InchargeForgotPassword />}></Route>
-             
+                <Route path="/" element={<StudentLogin />} />
+                <Route path="/admins" element={<Login />} />
+                <Route
+                  path="/studentregister"
+                  element={<StudentRegister />}
+                ></Route>
+                <Route
+                  path="/studentfpassword"
+                  element={<StudentForgotPassword />}
+                ></Route>
+                <Route
+                  path="/inchargefpassword"
+                  element={<InchargeForgotPassword />}
+                ></Route>
 
                 {/* student routes start */}
                 <Route element={<StudentProtectedRoutes />}>
@@ -88,11 +106,30 @@ function App() {
                     <Route path="dashboard" element={<InchargeDashboard />} />
                     <Route path="history" element={<InchargeHistory />} />
                     <Route path="inchargelist" element={<InchargeList />} />
-                    <Route path="viewstudent" element={<InchargeViewStudent />}/>
-                    <Route path="studentlist" element={<InchargeStudentList />}/>
-                    <Route path="pendingreq" element={<InchargePendingRequest />}/>
-                    <Route path="activereq" element={<InchargeActiveRequest />}/>
-                    <Route path="arrivedreq" element={<InchargeArrivedRequest />}/>
+                    <Route
+                      path="viewstudent"
+                      element={<InchargeViewStudent />}
+                    />
+                    <Route
+                      path="studentlist"
+                      element={<InchargeStudentList />}
+                    />
+                    <Route
+                      path="pendingreq"
+                      element={<InchargePendingRequest />}
+                    />
+                    <Route
+                      path="activereq"
+                      element={<InchargeActiveRequest />}
+                    />
+                    <Route
+                      path="arrivedreq"
+                      element={<InchargeArrivedRequest />}
+                    />
+                    <Route
+                      path="acceptedhistory"
+                      element={<InchargeAcceptedHistory />}
+                    />
                   </Route>
                 </Route>
                 {/* incharge routes end */}
@@ -100,10 +137,7 @@ function App() {
                 {/* admin routes starts */}
                 <Route element={<AdminProtectedRoutes />}>
                   <Route path="/admin/:eid" element={<AdminHome />}>
-                  <Route
-                  index
-                      element={<AdminDashboard />}
-                    ></Route>
+                    <Route index element={<AdminDashboard />}></Route>
                     <Route
                       path="dashboard"
                       element={<AdminDashboard />}
@@ -145,12 +179,45 @@ function App() {
                       path="arrivedrequests"
                       element={<AdminArrivedRequests />}
                     ></Route>
+                    <Route
+                      path="acceptedhistory"
+                      element={<AdminAcceptedHistory />}
+                    ></Route>
                     <Route path="history" element={<InchargeHistory />} />
+                    <Route path="logs" element={<AdminLogs />} />
                   </Route>
                 </Route>
                 {/* admin routes ends */}
+
+                {/* faculty routes starts */}
+                <Route element={<FacultyProtectedRoutes />}>
+                  <Route path="/faculty" element={<FacultyHome />}>
+                    <Route index element={<AdminViewStudent />} />
+                    <Route
+                      path="viewstudent"
+                      element={<InchargeViewStudent />}
+                    />
+                    <Route path="studentlist" element={<AdminStudentList />} />
+                    <Route
+                      path="arrivedrequests"
+                      element={<AdminArrivedRequests />}
+                    />
+                    <Route
+                      path="acceptedhistory"
+                      element={<AdminAcceptedHistory />}
+                    />
+                    <Route path="history" element={<InchargeHistory />} />
+                    <Route
+                      path="inchargelist"
+                      element={<FacultyInchargeList />}
+                    />
+                  </Route>
+                </Route>
+
+                {/* faculty routes ends */}
               </Routes>
             </BrowserRouter>
+            </FacultyAuthProvider>
           </AdminAuthProvider>
         </InchargeAuthProvider>
       </StudentAuthProvider>

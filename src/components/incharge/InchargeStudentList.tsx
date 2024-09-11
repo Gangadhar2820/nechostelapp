@@ -151,6 +151,8 @@ function InchargeStudentList() {
                   <option value="2">II Year</option>
                   <option value="3">III Year</option>
                   <option value="4">IV Year</option>
+                  <option value="5">V Year</option>
+                  <option value="6">VI Year</option>
                 </select>
               </div>
             </div>

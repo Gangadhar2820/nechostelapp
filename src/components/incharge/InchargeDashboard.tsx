@@ -4,6 +4,7 @@ import {
   getTodayAcceptedHostelStats,
   getTotalHostelStats,
   getTodayArrivedHostelStats,
+  getCollegeYearWiseData,
 } from "../../services/InchargeService";
 import { InchargeContext } from "./InchargeHome";
 import { Chip } from "primereact/chip";
@@ -27,6 +28,32 @@ interface TodayStats {
   permissionsList:[]
 }
 
+interface NEC{
+  Iyear:number;
+  IIyear:number;
+  IIIyear:number;
+  IVyear:number;
+  total:number;
+}
+
+interface NIT{
+  Iyear:number;
+  IIyear:number;
+  IIIyear:number;
+  IVyear:number;
+  total:number;
+}
+
+interface NIPS{
+  Iyear:number;
+  IIyear:number;
+  IIIyear:number;
+  IVyear:number;
+  Vyear:number;
+  VIyear:number;
+  total:number;
+}
+
 function InchargeDashboard() {
   const incharge = useContext(InchargeContext);
 
@@ -44,6 +71,11 @@ function InchargeDashboard() {
   const [activeLeaveList,setActiveLeaveList] = useState<Leave[]>([]);
 
   const [title,setTitle] = useState<string>("");
+
+  const [NECTotalData,setNECTotalData] = useState<NEC | null>(null);
+  const [NITTotalData,setNITTotalData] = useState<NIT | null>(null);
+  const [NIPSTotalData,setNIPSTotalData] = useState<NIPS | null>(null);
+
 
 
   useEffect(() => {
@@ -78,6 +110,24 @@ function InchargeDashboard() {
           permissionsList:data.permissionArray
         });
       });
+
+      getCollegeYearWiseData(incharge?.hostelId).then((data)=>{
+        const {NEC,NIT,NIPS} = data;
+        setNECTotalData({Iyear:NEC.IYear,IIyear:NEC.IIYear,IIIyear:NEC.IIIYear,
+          IVyear:NEC.IVYear,total:(NEC.IYear+NEC.IIYear+NEC.IIIYear+NEC.IVYear)
+        })
+        setNITTotalData({Iyear:NIT.IYear,IIyear:NIT.IIYear,IIIyear:NIT.IIIYear,
+          IVyear:NIT.IVYear,total:(NIT.IYear+NIT.IIYear+NIT.IIIYear+NIT.IVYear)
+        })
+        setNIPSTotalData({Iyear:NIPS.IYear,IIyear:NIPS.IIYear,IIIyear:NIPS.IIIYear,
+          IVyear:NIPS.IVYear,
+          total:(NIPS.IYear+NIPS.IIYear+NIPS.IIIYear+NIPS.IVYear+NIPS.VYear+NIPS.VIYear),
+          Vyear:NIPS.VYear,VIyear:NIPS.VIYear
+        })
+      }).catch((err)=>{
+        console.log("something went wrong",err)
+      })
+
     }
   }, [incharge]);
 
@@ -118,6 +168,19 @@ function InchargeDashboard() {
   const studentCardHeader = () => {
     return <h4 className="text-center">Students</h4>;
   };
+
+  const NECCardHeader = () => {
+    return <h4 className="text-center">NEC</h4>;
+  };
+
+  const NITCardHeader = () => {
+    return <h4 className="text-center">NIT</h4>;
+  };
+
+  const NIPSCardHeader = () => {
+    return <h4 className="text-center">NIPS</h4>;
+  };
+
   return (
     <>
         <Dialog
@@ -242,6 +305,140 @@ function InchargeDashboard() {
               </div>
             </div>
           </Card>
+
+          <Card
+            header={NECCardHeader}
+            className="col-12 sm:col-6 lg:col-4 mt-2"
+          >
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                I Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {NECTotalData?.Iyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                II Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {NECTotalData?.IIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">III Year</div>
+              <div className="text-900 font-bold m-1">
+                {NECTotalData?.IIIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">IV Year</div>
+              <div className="text-900 font-bold m-1">
+                {NECTotalData?.IVyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
+              <div className="text-500 font-bold font-medium m-1">Total</div>
+              <div className="text-900 font-bold m-1">
+                {NECTotalData?.total}
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            header={NITCardHeader}
+            className="col-12 sm:col-6 lg:col-4 mt-2"
+          >
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                I Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {NITTotalData?.Iyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                II Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {NITTotalData?.IIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">III Year</div>
+              <div className="text-900 font-bold m-1">
+                {NITTotalData?.IIIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">IV Year</div>
+              <div className="text-900 font-bold m-1">
+                {NITTotalData?.IVyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
+              <div className="text-500 font-bold font-medium m-1">Total</div>
+              <div className="text-900 font-bold m-1">
+                {NITTotalData?.total}
+              </div>
+            </div>
+          </Card>
+
+          <Card
+            header={NIPSCardHeader}
+            className="col-12 sm:col-6 lg:col-4 mt-2"
+          >
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                I Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {NIPSTotalData?.Iyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">
+                II Year
+              </div>
+              <div className="text-900 font-bold m-1">
+                {NIPSTotalData?.IIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">III Year</div>
+              <div className="text-900 font-bold m-1">
+                {NIPSTotalData?.IIIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">IV Year</div>
+              <div className="text-900 font-bold m-1">
+                {NIPSTotalData?.IVyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">V Year</div>
+              <div className="text-900 font-bold m-1">
+                {NIPSTotalData?.Vyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between">
+              <div className="text-500 font-bold font-medium m-1">VI Year</div>
+              <div className="text-900 font-bold m-1">
+                {NIPSTotalData?.VIyear}
+              </div>
+            </div>
+            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
+              <div className="text-500 font-bold font-medium m-1">Total</div>
+              <div className="text-900 font-bold m-1">
+                {NIPSTotalData?.total}
+              </div>
+            </div>
+          </Card>
+
+
         </div>
       </div>
     </>

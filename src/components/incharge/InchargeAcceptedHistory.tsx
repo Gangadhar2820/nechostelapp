@@ -18,10 +18,10 @@ import {
   getDateAfterDays,
   getDateBeforeDays,
 } from "../interfaces/Date";
-import { getArrivedRequests } from "../../services/InchargeService";
+import { AcceptedHistory } from "../../services/InchargeService";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 
-function InchargeArrivedRequest() {
+function InchargeAcceptedHistory() {
 
   const incharge = useContext(InchargeContext);
   const [selectionOption, setSelectionOption] = useState<string>("Permissions");
@@ -60,7 +60,7 @@ function InchargeArrivedRequest() {
       enddDate = getDateAfterDays(toDate as Date, 1);
     }
 
-    getArrivedRequests(incharge?.hostelId, starttDate as Date, enddDate as Date)
+    AcceptedHistory(incharge?.hostelId, starttDate as Date, enddDate as Date)
       .then((data) => {
         setIsSearching(false);
         let leaves: any = [];
@@ -206,7 +206,7 @@ function InchargeArrivedRequest() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Arrived Students">
+        <Card title="Accepted History">
           <form onSubmit={handleListStudentForm} className="grid">
             <div className="col-12 sm:col-6 md:col-4 mt-3">
               <div className="custom-select-container w-full">
@@ -241,7 +241,7 @@ function InchargeArrivedRequest() {
                       className="w-12 md:w-8"
                       showButtonBar
                       hourFormat="12"
-                      dateFormat="dd-mm-yy"
+                      dateFormat="dd/mm/yy"
                     />
                     <label htmlFor="inc-arr-req-fromDate">From Date</label>
                   </FloatLabel>
@@ -256,8 +256,7 @@ function InchargeArrivedRequest() {
                       className="w-12 md:w-8"
                       showButtonBar
                       hourFormat="12"
-                      dateFormat="dd-mm-yy"
-
+                      dateFormat="dd/mm/yy"
                     />
                     <label htmlFor="inc-arr-req-toDate">To Date</label>
                   </FloatLabel>
@@ -455,4 +454,4 @@ function InchargeArrivedRequest() {
   );
 }
 
-export default InchargeArrivedRequest;
+export default InchargeAcceptedHistory;

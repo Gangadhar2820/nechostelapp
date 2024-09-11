@@ -1,7 +1,7 @@
 import { Card } from "primereact/card";
 import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 import { Calendar } from "primereact/calendar";
 import { Button } from "primereact/button";
@@ -10,6 +10,9 @@ import { Divider } from "primereact/divider";
 import { AdminStudentRegisteration } from "../../services/RegisterService";
 import { Student } from "../interfaces/Student";
 import AdminStudentBulkDataUpload from "./AdminStudentBulkDataUpload";
+import { createLog } from "../../services/AdminService";
+import { LOG } from "../interfaces/Log";
+import { AdminContext } from "./AdminHome";
 
 function AdminAddStudent() {
   const [newStudent, setNewStudent] = useState<Student>({
@@ -29,6 +32,8 @@ function AdminAddStudent() {
     requestCount: 0,
     lastRequest: null,
   });
+
+  const admin = useContext(AdminContext);
 
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
@@ -90,6 +95,14 @@ function AdminAddStudent() {
         setIsRegistering(false);
         const { success } = data;
         if (success) {
+          let myLog: LOG = {
+            date: new Date(),
+            userId: admin.eid,
+            username: admin.name as string,
+            action: `Added new student ${newStudent.rollNo}`,
+          };
+          createLog(myLog);
+
           if (adminStudentToast.current) {
             adminStudentToast.current.show({
               severity: "success",
@@ -382,6 +395,8 @@ function AdminAddStudent() {
                   <option value="2">II Year</option>
                   <option value="3">III Year</option>
                   <option value="4">IV Year</option>
+                  <option value="5">V Year</option>
+                  <option value="6">VI Year</option>
                 </select>
               </div>
             </div>
@@ -403,6 +418,7 @@ function AdminAddStudent() {
                     Select Branch
                   </option>
                   <option value="AI&ML">AI & ML</option>
+                  <option value="BPHARMACY">B Pharmacy</option>
                   <option value="CAI">CAI</option>
                   <option value="CE">CIVIL</option>
                   <option value="CS">CS (Cyber Security)</option>
@@ -416,6 +432,7 @@ function AdminAddStudent() {
                   <option value="MBA">MBA</option>
                   <option value="MCA">MCA</option>
                   <option value="ME">MECH</option>
+                  <option value="PHARMD">Pharm D</option>
                 </select>
               </div>
             </div>

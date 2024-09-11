@@ -5,7 +5,7 @@ import { Navigate , Outlet } from 'react-router-dom';
 function InchargeProtectedRoutes() {
     const {inchargeExist} = useInchargeAuth();
 
-  return inchargeExist ? <Outlet/> : <Navigate to="/"/>
+  return inchargeExist ? <Outlet/> : <Navigate to="/admins"/>
   
 }
 

@@ -1,9 +1,11 @@
 import axios from "axios";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import * as XLSX from "xlsx";
-import { UploadStudentBulkData } from "../../services/AdminService";
+import { createLog, UploadStudentBulkData } from "../../services/AdminService";
+import { LOG } from "../interfaces/Log";
+import { AdminContext } from "./AdminHome";
 
 interface ExcelData {
   [key: string]: string | number | boolean;
@@ -17,6 +19,8 @@ function AdminStudentBulkDataUpload() {
 
   const [isExcelFormat, setIsExcelForamt] = useState<boolean | null>(null);
   const [noOfColumnsPresent, setNoOfColumnsPresent] = useState<number>(0);
+
+  const admin = useContext(AdminContext);
 
   const [requiredKeys, setRequiredKeys] = useState<any>([
     "name",
@@ -118,6 +122,13 @@ function AdminStudentBulkDataUpload() {
         const {added,message} = data;
 
         if(added){
+          let myLog: LOG = {
+            date: new Date(),
+            userId: admin.eid,
+            username: admin.name as string,
+            action: `Added Multiple Students (${message})`,
+          };
+          createLog(myLog);
           if(uploadDataToast.current){
             uploadDataToast.current.show({
               severity: "success",

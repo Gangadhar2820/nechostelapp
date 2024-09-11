@@ -13,6 +13,8 @@ import { FloatLabel } from "primereact/floatlabel";
 import { Student } from "./interfaces/Student";
 import { Calendar } from "primereact/calendar";
 import { formatDate, parseDate } from "./interfaces/Date";
+import { createLog } from "../services/AdminService";
+import { LOG } from "./interfaces/Log";
 
 function StudentRegister() {
   const Navigate = useNavigate();
@@ -81,11 +83,13 @@ function StudentRegister() {
   const handleRegisterForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsRegistering(true);
-    RegisterStudent(rollno,studentData as Student, stuPassword)
+    RegisterStudent(rollno, studentData as Student, stuPassword)
       .then((data) => {
         setIsRegistering(false);
-        const {success} = data;
+        const { success } = data;
         if (success) {
+          let myLog:LOG = {date:new Date(),userId:rollno,username:studentData?.name as string,action:"Registered as student"}
+          createLog(myLog)
           if (registerToast.current) {
             registerToast.current.show({
               severity: "success",
@@ -93,7 +97,7 @@ function StudentRegister() {
               detail: "You have successfully registered into NEC Hostel Portal",
             });
             setTimeout(() => {
-              Navigate("/",{replace:true}) 
+              Navigate("/", { replace: true });
             }, 2000);
           }
         } else {
@@ -104,7 +108,7 @@ function StudentRegister() {
               detail: "Something went wrong.Try Again or Consult Hostel Admin",
             });
             setTimeout(() => {
-              Navigate("/",{replace:true}) 
+              Navigate("/", { replace: true });
             }, 2000);
           }
         }
@@ -333,6 +337,7 @@ function StudentRegister() {
                       </option>
                       <option value="NEC">NEC</option>
                       <option value="NIPS">NIPS</option>
+                      <option value="NIT">NIT</option>
                     </select>
                   </div>
                 </div>
@@ -351,13 +356,13 @@ function StudentRegister() {
                       }}
                       required
                     >
-                      <option value="label" >
-                        Select Year
-                      </option>
+                      <option value="label">Select Year</option>
                       <option value="1">I Year</option>
                       <option value="2">II Year</option>
                       <option value="3">III Year</option>
                       <option value="4">IV Year</option>
+                      <option value="5">V Year</option>
+                      <option value="6">VI Year</option>
                     </select>
                   </div>
                 </div>
@@ -375,16 +380,26 @@ function StudentRegister() {
                         } as Student);
                       }}
                       required
-                      
                     >
                       <option value="label" disabled>
                         Select Branch
                       </option>
-                      <option value="CSE">CSE</option>
-                      <option value="ECE">ECE</option>
-                      <option value="EEE">EEE</option>
-                      <option value="MECH">MECH</option>
-                      <option value="CIVIL">CIVIL</option>
+                      <option value="AI&ML">AI & ML</option>
+                  <option value="BPHARMACY">B Pharmacy</option>
+                  <option value="CAI">CAI</option>
+                  <option value="CE">CIVIL</option>
+                  <option value="CS">CS (Cyber Security)</option>
+                  <option value="CSE">CSE</option>
+                  <option value="CSE-AI">CSE-AI</option>
+                  <option value="CSM(AI&ML)">CSM(AI&ML)</option>
+                  <option value="DS">DS (Data Science)</option>
+                  <option value="ECE">ECE</option>
+                  <option value="EEE">EEE</option>
+                  <option value="IT">IT</option>
+                  <option value="MBA">MBA</option>
+                  <option value="MCA">MCA</option>
+                  <option value="ME">MECH</option>
+                  <option value="PHARMD">Pharm D</option>
                     </select>
                   </div>
                 </div>
@@ -415,7 +430,7 @@ function StudentRegister() {
                       type="text"
                       className="w-12"
                       value={studentData?.parentPhoneNo}
-                      disabled = {studentData?.parentPhoneNo?true:false}
+                      disabled={studentData?.parentPhoneNo ? true : false}
                       required
                     />
                     <label htmlFor="stu-reg-parentPhone">Parent Phone No</label>

@@ -170,7 +170,7 @@ function InchargeForgotPassword() {
             detail: "Your password has been updated successfully !",
           });
           setTimeout(() => {
-            Navigate("/", { replace: true });
+            Navigate("/admins", { replace: true });
           }, 2000);
         }
       }else{
@@ -181,9 +181,6 @@ function InchargeForgotPassword() {
             detail: "Failed to update new password.Try again after sometime",
           });
       }
-      setTimeout(() => {
-        Navigate("/", { replace: true });
-      }, 2000);
     }
       }).catch((err)=>{
         console.log(err)
@@ -198,7 +195,7 @@ function InchargeForgotPassword() {
         visible={true}
         style={{ width: "50vw" }}
         onHide={() => {
-          Navigate("/", { replace: true });
+          Navigate("/admins", { replace: true });
         }}
         className="w-11 lg:w-5"
       >
@@ -216,7 +213,7 @@ function InchargeForgotPassword() {
                   setIsEIDValid(false);
                   let eid = e.target.value;
                   setEID(eid);
-                  if (/^[0-9]{6}$/.test(eid)) {
+                  if (/^[0-9]{7}$/.test(eid)) {
                     setIsEIDValid(true);
                   } else {
                     setIsEIDValid(false);

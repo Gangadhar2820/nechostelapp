@@ -133,6 +133,30 @@ export const AuthenticateAdminLogin = async (eid: string, password: string) => {
   }
 };
 
+// export const AuthenticateFacultyLogin = async (eid: string, password: string):Promise<{success:boolean}> => {
+//   // try {
+//     // const response = await axios.post(
+//     //   `${server}/admin-auth/login`,
+//     //   { eid: eid, password: password },
+//     //   {
+//     //     headers: {
+//     //       "Content-Type": "application/json",
+//     //     },
+//     //   }
+//     // );
+//     const response = await new Promise<{success:boolean}>((resolve,reject)=>{
+//       if(eid==="222" && password==="222"){
+//         resolve({success:true})
+//       }else{
+//         reject({success:false})
+//       }
+//     })
+//     return response;
+//   // } catch (err) {
+//   //   console.log("there is some error");
+//   // }
+// };
+
 
 
 export { AuthenticateStudentLogin , AuthenticateInchargeLogin,VerifyStuFPassMail,UpdateStuNewPassword };

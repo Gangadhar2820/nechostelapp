@@ -17,6 +17,8 @@ import {
 } from "../../services/InchargeService";
 
 import { AdminContext } from "./AdminHome";
+import { createLog } from "../../services/AdminService";
+import { LOG } from "../interfaces/Log";
 
 function AdminPendingRequests() {
   const admin = useContext(AdminContext);
@@ -191,7 +193,17 @@ function AdminPendingRequests() {
           setLeaves(newLeaves);
           setIsRejecting(false);
 
-          if (data.updates) {
+          if (data?.updated) {
+
+              let myLog: LOG = {
+                date: new Date(),
+                userId: admin.eid,
+                username: admin.name as string,
+                action: `Rejected ${rejRequest.rollNo} Leave`,
+              }
+              createLog(myLog);
+
+
             if (pendingRequestToast?.current) {
               pendingRequestToast?.current.show({
                 severity: "error",
@@ -217,7 +229,14 @@ function AdminPendingRequests() {
         AcceptORRejectRequest(id, rejRequest).then((data) => {
           setPermissions(newPermissions);
           setIsRejecting(false)
-          if (data.updates) {
+          if (data.updated) {
+            let myLog: LOG = {
+              date: new Date(),
+              userId: admin.eid,
+              username: admin.name as string,
+              action: `Rejected ${rejRequest.rollNo} Permission`,
+            }
+            createLog(myLog);
             if (pendingRequestToast?.current) {
               pendingRequestToast?.current.show({
                 severity: "error",
@@ -262,7 +281,15 @@ function AdminPendingRequests() {
         AcceptORRejectRequest(id, accRequest).then((data) => {
           setLeaves(newLeaves);
           setIsAccepting(false);
-          if (data.updates) {
+          if (data.updated) {
+            let myLog: LOG = {
+              date: new Date(),
+              userId: admin.eid,
+              username: admin.name as string,
+              action: `Accepted ${accRequest.rollNo} Leave`,
+            }
+            createLog(myLog);
+
             if (pendingRequestToast?.current) {
               pendingRequestToast?.current.show({
                 severity: "success",
@@ -289,6 +316,15 @@ function AdminPendingRequests() {
         AcceptORRejectRequest(id, accRequest).then((data) => {
           setPermissions(newPermissions);
           setIsAccepting(false);
+
+          let myLog: LOG = {
+            date: new Date(),
+            userId: admin.eid,
+            username: admin.name as string,
+            action: `Accepted ${accRequest.rollNo} Permission`,
+          }
+          createLog(myLog);
+          
           if (pendingRequestToast?.current) {
             pendingRequestToast?.current.show({
               severity: "success",
