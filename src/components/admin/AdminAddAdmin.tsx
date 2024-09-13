@@ -10,16 +10,16 @@ import { InputText } from "primereact/inputtext";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
-import { AdminInchargeRegisteration } from "../../services/RegisterService";
+import { AdminInchargeRegisteration, AdminRegisteration } from "../../services/RegisterService";
 import { Incharge } from "../interfaces/Incharge";
 import { createLog } from "../../services/AdminService";
 import { LOG } from "../interfaces/Log";
 import { AdminContext } from "./AdminHome";
+import { Admin } from "../interfaces/Admin";
 
-function AdminAddIncharge() {
-  const [newIncharge, setNewIncharge] = useState<Incharge>({
+function AdminAddAdmin() {
+  const [newAdmin, setNewAdmin] = useState<Admin>({
     eid: "",
-    hostelId: "label",
     designation: "",
     name: "",
     phoneNo: "",
@@ -31,57 +31,56 @@ function AdminAddIncharge() {
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
 
-  const adminInchargeToast = useRef<Toast>(null);
+  const adminToast = useRef<Toast>(null);
 
   const ValidateForm = useCallback(() => {
     setIsFormValid(false);
     if (
-      newIncharge?.hostelId !== "label" &&
-      newIncharge?.name !== "" &&
-      /^[0-9]{10}$/.test(newIncharge?.phoneNo as string) &&
-      newIncharge?.eid !== "" &&
+      newAdmin?.name !== "" &&
+      /^[0-9]{10}$/.test(newAdmin?.phoneNo as string) &&
+      newAdmin?.eid !== "" &&
       password !== "" &&
       CPassword === password &&
-      newIncharge?.designation !== ""
+      newAdmin?.designation !== ""
     ) {
       setIsFormValid(true);
     } else {
       setIsFormValid(false);
     }
-  }, [newIncharge, password, CPassword]);
+  }, [newAdmin, password, CPassword]);
 
   useEffect(() => {
     ValidateForm();
-  }, [newIncharge, password, CPassword, ValidateForm]);
+  }, [newAdmin, password, CPassword, ValidateForm]);
 
-  const handleAdminInchargeRegister = (
+  const handleAdminRegister = (
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
     setIsRegistering(true);
-    AdminInchargeRegisteration(newIncharge as Incharge, password)
+    AdminRegisteration(newAdmin as Admin, password)
       .then((data) => {
         setIsRegistering(false);
         const { success } = data;
+        console.log(data)
         if (success) {
           let myLog: LOG = {
             date: new Date(),
             userId: admin.eid,
             username: admin.name as string,
-            action: `Added New Incharge ${newIncharge.eid}`,
+            action: `Added New Admin ${newAdmin.eid}`,
           };
           createLog(myLog);
 
-          if (adminInchargeToast.current) {
-            adminInchargeToast.current.show({
+          if (adminToast.current) {
+            adminToast.current.show({
               severity: "success",
               summary: "Registered Successfully !",
-              detail: "New Incharge has been added",
+              detail: "New Admin has been added",
             });
           }
-          setNewIncharge({
+          setNewAdmin({
             eid: "",
-            hostelId: "label",
             designation: "",
             name: "",
             phoneNo: "",
@@ -89,11 +88,11 @@ function AdminAddIncharge() {
           setPassword("");
           setCPassword("");
         } else {
-          if (adminInchargeToast.current) {
-            adminInchargeToast.current.show({
+          if (adminToast.current) {
+            adminToast.current.show({
               severity: "error",
               summary: "Register Failed",
-              detail: "Incharge already exist",
+              detail: "Admin already exist",
             });
           }
         }
@@ -113,73 +112,52 @@ function AdminAddIncharge() {
           transform: "translatex(-50%)",
         }}
       >
-      <Toast ref={adminInchargeToast} position="center"></Toast>
+      <Toast ref={adminToast} position="center"></Toast>
 
-        <Card title="Incharge Registration">
+        <Card title="Admin Registration">
           <form
             action=""
             className="grid"
-            onSubmit={handleAdminInchargeRegister}
+            onSubmit={handleAdminRegister}
           >
-            <div className="col-12 md:col-6 mt-3">
-              <div className="custom-select-container w-full">
-                <select
-                  className="custom-select"
-                  value={newIncharge?.hostelId}
-                  id="ad-add-inc-hostelId"
-                  onChange={(e) => {
-                    setNewIncharge({
-                      ...newIncharge,
-                      hostelId: e.target.value.toUpperCase(),
-                    } as Incharge);
-                  }}
-                >
-                  <option value="label" disabled>
-                    Hostel ID
-                  </option>
-                  <option value="BH1">BH1</option>
-                  <option value="GH1">GH1</option>
-                </select>
-              </div>
-            </div>
 
             <div className="col-12 md:col-6 mt-3">
               <FloatLabel>
                 <InputText
-                  id="inc-name"
+                  id="adm-name"
                   type="text"
                   className="w-full"
-                  value={newIncharge?.name}
+                  value={newAdmin?.name}
                   onChange={(e) => {
-                    setNewIncharge({
-                      ...newIncharge,
+                    setNewAdmin({
+                      ...newAdmin,
                       name: e.target.value,
-                    } as Incharge);
+                    } as Admin);
                   }}
                   required
                 />
-                <label htmlFor="inc-name">Name</label>
+                <label htmlFor="adm-name">Name</label>
               </FloatLabel>
             </div>
             <div className="col-12 md:col-6 mt-3">
               <FloatLabel>
                 <InputText
-                  id="inc-phoneno"
+                  id="adm-phoneno"
                   type="text"
                   className="w-full"
-                  value={newIncharge?.phoneNo}
+                  value={newAdmin?.phoneNo}
                   onChange={(e) => {
-                    setNewIncharge({
-                      ...newIncharge,
+                    setNewAdmin({
+                      ...newAdmin,
                       phoneNo: e.target.value,
-                    } as Incharge);
+                    } as Admin);
                   }}
                   required
                 />
-                <label htmlFor="inc-phoneno">Phone Number</label>
+                <label htmlFor="adm-phoneno">Phone Number</label>
               </FloatLabel>
-              {!/^[0-9]{10}$/.test(newIncharge?.phoneNo as string) &&
-                newIncharge?.phoneNo !== "" && (
+              {!/^[0-9]{10}$/.test(newAdmin?.phoneNo as string) &&
+                newAdmin?.phoneNo !== "" && (
                   <small id="phoneno-help" className="text-red-500">
                     Phone number must be 10 digits
                   </small>
@@ -189,38 +167,38 @@ function AdminAddIncharge() {
             <div className="col-12 md:col-6  mt-3">
               <FloatLabel>
                 <InputText
-                  id="inc-username"
+                  id="adm-username"
                   type="text"
                   className="w-full"
-                  value={newIncharge?.eid}
+                  value={newAdmin?.eid}
                   onChange={(e) => {
-                    setNewIncharge({
-                      ...newIncharge,
+                    setNewAdmin({
+                      ...newAdmin,
                       eid: e.target.value.toUpperCase(),
-                    } as Incharge);
+                    } as Admin);
                   }}
                   required
                 />
-                <label htmlFor="inc-username">EID</label>
+                <label htmlFor="adm-username">EID</label>
               </FloatLabel>
             </div>
 
             <div className="col-12 md:col-6  mt-3">
               <FloatLabel>
                 <InputText
-                  id="inc-designation"
+                  id="adm-designation"
                   type="text"
                   className="w-full"
-                  value={newIncharge?.designation}
+                  value={newAdmin?.designation}
                   onChange={(e) => {
-                    setNewIncharge({
-                      ...newIncharge,
+                    setNewAdmin({
+                      ...newAdmin,
                       designation: e.target.value,
-                    } as Incharge);
+                    } as Admin);
                   }}
                   required
                 />
-                <label htmlFor="inc-designation">Designation</label>
+                <label htmlFor="adm-designation">Designation</label>
               </FloatLabel>
             </div>
 
@@ -228,7 +206,7 @@ function AdminAddIncharge() {
               <div className="p-inputgroup flex-1 w-12 ">
                 <FloatLabel>
                   <InputText
-                    id="inc-password"
+                    id="adm-password"
                     type="password"
                     className="w-full"
                     value={password}
@@ -237,13 +215,13 @@ function AdminAddIncharge() {
                     }}
                     required
                   />
-                  <label htmlFor="inc-password">Password</label>
+                  <label htmlFor="adm-password">Password</label>
                 </FloatLabel>
                 <span
                   className="p-inputgroup-addon"
                   onClick={() => {
                     const ele = document.getElementById(
-                      "inc-password"
+                      "adm-password"
                     ) as HTMLInputElement | null;
                     if (ele) {
                       if (ele.type === "text") {
@@ -263,7 +241,7 @@ function AdminAddIncharge() {
               <div className="p-inputgroup flex-1 w-12">
                 <FloatLabel>
                   <InputText
-                    id="inc-cpassword"
+                    id="adm-cpassword"
                     type="password"
                     className="w-full"
                     value={CPassword}
@@ -272,13 +250,13 @@ function AdminAddIncharge() {
                     }}
                     required
                   />
-                  <label htmlFor="inc-cpassword">Confirm Password</label>
+                  <label htmlFor="adm-cpassword">Confirm Password</label>
                 </FloatLabel>
                 <span
                   className="p-inputgroup-addon"
                   onClick={() => {
                     const ele = document.getElementById(
-                      "inc-cpassword"
+                      "adm-cpassword"
                     ) as HTMLInputElement | null;
                     if (ele) {
                       if (ele.type === "text") {
@@ -313,4 +291,4 @@ function AdminAddIncharge() {
   );
 }
 
-export default AdminAddIncharge;
+export default AdminAddAdmin;

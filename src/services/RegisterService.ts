@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Student } from "../components/interfaces/Student";
 import { Incharge } from "../components/interfaces/Incharge";
+import { Admin } from "../components/interfaces/Admin";
 
 const server = process.env.REACT_APP_SERVER;
 
@@ -57,6 +58,28 @@ const AdminInchargeRegisteration = async (
     return response.data;
   } catch (err) {
     console.log("Error : while creating new incharge", err);
+  }
+};
+
+export const AdminRegisteration = async (
+  newAdmin:Admin,
+  password: string
+) => {
+  try {
+    const response = await axios.post(
+      `${server}/admin/add-admin`,
+      {...newAdmin,
+        password: password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (err) {
+    console.log("Error : while creating new admin", err);
   }
 };
 

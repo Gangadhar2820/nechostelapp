@@ -416,19 +416,19 @@ function AdminPendingRequests() {
               tableStyle={{ minWidth: "50rem" }}
               selectionMode="single"
             >
-              <Column
-                field="hostelId"
-                className="font-bold"
-                header="Hostel ID"
-                sortable
-                frozen
-              ></Column>
+             
               <Column
                 field="rollNo"
                 className="font-bold"
                 header="Roll Number"
                 sortable
                 frozen
+              ></Column>
+               <Column
+                field="hostelId"
+                className="font-bold"
+                header="Hostel ID"
+                sortable
               ></Column>
 
               <Column field="name" header="Name"></Column>
@@ -465,19 +465,19 @@ function AdminPendingRequests() {
               rowsPerPageOptions={[5, 10, 25, 50]}
               tableStyle={{ minWidth: "50rem" }}
             >
-              <Column
-                field="hostelId"
-                className="font-bold"
-                header="Hostel ID"
-                sortable
-                frozen
-              ></Column>
+             
               <Column
                 field="rollNo"
                 className="font-bold"
                 header="Roll Number"
                 sortable
                 frozen
+              ></Column>
+               <Column
+                field="hostelId"
+                className="font-bold"
+                header="Hostel ID"
+                sortable
               ></Column>
 
               <Column field="name" header="Name"></Column>

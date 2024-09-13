@@ -151,7 +151,7 @@ function AdminAddStudent() {
       <Toast ref={adminStudentToast} position="center"></Toast>
 
       <div
-        className="p-2 w-10"
+        className="w-full p-2"
         style={{
           position: "absolute",
           left: "50%",

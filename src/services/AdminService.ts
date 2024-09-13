@@ -2,6 +2,7 @@ import axios from "axios";
 import { Incharge } from "../components/interfaces/Incharge";
 import { Student } from "../components/interfaces/Student";
 import { LOG } from "../components/interfaces/Log";
+import { Admin } from "../components/interfaces/Admin";
 
 const server = process.env.REACT_APP_SERVER;
 
@@ -110,5 +111,98 @@ export const getLogs = async (date: Date) => {
   }
 };
 
+export const getAllAdmins = async ()=>{
+  try{
+    const response = await axios.get(`${server}/admin/getAdmins`);
+    return response.data;
+
+  }catch(error){
+    console.log("Error : While getting all admins data",error)
+  }
+}
+
+export const updateAdmin = async (admin: Admin) => {
+  try {
+    const response = await axios.put(
+      `${server}/admin/update/${admin.eid}`,
+      admin,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error : while Updating Admin details", error);
+  }
+};
+
+export const deleteAdmin = async (eid: string) => {
+  try {
+    const response = await axios.delete(`${server}/admin/delete/${eid}`);
+    return response.data;
+  } catch (error) {
+    console.log("Error : while Deleting Admin details", error);
+  }
+};
+
+export const UpdateMultipleStudents = async (rollNumbers:string[],year:string)=>{
+
+  try {
+    const response = await axios.put(`${server}/student/updateMany`,{rollNumbers:rollNumbers,year:year},{
+      headers:{
+        "Content-Type":"application/json"
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error : while Updating  Multiple students", error);
+  }
+
+}
+
+export const DeleteMultipleStudents = async (rollNumbers:string[]) => {
+  try {
+    const response = await axios.delete(`${server}/student/deleteMany`,
+      {data:{rollNumbers:rollNumbers},headers:{"Content-Type":"application/json"}});
+    return response.data;
+  } catch (error) {
+    console.log("Error : while Deleting Multiple students", error);
+  }
+};
+
+export const FetchFacultyData = async ()=>{
+  try{
+    const response = await axios.get(`${server}/faculty/get`);
+    return response.data;
+  }catch(error){
+    console.log("Error : While fetching faculty credentials",error)
+  }
+}
+
+export const UpdateFacultyData = async (username:string,password:string)=>{
+
+  try {
+    const response = await axios.put(`${server}/faculty/update`,{username:username,password:password},{
+      headers:{
+        "Content-Type":"application/json"
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error : while Updating  Faculty data", error);
+  }
+
+}
+
+export const deleteLogs = async () => {
+  try {
+    const response = await axios.delete(`${server}/logs/delete-logs`);
+    return response.data;
+  } catch (error) {
+    console.log("Error : while Deleting Logs", error);
+  }
+};
 
 export {};

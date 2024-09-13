@@ -10,7 +10,7 @@ import { InchargeContext } from "./InchargeHome";
 import { Nullable } from "primereact/ts-helpers";
 import { Calendar } from "primereact/calendar";
 import { FloatLabel } from "primereact/floatlabel";
-import { Permission,Leave } from "../interfaces/Request";
+import { Permission, Leave } from "../interfaces/Request";
 import {
   formatDate,
   formatDateWithTime,
@@ -22,7 +22,6 @@ import { AcceptedHistory } from "../../services/InchargeService";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 
 function InchargeAcceptedHistory() {
-
   const incharge = useContext(InchargeContext);
   const [selectionOption, setSelectionOption] = useState<string>("Permissions");
   const [permissions, setPermissions] = useState<Permission[]>([]);
@@ -37,9 +36,9 @@ function InchargeAcceptedHistory() {
 
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
-
-  const tableFooter = `Total : ${selectionOption==="Leaves"?leaves.length:permissions.length} ${selectionOption}`;
-
+  const tableFooter = `Total : ${
+    selectionOption === "Leaves" ? leaves.length : permissions.length
+  } ${selectionOption}`;
 
   const handleListStudentForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -128,8 +127,6 @@ function InchargeAcceptedHistory() {
     return "";
   };
 
- 
-
   const arrivedTime = (data: any) => {
     if (data.arrived) {
       const date = data?.arrived?.time;
@@ -146,7 +143,6 @@ function InchargeAcceptedHistory() {
     }
     return "";
   };
-
 
   const arrivedName = (data: any) => {
     if (data.arrived) {
@@ -265,10 +261,14 @@ function InchargeAcceptedHistory() {
             )}
 
             <div className="col-12 sm:col-6 md:col-4 mt-3">
-              <Button type="submit" disabled={isSearching}>
-                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
+              <Button
+                type="submit"
+                disabled={isSearching}
+                className="w-full sm:w-auto text-center"
+                label={isSearching ? "Searching" : "Search"}
+              >
                 &nbsp;&nbsp;
-                {isSearching ? "Searching" : "Search"}
+                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
               </Button>
             </div>
           </form>
@@ -433,7 +433,6 @@ function InchargeAcceptedHistory() {
                 body={acceptedTime}
                 style={{ minWidth: "120px" }}
               ></Column>
-
 
               <Column
                 field="arrived"

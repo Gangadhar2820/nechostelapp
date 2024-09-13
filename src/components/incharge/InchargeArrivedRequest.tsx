@@ -266,10 +266,13 @@ function InchargeArrivedRequest() {
             )}
 
             <div className="col-12 sm:col-6 md:col-4 mt-3">
-              <Button type="submit" disabled={isSearching}>
-                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
+              <Button type="submit" disabled={isSearching}
+              className="w-full sm:w-auto text-center"
+              label={isSearching ? "Searching" : "Search"}
+
+              >
                 &nbsp;&nbsp;
-                {isSearching ? "Searching" : "Search"}
+                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
               </Button>
             </div>
           </form>

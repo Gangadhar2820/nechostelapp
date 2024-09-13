@@ -60,6 +60,15 @@ import FacultyInchargeList from "./components/faculty/FacultyInchargeList";
 import FacultyProtectedRoutes from "./utils/FacultyProtectedRoutes";
 import StudentLogin from "./components/StudentLogin";
 import { FacultyAuthProvider } from "./utils/FacultyAuth";
+import SubHomeAdmin from "./components/admin/SubHomeAdmin";
+import SubHomeStudent from "./components/admin/SubHomeStudent";
+import SubHomeIncharge from "./components/admin/SubHomeIncharge";
+import AdminAddAdmin from "./components/admin/AdminAddAdmin";
+import AdminAdminList from "./components/admin/AdminAdminList";
+import AdminHistory from "./components/admin/AdminHistory";
+import AdminFaculty from "./components/admin/AdminFaculty";
+import FacultyStudentList from "./components/faculty/FacultyStudentList";
+import AdminForgotPassword from "./components/AdminForgotPassword";
 
 function App() {
   return (
@@ -68,155 +77,191 @@ function App() {
         <InchargeAuthProvider>
           <AdminAuthProvider>
             <FacultyAuthProvider>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<StudentLogin />} />
-                <Route path="/admins" element={<Login />} />
-                <Route
-                  path="/studentregister"
-                  element={<StudentRegister />}
-                ></Route>
-                <Route
-                  path="/studentfpassword"
-                  element={<StudentForgotPassword />}
-                ></Route>
-                <Route
-                  path="/inchargefpassword"
-                  element={<InchargeForgotPassword />}
-                ></Route>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<StudentLogin />} />
+                  <Route path="/admins" element={<Login />} />
+                  <Route
+                    path="/studentregister"
+                    element={<StudentRegister />}
+                  ></Route>
+                  <Route
+                    path="/studentfpassword"
+                    element={<StudentForgotPassword />}
+                  ></Route>
+                  <Route
+                    path="/inchargefpassword"
+                    element={<InchargeForgotPassword />}
+                  ></Route>
 
-                {/* student routes start */}
-                <Route element={<StudentProtectedRoutes />}>
-                  <Route path="/student/:rollNo" element={<StudentHome />}>
-                    <Route index element={<StudentDashboard />}></Route>
-                    <Route path="profile" element={<StudentProfile />} />
-                    <Route path="dashboard" element={<StudentDashboard />} />
-                    <Route path="leave" element={<StudentLeave />} />
-                    <Route path="history" element={<StudentHistory />} />
-                    <Route path="incharge" element={<StudentIncharge />} />
+                  <Route
+                    path="/adminfpassword"
+                    element={<AdminForgotPassword />}
+                  ></Route>
+
+                  {/* student routes start */}
+                  <Route element={<StudentProtectedRoutes />}>
+                    <Route path="/student/:rollNo" element={<StudentHome />}>
+                      <Route index element={<StudentDashboard />}></Route>
+                      <Route path="profile" element={<StudentProfile />} />
+                      <Route path="dashboard" element={<StudentDashboard />} />
+                      <Route path="leave" element={<StudentLeave />} />
+                      <Route path="history" element={<StudentHistory />} />
+                      <Route path="incharge" element={<StudentIncharge />} />
+                    </Route>
                   </Route>
-                </Route>
-                {/* student routes end */}
+                  {/* student routes end */}
 
-                {/* incharge routes start */}
-                <Route element={<InchargeProtectedRoutes />}>
-                  <Route path="/incharge/:eid" element={<InchargeHome />}>
-                    <Route index element={<InchargeDashboard />} />
-                    <Route path="profile" element={<InchargeProfile />} />
-                    <Route path="dashboard" element={<InchargeDashboard />} />
-                    <Route path="history" element={<InchargeHistory />} />
-                    <Route path="inchargelist" element={<InchargeList />} />
-                    <Route
-                      path="viewstudent"
-                      element={<InchargeViewStudent />}
-                    />
-                    <Route
-                      path="studentlist"
-                      element={<InchargeStudentList />}
-                    />
-                    <Route
-                      path="pendingreq"
-                      element={<InchargePendingRequest />}
-                    />
-                    <Route
-                      path="activereq"
-                      element={<InchargeActiveRequest />}
-                    />
-                    <Route
-                      path="arrivedreq"
-                      element={<InchargeArrivedRequest />}
-                    />
-                    <Route
-                      path="acceptedhistory"
-                      element={<InchargeAcceptedHistory />}
-                    />
+                  {/* incharge routes start */}
+                  <Route element={<InchargeProtectedRoutes />}>
+                    <Route path="/incharge/:eid" element={<InchargeHome />}>
+                      <Route index element={<InchargeDashboard />} />
+                      <Route path="profile" element={<InchargeProfile />} />
+                      <Route path="dashboard" element={<InchargeDashboard />} />
+                      <Route path="history" element={<InchargeHistory />} />
+                      <Route path="inchargelist" element={<InchargeList />} />
+                      <Route
+                        path="viewstudent"
+                        element={<InchargeViewStudent />}
+                      />
+                      <Route
+                        path="studentlist"
+                        element={<InchargeStudentList />}
+                      />
+                      <Route
+                        path="pendingreq"
+                        element={<InchargePendingRequest />}
+                      />
+                      <Route
+                        path="activereq"
+                        element={<InchargeActiveRequest />}
+                      />
+                      <Route
+                        path="arrivedreq"
+                        element={<InchargeArrivedRequest />}
+                      />
+                      <Route
+                        path="acceptedhistory"
+                        element={<InchargeAcceptedHistory />}
+                      />
+                    </Route>
                   </Route>
-                </Route>
-                {/* incharge routes end */}
+                  {/* incharge routes end */}
 
-                {/* admin routes starts */}
-                <Route element={<AdminProtectedRoutes />}>
-                  <Route path="/admin/:eid" element={<AdminHome />}>
-                    <Route index element={<AdminDashboard />}></Route>
-                    <Route
-                      path="dashboard"
-                      element={<AdminDashboard />}
-                    ></Route>
-                    <Route path="profile" element={<AdminProfile />}></Route>
-                    <Route
-                      path="addincharge"
-                      element={<AdminAddIncharge />}
-                    ></Route>
-                    <Route
-                      path="viewincharge"
-                      element={<AdminViewIncharge />}
-                    ></Route>
-                    <Route
-                      path="inchargelist"
-                      element={<AdminInchargeList />}
-                    ></Route>
-                    <Route
-                      path="addstudent"
-                      element={<AdminAddStudent />}
-                    ></Route>
-                    <Route
-                      path="viewstudent"
-                      element={<AdminViewStudent />}
-                    ></Route>
-                    <Route
-                      path="studentlist"
-                      element={<AdminStudentList />}
-                    ></Route>
-                    <Route
-                      path="pendingrequests"
-                      element={<AdminPendingRequests />}
-                    ></Route>
-                    <Route
-                      path="activerequests"
-                      element={<AdminActiveRequests />}
-                    ></Route>
-                    <Route
-                      path="arrivedrequests"
-                      element={<AdminArrivedRequests />}
-                    ></Route>
-                    <Route
-                      path="acceptedhistory"
-                      element={<AdminAcceptedHistory />}
-                    ></Route>
-                    <Route path="history" element={<InchargeHistory />} />
-                    <Route path="logs" element={<AdminLogs />} />
+                  {/* admin routes starts */}
+                  <Route element={<AdminProtectedRoutes />}>
+                    <Route path="/admin/:eid" element={<AdminHome />}>
+                      <Route index element={<AdminDashboard />}></Route>
+
+                      <Route
+                        path="dashboard"
+                        element={<AdminDashboard />}
+                      ></Route>
+                      <Route path="profile" element={<AdminProfile />}></Route>
+
+                      <Route path="admin" element={<SubHomeAdmin />}>
+                        <Route index element={<AdminAddAdmin />}></Route>
+                        <Route
+                          path="addadmin"
+                          element={<AdminAddAdmin />}
+                        ></Route>
+                        <Route
+                          path="adminlist"
+                          element={<AdminAdminList />}
+                        ></Route>
+                      </Route>
+
+                      <Route path="incharge" element={<SubHomeIncharge />}>
+                        <Route index element={<AdminAddIncharge />}></Route>
+                        <Route
+                          path="addincharge"
+                          element={<AdminAddIncharge />}
+                        ></Route>
+                        <Route
+                          path="inchargelist"
+                          element={<AdminInchargeList />}
+                        ></Route>
+                      </Route>
+
+                      <Route path="student" element={<SubHomeStudent />}>
+                        <Route index element={<AdminAddStudent />}></Route>
+                        <Route
+                          path="addstudent"
+                          element={<AdminAddStudent />}
+                        ></Route>
+                        <Route
+                          path="viewstudent"
+                          element={<AdminViewStudent />}
+                        ></Route>
+                        <Route
+                          path="studentlist"
+                          element={<AdminStudentList />}
+                        ></Route>
+                        <Route
+                          path="studenthistory"
+                          element={<InchargeHistory />}
+                        ></Route>
+                      </Route>
+
+                      <Route path="faculty" element={<AdminFaculty />}></Route>
+
+                      <Route
+                        path="pendingrequests"
+                        element={<AdminPendingRequests />}
+                      ></Route>
+                      <Route
+                        path="activerequests"
+                        element={<AdminActiveRequests />}
+                      ></Route>
+
+                      <Route path="history" element={<AdminHistory />}>
+                        <Route index element={<AdminArrivedRequests />}></Route>
+                        <Route
+                          path="arrivedrequests"
+                          element={<AdminArrivedRequests />}
+                        ></Route>
+                        <Route
+                          path="acceptedhistory"
+                          element={<AdminAcceptedHistory />}
+                        ></Route>
+                      </Route>
+
+                      <Route path="logs" element={<AdminLogs />} />
+                    </Route>
                   </Route>
-                </Route>
-                {/* admin routes ends */}
+                  {/* admin routes ends */}
 
-                {/* faculty routes starts */}
-                <Route element={<FacultyProtectedRoutes />}>
-                  <Route path="/faculty" element={<FacultyHome />}>
-                    <Route index element={<AdminViewStudent />} />
-                    <Route
-                      path="viewstudent"
-                      element={<InchargeViewStudent />}
-                    />
-                    <Route path="studentlist" element={<AdminStudentList />} />
-                    <Route
-                      path="arrivedrequests"
-                      element={<AdminArrivedRequests />}
-                    />
-                    <Route
-                      path="acceptedhistory"
-                      element={<AdminAcceptedHistory />}
-                    />
-                    <Route path="history" element={<InchargeHistory />} />
-                    <Route
-                      path="inchargelist"
-                      element={<FacultyInchargeList />}
-                    />
+                  {/* faculty routes starts */}
+                  <Route element={<FacultyProtectedRoutes />}>
+                    <Route path="/faculty" element={<FacultyHome />}>
+                      <Route index element={<InchargeViewStudent />} />
+                      <Route
+                        path="viewstudent"
+                        element={<InchargeViewStudent />}
+                      />
+                      <Route
+                        path="studentlist"
+                        element={<FacultyStudentList />}
+                      />
+                      <Route
+                        path="arrivedrequests"
+                        element={<AdminArrivedRequests />}
+                      />
+                      <Route
+                        path="acceptedhistory"
+                        element={<AdminAcceptedHistory />}
+                      />
+                      <Route path="history" element={<InchargeHistory />} />
+                      <Route
+                        path="inchargelist"
+                        element={<FacultyInchargeList />}
+                      />
+                    </Route>
                   </Route>
-                </Route>
 
-                {/* faculty routes ends */}
-              </Routes>
-            </BrowserRouter>
+                  {/* faculty routes ends */}
+                </Routes>
+              </BrowserRouter>
             </FacultyAuthProvider>
           </AdminAuthProvider>
         </InchargeAuthProvider>

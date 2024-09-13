@@ -5,11 +5,11 @@ import { DataTable } from "primereact/datatable";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { Nullable } from "primereact/ts-helpers";
 import { Calendar } from "primereact/calendar";
 import { FloatLabel } from "primereact/floatlabel";
-import { Permission,Leave } from "../interfaces/Request";
+import { Permission, Leave } from "../interfaces/Request";
 import {
   formatDate,
   formatDateWithTime,
@@ -21,7 +21,6 @@ import { AcceptedHistory } from "../../services/InchargeService";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 
 function AdminAcceptedHistory() {
-
   const [selectionOption, setSelectionOption] = useState<string>("Permissions");
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [leaves, setLeaves] = useState<Leave[]>([]);
@@ -35,9 +34,9 @@ function AdminAcceptedHistory() {
 
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
-
-  const tableFooter = `Total : ${selectionOption==="Leaves"?leaves.length:permissions.length} ${selectionOption}`;
-
+  const tableFooter = `Total : ${
+    selectionOption === "Leaves" ? leaves.length : permissions.length
+  } ${selectionOption}`;
 
   const handleListStudentForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -125,8 +124,6 @@ function AdminAcceptedHistory() {
     return "";
   };
 
-
-
   const arrivedTime = (data: any) => {
     if (data.arrived) {
       const date = data?.arrived?.time;
@@ -143,7 +140,6 @@ function AdminAcceptedHistory() {
     }
     return "";
   };
-
 
   const arrivedName = (data: any) => {
     if (data.arrived) {
@@ -261,11 +257,15 @@ function AdminAcceptedHistory() {
               </>
             )}
 
-            <div className="col-12 sm:col-6 md:col-4 mt-3">
-              <Button type="submit" disabled={isSearching}>
-                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
+            <div className="col-12 sm:col-6 mt-3">
+              <Button
+                type="submit"
+                label={isSearching ? "Searching" : "Search"}
+                disabled={isSearching}
+                className="w-full sm:w-auto text-center"
+              >
                 &nbsp;&nbsp;
-                {isSearching ? "Searching" : "Search"}
+                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
               </Button>
             </div>
           </form>
@@ -321,18 +321,19 @@ function AdminAcceptedHistory() {
               selectionMode="single"
             >
               <Column
+                field="rollNo"
+                className="font-bold"
+                header="Roll Number"
+                sortable
+                frozen
+              ></Column>
+              <Column
                 field="hostelId"
                 className="font-bold"
                 header="Hostel ID"
                 sortable
               ></Column>
-              <Column
-                field="rollNo"
-                className="font-bold"
-                header="Roll Number"
-                sortable
-              ></Column>
-              
+
               <Column
                 header="From Date"
                 field="fromDate"
@@ -393,19 +394,20 @@ function AdminAcceptedHistory() {
               tableStyle={{ minWidth: "50rem" }}
               selectionMode="single"
             >
-               <Column
-                field="hostelId"
-                className="font-bold"
-                header="Hostel ID"
-                sortable
-              ></Column>
               <Column
                 field="rollNo"
                 className="font-bold"
                 header="Roll Number"
                 sortable
+                frozen
               ></Column>
-             
+              <Column
+                field="hostelId"
+                className="font-bold"
+                header="Hostel ID"
+                sortable
+              ></Column>
+
               <Column
                 header="Date"
                 field="date"
@@ -444,7 +446,6 @@ function AdminAcceptedHistory() {
                 body={acceptedTime}
                 style={{ minWidth: "120px" }}
               ></Column>
-
 
               <Column
                 field="arrived"

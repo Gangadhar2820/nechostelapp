@@ -5,38 +5,299 @@ import { DataTable } from "primereact/datatable";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
-import React, {  useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { getAllStudents } from "../../services/InchargeService";
 import { Student } from "../interfaces/Student";
+import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
+import { Toast } from "primereact/toast";
+import {
+  createLog,
+  DeleteMultipleStudents,
+  UpdateMultipleStudents,
+} from "../../services/AdminService";
+import { LOG } from "../interfaces/Log";
+import { AdminContext } from "./AdminHome";
 
 function AdminStudentList() {
-
-  const [hostelId,setHostelId] = useState<string>("label");
+  const [hostelId, setHostelId] = useState<string>("label");
 
   const [college, setCollege] = useState<string>("label");
   const [year, setYear] = useState<string>("label");
   const [branch, setBranch] = useState<string>("label");
 
   const [isListSearching, setIsListSearching] = useState<boolean>(false);
-  const [studentsList, setStudentsList] = useState<Student[]>();
+  const [studentsList, setStudentsList] = useState<Student[]>([]);
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
 
-  const validateForm = useCallback( () => {
+  const [selectedStudents, setSelectedStudents] = useState<Student[] | []>([]);
+
+  const [enableEdit, setEnableEdit] = useState<boolean>(false);
+
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+  const mytoast = useRef<Toast>(null);
+
+  const [currentYear, setCurrentYear] = useState<string>("ALL");
+  const [newYear, setNewYear] = useState<string>("");
+
+  const admin = useContext(AdminContext);
+
+  useEffect(() => {
+    if (currentYear !== "ALL") {
+      setNewYear((Number(currentYear) + 1).toString());
+    } else {
+      setNewYear("ALL");
+    }
+  }, [currentYear]);
+
+  const validateForm = useCallback(() => {
     setIsFormValid(false);
-    if ( hostelId!== "label" && college !== "label" && year !== "label" && branch !== "label") {
+    if (
+      hostelId !== "label" &&
+      college !== "label" &&
+      year !== "label" &&
+      branch !== "label"
+    ) {
       setIsFormValid(true);
     }
-  },[hostelId,college,year,branch]);
+  }, [hostelId, college, year, branch]);
 
   useEffect(() => {
     validateForm();
-  }, [hostelId,college, year, branch,validateForm]);
+  }, [hostelId, college, year, branch, validateForm]);
 
-  const tableFooter = `Total : ${
-    studentsList ? studentsList.length : 0
-  }  Students.`;
+  const handleBulkUpdate = () => {
+    const accept = () => {
+      if (selectedStudents.length > 0) {
+        setIsUpdating(true);
+        const selectedRollNo = new Set(
+          selectedStudents.map((ele) => ele.rollNo)
+        );
+        const result1 = studentsList.filter(
+          (item) => !selectedRollNo.has(item.rollNo)
+        );
+        const result2 = studentsList.filter((item) =>
+          selectedRollNo.has(item.rollNo)
+        );
+        const result3 = result2.map((item) => {
+          return { ...item, year: newYear };
+        });
+
+        UpdateMultipleStudents(Array.from(selectedRollNo), newYear).then(
+          (data) => {
+            setIsUpdating(false);
+            const { isUpdated, message } = data;
+
+            if (isUpdated) {
+              setStudentsList([...result1, ...result3]);
+              setSelectedStudents([])
+              let myLog: LOG = {
+                date: new Date(),
+                userId: admin.eid,
+                username: admin.name as string,
+                action: ` ${selectedRollNo.size} students are updated from ${currentYear} year to ${newYear} in ${branch} branch of ${college} college`,
+              };
+              createLog(myLog);
+
+              if (mytoast.current) {
+                mytoast.current.show({
+                  severity: "success",
+                  summary: "Updated Successfully !",
+                  detail: message,
+                });
+              }
+            } else {
+              if (mytoast.current) {
+                mytoast.current.show({
+                  severity: "error",
+                  summary: "Update Failed !",
+                  detail: "Failed to update.Try Again",
+                });
+              }
+            }
+          }
+        );
+      }
+    };
+    const reject = () => {};
+
+    confirmDialog({
+      message: `Do you really want to update year from ${currentYear} to ${newYear} of ${selectedStudents.length} selected students.`,
+      header: "Update Confirmation",
+      icon: "pi pi-info-circle",
+      defaultFocus: "reject",
+      acceptClassName: "p-button-success",
+      accept,
+      reject,
+    });
+  };
+
+  const handleBulkDelete = () => {
+    const accept = () => {
+      setIsDeleting(true);
+      const selectStudentRollNo = new Set(
+        selectedStudents.map((item) => item.rollNo)
+      );
+      const result1 = studentsList.filter(
+        (item) => !selectStudentRollNo.has(item.rollNo)
+      );
+
+      DeleteMultipleStudents(Array.from(selectStudentRollNo)).then((data) => {
+        setIsDeleting(false);
+        console.log(data);
+        const { isDeleted, message } = data;
+        if (isDeleted) {
+          setStudentsList(result1);
+          setSelectedStudents([])
+          let myLog: LOG = {
+            date: new Date(),
+            userId: admin.eid,
+            username: admin.name as string,
+            action: `${selectStudentRollNo.size} Students are deleted from ${currentYear} year ${branch} branch in ${college} college (${message})`,
+          };
+          createLog(myLog);
+          if (mytoast.current) {
+            mytoast.current.show({
+              severity: "success",
+              summary: "Deleted Successfully !",
+              detail: `${selectStudentRollNo.size} Students are deleted from ${currentYear} year ${branch} branch in ${college} college`,
+            });
+          }
+        } else {
+          if (mytoast.current) {
+            mytoast.current.show({
+              severity: "error",
+              summary: "Delete Failed !",
+              detail: `Failed to delete.Try again`,
+            });
+          }
+        }
+      });
+    };
+
+    const reject = () => {};
+
+    confirmDialog({
+      message: `Do you want to delete ${selectedStudents.length} selected students from ${college} college in ${currentYear} year`,
+      header: "Delete Confirmation",
+      icon: "pi pi-info-circle",
+      defaultFocus: "reject",
+      acceptClassName: "p-button-danger",
+      accept,
+      reject,
+    });
+  };
+
+  const tableFooter = () => {
+    return (
+      <>
+        <div className="grid">
+          <div className="item-1 col-6 sm:col-3 flex align-items-center">
+            <p className="w-full">
+              Total : {studentsList ? studentsList.length : 0} Students.
+            </p>
+          </div>
+
+          {enableEdit && (
+            <div className="item-2 col-6 sm:col-3 flex align-items-center">
+              <Button
+                type="button"
+                severity="danger"
+                icon={!isDeleting && "pi pi-trash"}
+                onClick={handleBulkDelete}
+                disabled={isDeleting || !(selectedStudents.length > 0)}
+              >
+                {isDeleting && <i className="pi pi-spin pi-spinner"></i>}
+                &nbsp;&nbsp;
+                {isDeleting ? "Deleting" : "Delete"}&nbsp;&nbsp;
+              </Button>
+            </div>
+          )}
+
+          {enableEdit && (
+            <div className="item-3 flex-column col-12 sm:col-6">
+              <div className="head w-full p-0 w-0">
+                <Button
+                  className="w-full"
+                  disabled
+                  label="Change Year"
+                  severity="secondary"
+                  text
+                  raised
+                ></Button>
+              </div>
+              <div className="grid mt-2">
+                <Button
+                  disabled
+                  className="col-2"
+                  label="From"
+                  text
+                  raised
+                  severity="secondary"
+                ></Button>
+                <Button
+                  disabled
+                  className="col-2"
+                  label={currentYear}
+                  text
+                  raised
+                ></Button>
+                <Button
+                  disabled
+                  className="col-2"
+                  label="To"
+                  text
+                  raised
+                  severity="secondary"
+                ></Button>
+                <select
+                  value={newYear}
+                  style={{ height: "38px" }}
+                  className=" col-2 p-card text-primary text-center border-none outline-none"
+                  onChange={(e) => {
+                    setNewYear(e.target.value);
+                  }}
+                  disabled={
+                    !(selectedStudents.length > 0) || currentYear === "ALL"
+                  }
+                >
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                </select>
+                <Button
+                  type="button"
+                  onClick={handleBulkUpdate}
+                  disabled={
+                    isUpdating ||
+                    currentYear === "ALL" ||
+                    !(selectedStudents.length > 0)
+                  }
+                  label={isUpdating ? "Updating" : "Update"}
+                  severity="success"
+                  className="col-4 text-center"
+                >
+                  {isUpdating && <i className="pi pi-spin pi-spinner"></i>}
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  };
 
   const handleListStudentForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -49,7 +310,9 @@ function AdminStudentList() {
     })
       .then((data) => {
         setIsListSearching(false);
-        setStudentsList(data)
+        setStudentsList(data);
+        setCurrentYear(year);
+        setSelectedStudents([]);
       })
       .catch((err) => {
         console.log(err);
@@ -58,14 +321,17 @@ function AdminStudentList() {
 
   const renderHeader = () => {
     return (
-      <div className="flex justify-content-between">
+      <div className="flex justify-content-between p-0 m-0">
         <Button
           type="button"
-          icon="pi pi-filter-slash"
-          label=""
+          // icon={enableEdit ? "pi pi-times" : "pi pi-pen-to-square"}
+          label={enableEdit ? "Cancel" : "Edit"}
           outlined
           onClick={() => {
-            setGlobalFilterValue("");
+            if (enableEdit) {
+              setSelectedStudents([]);
+            }
+            setEnableEdit((prevvalue) => !prevvalue);
           }}
         />
         <IconField iconPosition="left">
@@ -88,6 +354,8 @@ function AdminStudentList() {
 
   return (
     <>
+      <ConfirmDialog />
+
       <div
         className="w-full"
         style={{
@@ -96,17 +364,17 @@ function AdminStudentList() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card  header={StudentListHeader}>
-          <form onSubmit={handleListStudentForm} className="grid">
 
-          <div className="col-12 sm:col-6  md:col-3 mt-3">
+        <Card header={StudentListHeader}>
+          <form onSubmit={handleListStudentForm} className="grid">
+            <div className="col-12 sm:col-6  md:col-3 mt-3">
               <div className="custom-select-container w-12">
                 <select
                   className="custom-select"
                   id="ad-stu-list-hostelId"
                   value={hostelId}
                   onChange={(e) => {
-                    setHostelId(e.target.value)
+                    setHostelId(e.target.value);
                   }}
                 >
                   <option value="label" disabled>
@@ -118,7 +386,7 @@ function AdminStudentList() {
                 </select>
               </div>
             </div>
-            
+
             <div className="col-12 sm:col-6  md:col-3 mt-3">
               <div className="custom-select-container w-full">
                 <select
@@ -210,6 +478,8 @@ function AdminStudentList() {
 
         {studentsList && (
           <Card className="mt-2">
+      <Toast ref={mytoast} position="bottom-center"></Toast>
+
             <DataTable
               value={studentsList}
               stripedRows
@@ -222,8 +492,15 @@ function AdminStudentList() {
               rows={5}
               rowsPerPageOptions={[5, 10, 25, 50]}
               tableStyle={{ minWidth: "50rem" }}
-              selectionMode={"single"}
+              selectionMode={"checkbox"}
+              selection={selectedStudents}
+              onSelectionChange={(e) => setSelectedStudents(e.value)}
             >
+              <Column
+                selectionMode="multiple"
+                frozen
+                headerStyle={{ width: "3rem" }}
+              ></Column>
               <Column
                 field="rollNo"
                 header="Roll Number"

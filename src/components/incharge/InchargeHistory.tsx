@@ -241,7 +241,7 @@ function History() {
         >
           <ReqCard request={selectedRequest} />
         </Dialog>
-        <Card title="Student Request History">
+        <Card title="Student History">
           <form onSubmit={handleSearchFormSubmit} className="grid">
             <div className="col-12 sm:col-6  mt-3 ">
               <FloatLabel>

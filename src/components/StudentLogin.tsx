@@ -99,10 +99,9 @@ function StudentLogin() {
           />
       </div>
 
-      <div className="flex align-items-center justify-content-center mt-5">
+      <div className="flex align-items-center justify-content-center m-5">
         <div className="surface-card p-4 shadow-2 border-round w-full lg:w-5">
-          {/* <TabView> */}
-            {/* <TabPanel header="Student"> */}
+     
               <div className="text-center mb-5">
                 <div className="text-900 text-2xl font-medium mb-2">
                   Student Sign In
@@ -199,8 +198,7 @@ function StudentLogin() {
                   Forgot your password ?
                 </Link>
               </div>
-            {/* </TabPanel>     */}
-          {/* </TabView> */}
+       
         </div>
       </div>
       <div className="absolute top-0 left-0">

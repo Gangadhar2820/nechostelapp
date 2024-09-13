@@ -11,6 +11,8 @@ import {
   VerifyStuFPassMail,
   VerifyStuOTP,
 } from "../services/LoginService";
+import { createLog } from "../services/AdminService";
+import { LOG } from "./interfaces/Log";
 
 function StudentForgotPassword() {
   const Navigate = useNavigate();
@@ -169,6 +171,15 @@ function StudentForgotPassword() {
         setIsUpdatingNewPass(false);
         const { isUpdated } = data;
         if (isUpdated) {
+
+          let myLog: LOG = {
+            date: new Date(),
+            userId: rollNo,
+            username: rollNo,
+            action: `New Password Updated`,
+          };
+          createLog(myLog);
+
           if (FPassToast.current) {
             FPassToast.current.show({
               severity: "success",

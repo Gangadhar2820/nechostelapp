@@ -6,18 +6,22 @@ import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UpdateINCNewPassword, VerifyINCFPassMail, VerifyINCOTP } from "../services/LoginService";
+import {
+  UpdateADMINNewPassword,
+  VerifyADMINFPassMail,
+  VerifyADMINOTP,
+} from "../services/LoginService";
 import { createLog } from "../services/AdminService";
 import { LOG } from "./interfaces/Log";
 
-function InchargeForgotPassword() {
+function AdminForgotPassword() {
   const FPassToast = useRef<Toast>(null);
   const Navigate = useNavigate();
 
   const [EID, setEID] = useState<string>("");
   const [isEIDValid, setIsEIDValid] = useState<boolean>(false);
 
-  const [isInchargeExist, setIsInchargeExist] = useState<boolean | null>(null);
+  const [isAdminExist, setIsAdminExist] = useState<boolean | null>(null);
   const [isValidating, setisValidating] = useState<boolean>(false);
 
   const [otpToken, setOtpTokens] = useState<any>();
@@ -33,19 +37,18 @@ function InchargeForgotPassword() {
   const [isPasswordsSame, setIsPasswordsSame] = useState<boolean>(true);
   const [isUpdatingNewPass, setIsUpdatingNewPass] = useState<boolean>(false);
 
-  const [phoneNo,setPhoneNo] = useState<string>("");
+  const [phoneNo, setPhoneNo] = useState<string>("");
 
   const [resendOTPTime, setResendOTPTime] = useState<number>(0);
-
 
   useEffect(() => {
     if (resendOTPTime > 0) {
       setDisableResendOTP(true);
       const interval = setInterval(() => {
-        setResendOTPTime((prevValue)=>prevValue-1)
+        setResendOTPTime((prevValue) => prevValue - 1);
       }, 1000);
-      return ()=>clearInterval(interval)
-    } else{
+      return () => clearInterval(interval);
+    } else {
       setDisableResendOTP(false);
     }
   }, [resendOTPTime]);
@@ -67,21 +70,23 @@ function InchargeForgotPassword() {
     }
   }, [incNewPassword, incNewCPassword]);
 
-  const handleIncForgotPassFormSubmit = (
+  const handleAdminForgotPassFormSubmit = (
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
     setisValidating(true);
-    setIsInchargeExist(null);
+    setIsAdminExist(null);
 
-    VerifyINCFPassMail(EID).then((data) => {
+    VerifyADMINFPassMail(EID).then((data) => {
       setisValidating(false);
-      const { isExist , phoneNo } = data;
-      const maskedPhoneNo = phoneNo ? phoneNo.slice(0,2)+"*****"+phoneNo.slice(7,10):"";
-      setPhoneNo(maskedPhoneNo)
+      const { isExist, phoneNo } = data;
+      const maskedPhoneNo = phoneNo
+        ? phoneNo.slice(0, 2) + "*****" + phoneNo.slice(7, 10)
+        : "";
+      setPhoneNo(maskedPhoneNo);
 
       if (isExist) {
-        setIsInchargeExist(true);
+        setIsAdminExist(true);
         if (FPassToast.current) {
           FPassToast.current.show({
             severity: "success",
@@ -89,9 +94,9 @@ function InchargeForgotPassword() {
             detail: "OTP has been send to your registered phone number",
           });
         }
-        setResendOTPTime(90)
+        setResendOTPTime(90);
       } else {
-        setIsInchargeExist(false);
+        setIsAdminExist(false);
         if (FPassToast.current) {
           FPassToast.current.show({
             severity: "warn",
@@ -108,7 +113,7 @@ function InchargeForgotPassword() {
     setIsOTPcorrect(false);
     setIsOTPsubmitting(true);
 
-    VerifyINCOTP(EID, otpToken.toString())
+    VerifyADMINOTP(EID, otpToken.toString())
       .then((data) => {
         const { isOTPValid } = data;
 
@@ -138,10 +143,10 @@ function InchargeForgotPassword() {
       });
   };
 
-  const handleResendOTP = ()=>{
-    setDisableResendOTP(true)
+  const handleResendOTP = () => {
+    setDisableResendOTP(true);
 
-    VerifyINCFPassMail(EID)
+    VerifyADMINFPassMail(EID)
       .then((data) => {
         if (FPassToast.current) {
           FPassToast.current.show({
@@ -155,55 +160,55 @@ function InchargeForgotPassword() {
       .catch((err) => {
         console.log(err);
       });
-  }
+  };
 
   const handleNewPasswordForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsUpdatingNewPass(true);
 
-      UpdateINCNewPassword(EID,incNewPassword).then((data)=>{
-      setIsUpdatingNewPass(false);
-        const {isUpdated} = data;
-      if (isUpdated) {
+    UpdateADMINNewPassword(EID, incNewPassword)
+      .then((data) => {
+        setIsUpdatingNewPass(false);
+        const { isUpdated } = data;
+        if (isUpdated) {
+          let myLog: LOG = {
+            date: new Date(),
+            userId: EID,
+            username: EID,
+            action: `New Password Updated`,
+          };
+          createLog(myLog);
 
-        let myLog: LOG = {
-          date: new Date(),
-          userId: EID,
-          username: EID,
-          action: `New Password Updated`,
-        };
-        createLog(myLog);
-
-
-        if (FPassToast.current) {
-          FPassToast.current.show({
-            severity: "success",
-            summary: "Password Reset Successfully !",
-            detail: "Your password has been updated successfully !",
-          });
-          setTimeout(() => {
-            Navigate("/admins", { replace: true });
-          }, 2000);
+          if (FPassToast.current) {
+            FPassToast.current.show({
+              severity: "success",
+              summary: "Password Reset Successfully !",
+              detail: "Your password has been updated successfully !",
+            });
+            setTimeout(() => {
+              Navigate("/admins", { replace: true });
+            }, 2000);
+          }
+        } else {
+          if (FPassToast.current) {
+            FPassToast.current.show({
+              severity: "warn",
+              summary: "Something went wrong !",
+              detail: "Failed to update new password.Try again after sometime",
+            });
+          }
         }
-      }else{
-        if (FPassToast.current) {
-          FPassToast.current.show({
-            severity: "warn",
-            summary: "Something went wrong !",
-            detail: "Failed to update new password.Try again after sometime",
-          });
-      }
-    }
-      }).catch((err)=>{
-        console.log(err)
       })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
     <>
       <Toast ref={FPassToast} position="top-center" />
-      <Dialog 
-        header="Incharge Forgot Password"
+      <Dialog
+        header="Admin Forgot Password"
         visible={true}
         style={{ width: "50vw" }}
         onHide={() => {
@@ -212,7 +217,7 @@ function InchargeForgotPassword() {
         className="w-11 lg:w-5"
       >
         <Card className="mt-1 w-full">
-          <form onSubmit={handleIncForgotPassFormSubmit}>
+          <form onSubmit={handleAdminForgotPassFormSubmit}>
             <div className="p-inputgroup flex-1">
               <span className="p-inputgroup-addon">
                 <i className="pi pi-envelope"></i>
@@ -232,11 +237,11 @@ function InchargeForgotPassword() {
                   }
                 }}
                 className="text-center font-bold"
-                disabled={isInchargeExist ? true : false}
+                disabled={isAdminExist ? true : false}
               />
-              {isInchargeExist == null ? (
+              {isAdminExist == null ? (
                 <Button
-                  className={`${isInchargeExist}`}
+                  className={`${isAdminExist}`}
                   disabled={!isEIDValid || isValidating}
                   type="submit"
                 >
@@ -245,29 +250,29 @@ function InchargeForgotPassword() {
                 </Button>
               ) : (
                 <Button
-                  severity={isInchargeExist ? "success" : "danger"}
+                  severity={isAdminExist ? "success" : "danger"}
                   type="submit"
-                  disabled={isInchargeExist}
+                  disabled={isAdminExist}
                 >
-                  {isInchargeExist ? (
+                  {isAdminExist ? (
                     <i className="pi pi-verified"></i>
                   ) : (
                     <i className="pi pi-ban"></i>
                   )}
-                  &nbsp;&nbsp;{isInchargeExist ? `Valid ` : `Invalid`}
+                  &nbsp;&nbsp;{isAdminExist ? `Valid ` : `Invalid`}
                 </Button>
               )}
             </div>
           </form>
 
-          {isInchargeExist && !isOTPcorrect && (
+          {isAdminExist && !isOTPcorrect && (
             <div className="mt-4">
               <form onSubmit={handleOTPSubmit}>
                 <div className="card flex justify-content-center">
                   <div className="flex flex-column align-items-center w-full">
                     <p className="text-color-secondary block mb-5">
-                      Please enter the code sent to your registered phone no {phoneNo}
-                      
+                      Please enter the code sent to your registered phone no{" "}
+                      {phoneNo}
                     </p>
                     <div className="card flex justify-content-center">
                       <InputOtp
@@ -287,8 +292,13 @@ function InchargeForgotPassword() {
                         className="p-0"
                         onClick={handleResendOTP}
                       >
-                        &nbsp;&nbsp;{resendOTPTime>0 && (`0${Math.floor(resendOTPTime / 60)} : ${(resendOTPTime%60).toString().padStart(2,"0")} sec`)}
-                      
+                        &nbsp;&nbsp;
+                        {resendOTPTime > 0 &&
+                          `0${Math.floor(resendOTPTime / 60)} : ${(
+                            resendOTPTime % 60
+                          )
+                            .toString()
+                            .padStart(2, "0")} sec`}
                       </Button>
                       <Button
                         type="submit"
@@ -307,7 +317,7 @@ function InchargeForgotPassword() {
             </div>
           )}
 
-          {isInchargeExist && isOTPcorrect && (
+          {isAdminExist && isOTPcorrect && (
             <div className="mt-4">
               <form onSubmit={handleNewPasswordForm}>
                 <label
@@ -416,4 +426,4 @@ function InchargeForgotPassword() {
   );
 }
 
-export default InchargeForgotPassword;
+export default AdminForgotPassword;

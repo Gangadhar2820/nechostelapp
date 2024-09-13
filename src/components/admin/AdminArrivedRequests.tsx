@@ -5,11 +5,11 @@ import { DataTable } from "primereact/datatable";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { Nullable } from "primereact/ts-helpers";
 import { Calendar } from "primereact/calendar";
 import { FloatLabel } from "primereact/floatlabel";
-import { Permission,Leave } from "../interfaces/Request";
+import { Permission, Leave } from "../interfaces/Request";
 import {
   formatDate,
   formatDateWithTime,
@@ -21,7 +21,6 @@ import { getArrivedRequests } from "../../services/InchargeService";
 import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 
 function AdminArrivedRequests() {
-
   const [selectionOption, setSelectionOption] = useState<string>("Permissions");
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [leaves, setLeaves] = useState<Leave[]>([]);
@@ -35,9 +34,9 @@ function AdminArrivedRequests() {
 
   const [globalFilterValue, setGlobalFilterValue] = useState<string>("");
 
-
-  const tableFooter = `Total : ${selectionOption==="Leaves"?leaves.length:permissions.length} ${selectionOption}`;
-
+  const tableFooter = `Total : ${
+    selectionOption === "Leaves" ? leaves.length : permissions.length
+  } ${selectionOption}`;
 
   const handleListStudentForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -125,8 +124,6 @@ function AdminArrivedRequests() {
     return "";
   };
 
-
-
   const arrivedTime = (data: any) => {
     if (data.arrived) {
       const date = data?.arrived?.time;
@@ -143,8 +140,6 @@ function AdminArrivedRequests() {
     }
     return "";
   };
-
- 
 
   const arrivedName = (data: any) => {
     if (data.arrived) {
@@ -240,7 +235,6 @@ function AdminArrivedRequests() {
                       showButtonBar
                       hourFormat="12"
                       dateFormat="dd/mm/yy"
-
                     />
                     <label htmlFor="inc-arr-req-fromDate">From Date</label>
                   </FloatLabel>
@@ -256,7 +250,6 @@ function AdminArrivedRequests() {
                       showButtonBar
                       hourFormat="12"
                       dateFormat="dd/mm/yy"
-
                     />
                     <label htmlFor="inc-arr-req-toDate">To Date</label>
                   </FloatLabel>
@@ -264,11 +257,15 @@ function AdminArrivedRequests() {
               </>
             )}
 
-            <div className="col-12 sm:col-6 md:col-4 mt-3">
-              <Button type="submit" disabled={isSearching}>
-                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
+            <div className="col-12 sm:col-6 mt-3">
+              <Button
+                type="submit"
+                label={isSearching ? "Searching" : "Search"}
+                disabled={isSearching}
+                className="w-full sm:w-auto text-center"
+              >
                 &nbsp;&nbsp;
-                {isSearching ? "Searching" : "Search"}
+                {isSearching && <i className="pi pi-spin pi-spinner"></i>}
               </Button>
             </div>
           </form>
@@ -324,18 +321,19 @@ function AdminArrivedRequests() {
               selectionMode="single"
             >
               <Column
+                field="rollNo"
+                className="font-bold"
+                header="Roll Number"
+                sortable
+                frozen
+              ></Column>
+              <Column
                 field="hostelId"
                 className="font-bold"
                 header="Hostel ID"
                 sortable
               ></Column>
-              <Column
-                field="rollNo"
-                className="font-bold"
-                header="Roll Number"
-                sortable
-              ></Column>
-              
+
               <Column
                 header="From Date"
                 field="fromDate"
@@ -396,19 +394,20 @@ function AdminArrivedRequests() {
               tableStyle={{ minWidth: "50rem" }}
               selectionMode="single"
             >
-               <Column
-                field="hostelId"
-                className="font-bold"
-                header="Hostel ID"
-                sortable
-              ></Column>
               <Column
                 field="rollNo"
                 className="font-bold"
                 header="Roll Number"
                 sortable
+                frozen
               ></Column>
-             
+              <Column
+                field="hostelId"
+                className="font-bold"
+                header="Hostel ID"
+                sortable
+              ></Column>
+
               <Column
                 header="Date"
                 field="date"
@@ -447,7 +446,6 @@ function AdminArrivedRequests() {
                 body={acceptedTime}
                 style={{ minWidth: "120px" }}
               ></Column>
-
 
               <Column
                 field="arrived"

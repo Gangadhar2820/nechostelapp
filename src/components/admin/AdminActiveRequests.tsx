@@ -11,16 +11,20 @@ import { Leave, Permission } from "../interfaces/Request";
 import { formatDate, formatDateWithTime, formatTime } from "../interfaces/Date";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
-import { ArriveRequest, getActiveRequests } from "../../services/InchargeService";
+import {
+  ArriveRequest,
+  getActiveRequests,
+} from "../../services/InchargeService";
 import { AdminContext } from "./AdminHome";
 import { createLog } from "../../services/AdminService";
 import { LOG } from "../interfaces/Log";
 
 function AdminActiveRequests() {
-
   const admin = useContext(AdminContext);
 
-  const [selectionOption, setSelectionOption] = useState<"Permissions" | "Leaves">("Permissions");
+  const [selectionOption, setSelectionOption] = useState<
+    "Permissions" | "Leaves"
+  >("Permissions");
 
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [leaves, setLeaves] = useState<Leave[]>([]);
@@ -29,9 +33,9 @@ function AdminActiveRequests() {
 
   const activeRequestToast = useRef<Toast>(null);
 
-  const [isArriving,setIsArriving] = useState<boolean>(false);
+  const [isArriving, setIsArriving] = useState<boolean>(false);
 
-  const [activeRID,setActiveRID] = useState<string>("");
+  const [activeRID, setActiveRID] = useState<string>("");
 
   useEffect(() => {
     if (admin) {
@@ -55,8 +59,6 @@ function AdminActiveRequests() {
         });
     }
   }, [admin]);
-
-  
 
   const renderHeader = () => {
     return (
@@ -132,100 +134,109 @@ function AdminActiveRequests() {
 
   const ArrivedButton = (request: Permission | Leave) => {
     return (
-<Button
-        label={(isArriving && activeRID === request.id)?"Arriving":"Arrived"}
+      <Button
+        label={isArriving && activeRID === request.id ? "Arriving" : "Arrived"}
         icon="pi pi-sign-in"
         severity="info"
         onClick={() => {
-          handleRequestArrive(request?.id,request?.rollNo, request?.type);
+          handleRequestArrive(request?.id, request?.rollNo, request?.type);
         }}
-      >&nbsp;&nbsp;
-      {(isArriving && activeRID=== request.id) && <i className="pi pi-spin pi-spinner"></i>}
-
+      >
+        &nbsp;&nbsp;
+        {isArriving && activeRID === request.id && (
+          <i className="pi pi-spin pi-spinner"></i>
+        )}
       </Button>
     );
   };
 
-  const handleRequestArrive = (id:string,rollNo: string, type: string) => {
+  const handleRequestArrive = (id: string, rollNo: string, type: string) => {
     const accept = () => {
       setActiveRID(id);
       setIsArriving(true);
 
-      if(type==="LEAVE"){
-        let arrRequest = leaves.filter(request=>request.id===id)[0];
-        let newLeaves = leaves.filter(request=>request.id!==id);
-        arrRequest = {...arrRequest,status:"ARRIVED",isActive:false,arrived:{
-          time:new Date(),
-          name:admin.name,
-          eid:admin.eid
-        }}
+      if (type === "LEAVE") {
+        let arrRequest = leaves.filter((request) => request.id === id)[0];
+        let newLeaves = leaves.filter((request) => request.id !== id);
+        arrRequest = {
+          ...arrRequest,
+          status: "ARRIVED",
+          isActive: false,
+          arrived: {
+            time: new Date(),
+            name: admin.name,
+            eid: admin.eid,
+          },
+        };
 
-        ArriveRequest(id,arrRequest).then((data)=>{
-          setLeaves(newLeaves);
-          setIsArriving(false);
-          if (data.updated) {
+        ArriveRequest(id, arrRequest)
+          .then((data) => {
+            setLeaves(newLeaves);
+            setIsArriving(false);
+            if (data.updated) {
+              let myLog: LOG = {
+                date: new Date(),
+                userId: admin.eid,
+                username: admin.name as string,
+                action: `Arrived ${arrRequest.rollNo} from Leave`,
+              };
+              createLog(myLog);
 
-            let myLog: LOG = {
-              date: new Date(),
-              userId: admin.eid,
-              username: admin.name as string,
-              action: `Arrived ${arrRequest.rollNo} from Leave`,
-            };
-            createLog(myLog);
-
-
-            if (activeRequestToast?.current) {
-              activeRequestToast?.current.show({
-                severity: "info",
-                summary: `${rollNo} is Arrived from ${type}`,
-                detail: "",
-              });
+              if (activeRequestToast?.current) {
+                activeRequestToast?.current.show({
+                  severity: "info",
+                  summary: `${rollNo} is Arrived from ${type}`,
+                  detail: "",
+                });
+              }
             }
-          }
-        }).catch(err=>{
-          console.log(err)
-        })
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else if (type === "PERMISSION") {
+        let arrRequest = permissions.filter((request) => request.id === id)[0];
+        let newPermissions = permissions.filter((request) => request.id !== id);
 
-      }else if(type==="PERMISSION"){
+        arrRequest = {
+          ...arrRequest,
+          status: "ARRIVED",
+          isActive: false,
+          arrived: {
+            time: new Date(),
+            name: admin.name,
+            eid: admin.eid,
+          },
+        };
 
-        let arrRequest = permissions.filter(request=>request.id===id)[0];
-        let newPermissions = permissions.filter(request=>request.id!==id);
+        ArriveRequest(id, arrRequest)
+          .then((data) => {
+            setPermissions(newPermissions);
+            setIsArriving(false);
+            if (data.updated) {
+              let myLog: LOG = {
+                date: new Date(),
+                userId: admin.eid,
+                username: admin.name as string,
+                action: `Arrived ${arrRequest.rollNo} from Permission`,
+              };
+              createLog(myLog);
 
-        arrRequest = {...arrRequest,status:"ARRIVED",isActive:false,arrived:{
-          time:new Date(),
-          name:admin.name,
-          eid:admin.eid
-        }}
-
-        ArriveRequest(id,arrRequest).then((data)=>{
-          setPermissions(newPermissions);
-          setIsArriving(false);
-          if (data.updated) {
-
-            let myLog: LOG = {
-              date: new Date(),
-              userId: admin.eid,
-              username: admin.name as string,
-              action: `Arrived ${arrRequest.rollNo} from Permission`,
-            };
-            createLog(myLog);
-
-            if (activeRequestToast?.current) {
-              activeRequestToast?.current.show({
-                severity: "info",
-                summary: `${rollNo} is Arrived from ${type}`,
-                detail: "",
-              });
+              if (activeRequestToast?.current) {
+                activeRequestToast?.current.show({
+                  severity: "info",
+                  summary: `${rollNo} is Arrived from ${type}`,
+                  detail: "",
+                });
+              }
             }
-          }
-        }).catch(err=>{
-          console.log(err)
-        })
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
-
     };
-    const reject = () => {
-    };
+    const reject = () => {};
 
     confirmDialog({
       message: `Is \`${rollNo}\` Arrived from ${type} ?`,
@@ -303,20 +314,19 @@ function AdminActiveRequests() {
               selectionMode="single"
             >
               <Column
-                field="hostelId"
-                className="font-bold"
-                header="Hostel ID"
-                sortable
-                frozen
-              ></Column>
-              <Column
                 field="rollNo"
                 className="font-bold"
                 header="Roll Number"
                 sortable
                 frozen
               ></Column>
-              
+              <Column
+                field="hostelId"
+                className="font-bold"
+                header="Hostel ID"
+                sortable
+              ></Column>
+
               <Column field="name" header="Name"></Column>
 
               <Column
@@ -351,20 +361,19 @@ function AdminActiveRequests() {
               tableStyle={{ minWidth: "50rem" }}
             >
               <Column
-                field="hostelId"
-                className="font-bold"
-                header="Hostel Id"
-                sortable
-                frozen
-              ></Column>
-              <Column
                 field="rollNo"
                 className="font-bold"
                 header="Roll Number"
                 sortable
                 frozen
               ></Column>
-              
+              <Column
+                field="hostelId"
+                className="font-bold"
+                header="Hostel Id"
+                sortable
+              ></Column>
+
               <Column field="name" header="Name"></Column>
 
               <Column
@@ -398,4 +407,3 @@ function AdminActiveRequests() {
 }
 
 export default AdminActiveRequests;
-

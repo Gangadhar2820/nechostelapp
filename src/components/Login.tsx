@@ -8,12 +8,12 @@ import { jwtDecode } from "jwt-decode";
 
 import {
   AuthenticateAdminLogin,
+  AuthenticateFacultyLogin,
   AuthenticateInchargeLogin,
 } from "../services/LoginService";
 import { useInchargeAuth } from "../utils/InchargeAuth";
 import { useAdminAuth } from "../utils/AdminAuth";
 import { useFacultyAuth } from "../utils/FacultyAuth";
-
 
 interface CustomInchargeJwtPayload {
   eid: string;
@@ -70,33 +70,35 @@ function Login() {
   const handleFacultySigninForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setShowFacLoading(true);
-    setTimeout(() => {
-      setShowFacLoading(false);
-      if(facUsername==="111" && facPassword==="111"){
-        if (loginToast.current) {
-          loginToast.current.show({
-            severity: "success",
-            summary: "Login Successful !",
-            detail: "Welcome, User",
-          });
-        }
-        facultyLogin();
-        Navigate(`/faculty`, { replace: true });
-      }else{
-        if (loginToast.current) {
-          loginToast.current.show({
-            severity: "warn",
-            summary: "Invalid Credentials",
-            detail: "Check Username or Password",
-          });
-        }
-        facultyLogout();
 
-      }
-      
-    }, 2000);
-
-       
+    AuthenticateFacultyLogin(facUsername, facPassword)
+      .then((data) => {
+        setShowFacLoading(false);
+        const { success } = data;
+        if (success) {
+          if (loginToast.current) {
+            loginToast.current.show({
+              severity: "success",
+              summary: "Login Successful !",
+              detail: "Welcome, User",
+            });
+          }
+          facultyLogin();
+          Navigate(`/faculty`, { replace: true });
+        } else {
+          if (loginToast.current) {
+            loginToast.current.show({
+              severity: "warn",
+              summary: "Invalid Credentials",
+              detail: "Check Username or Password",
+            });
+          }
+          facultyLogout();
+        }
+      })
+      .catch((err) => {
+        console.log("something went wrong", err);
+      });
   };
 
   const handleInchargeSigninForm = (
@@ -178,18 +180,17 @@ function Login() {
         className="w-full p-1 flex align-items-center justify-content-between"
         style={{ backgroundColor: "#3FA2F6" }}
       >
-          <img
-            src="/images/logo-no-background1.png"
-            alt="Nec logo"
-            className="ml-4 h-3rem"
-          />
-          <img src="/images/Nec.png" alt="Nec logo"
-           className="mr-4 h-4rem" />
-          <img
-            src="/images/logo nec 2.png"
-            alt="Nec logo"
-            className="mr-4 h-4rem hidden sm:block"
-          />
+        <img
+          src="/images/logo-no-background1.png"
+          alt="Nec logo"
+          className="ml-4 h-3rem"
+        />
+        <img src="/images/Nec.png" alt="Nec logo" className="mr-4 h-4rem" />
+        <img
+          src="/images/logo nec 2.png"
+          alt="Nec logo"
+          className="mr-4 h-4rem hidden sm:block"
+        />
       </div>
       <div className="flex align-items-center justify-content-center mt-3">
         <div className="surface-card p-4 shadow-2 border-round w-full lg:w-5">
@@ -443,6 +444,14 @@ function Login() {
                     )}
                   </Button>
                 </form>
+              </div>
+              <div className="flex align-items-center justify-content-end">
+                <Link
+                  className="font-medium no-underline ml-2 text-blue-500  cursor-pointer mt-2"
+                  to="/adminfpassword"
+                >
+                  Forgot your password ?
+                </Link>
               </div>
             </TabPanel>
           </TabView>
