@@ -113,17 +113,67 @@ function InchargeDashboard() {
 
       getCollegeYearWiseData(incharge?.hostelId).then((data)=>{
         const {NEC,NIT,NIPS} = data;
-        setNECTotalData({Iyear:NEC.IYear,IIyear:NEC.IIYear,IIIyear:NEC.IIIYear,
-          IVyear:NEC.IVYear,total:(NEC.IYear+NEC.IIYear+NEC.IIIYear+NEC.IVYear)
-        })
-        setNITTotalData({Iyear:NIT.IYear,IIyear:NIT.IIYear,IIIyear:NIT.IIIYear,
-          IVyear:NIT.IVYear,total:(NIT.IYear+NIT.IIYear+NIT.IIIYear+NIT.IVYear)
-        })
-        setNIPSTotalData({Iyear:NIPS.IYear,IIyear:NIPS.IIYear,IIIyear:NIPS.IIIYear,
-          IVyear:NIPS.IVYear,
-          total:(NIPS.IYear+NIPS.IIYear+NIPS.IIIYear+NIPS.IVYear+NIPS.VYear+NIPS.VIYear),
-          Vyear:NIPS.VYear,VIyear:NIPS.VIYear
-        })
+        if (NEC) {
+          setNECTotalData({
+            Iyear: NEC.IYear,
+            IIyear: NEC.IIYear,
+            IIIyear: NEC.IIIYear,
+            IVyear: NEC.IVYear,
+            total: NEC.IYear + NEC.IIYear + NEC.IIIYear + NEC.IVYear,
+          });
+        } else {
+          setNECTotalData({
+            Iyear: 0,
+            IIyear: 0,
+            IIIyear: 0,
+            IVyear: 0,
+            total: 0,
+          });
+        }
+        if (NIT) {
+          setNITTotalData({
+            Iyear: NIT?.IYear,
+            IIyear: NIT?.IIYear,
+            IIIyear: NIT.IIIYear,
+            IVyear: NIT.IVYear,
+            total: NIT.IYear + NIT.IIYear + NIT.IIIYear + NIT.IVYear,
+          });
+        } else {
+          setNITTotalData({
+            Iyear: 0,
+            IIyear: 0,
+            IIIyear: 0,
+            IVyear: 0,
+            total: 0,
+          });
+        }
+        if (NIPS) {
+          setNIPSTotalData({
+            Iyear: NIPS.IYear,
+            IIyear: NIPS.IIYear,
+            IIIyear: NIPS.IIIYear,
+            IVyear: NIPS.IVYear,
+            total:
+              NIPS.IYear +
+              NIPS.IIYear +
+              NIPS.IIIYear +
+              NIPS.IVYear +
+              NIPS.VYear +
+              NIPS.VIYear,
+            Vyear: NIPS.VYear,
+            VIyear: NIPS.VIYear,
+          });
+        } else {
+          setNIPSTotalData({
+            Iyear: 0,
+            IIyear: 0,
+            IIIyear: 0,
+            IVyear: 0,
+            Vyear: 0,
+            VIyear: 0,
+            total: 0,
+          });
+        }
       }).catch((err)=>{
         console.log("something went wrong",err)
       })
