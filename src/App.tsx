@@ -41,7 +41,6 @@ import AdminHome from "./components/admin/AdminHome";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminProfile from "./components/admin/AdminProfile";
 import AdminAddIncharge from "./components/admin/AdminAddIncharge";
-import AdminViewIncharge from "./components/admin/AdminViewIncharge";
 import AdminInchargeList from "./components/admin/AdminInchargeList";
 import AdminAddStudent from "./components/admin/AdminAddStudent";
 import AdminViewStudent from "./components/admin/AdminViewStudent";
@@ -69,6 +68,8 @@ import AdminHistory from "./components/admin/AdminHistory";
 import AdminFaculty from "./components/admin/AdminFaculty";
 import FacultyStudentList from "./components/faculty/FacultyStudentList";
 import AdminForgotPassword from "./components/AdminForgotPassword";
+import AdminHolidayMessage from "./components/admin/AdminHolidayMessage";
+
 
 function App() {
   return (
@@ -227,6 +228,7 @@ function App() {
                       </Route>
 
                       <Route path="logs" element={<AdminLogs />} />
+                      <Route path="holidaymessage" element={<AdminHolidayMessage />} />
                     </Route>
                   </Route>
                   {/* admin routes ends */}

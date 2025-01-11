@@ -156,7 +156,7 @@ function AdminHome() {
                         <span className="font-medium">Incharge</span>
                       </NavLink>
                     </li>
-                  
+
                     <li>
                       <NavLink
                         to="student"
@@ -239,7 +239,7 @@ function AdminHome() {
                         <span className="font-medium">History</span>
                       </NavLink>
                     </li>
-                   
+
                     <li>
                       <NavLink
                         to="logs"
@@ -254,6 +254,23 @@ function AdminHome() {
                       >
                         <i className="pi pi-address-book mr-2"></i>
                         <span className="font-medium">Logs</span>
+                      </NavLink>
+                    </li>
+
+                    <li>
+                      <NavLink
+                        to="holidaymessage"
+                        className={({ isActive }) => {
+                          let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
+                            isActive
+                              ? "text-primary surface-100 text-primary"
+                              : "text-white"
+                          }`;
+                          return result;
+                        }}
+                      >
+                        <i className="pi pi-send mr-2"></i>
+                        <span className="font-medium">Holiday Message</span>
                       </NavLink>
                     </li>
                   </ul>
@@ -269,170 +286,188 @@ function AdminHome() {
                   >
                     <div className="overflow-y-auto">
                       <ul className="list-none p-3 m-0">
-                      <li>
-                      <NavLink
-                        to="dashboard"
-                        className={({ isActive }) => {
-                          let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
-                            isActive
-                              ? "text-primary surface-100 text-primary"
-                              : "text-white"
-                          }`;
-                          return result;
-                        }}
-                      >
-                        <i className="pi pi-box mr-2"></i>
-                        <span className="font-medium">Dashboard</span>
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
-                        to="profile"
-                        className={({ isActive }) => {
-                          let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
-                            isActive
-                              ? "text-primary surface-100 text-primary"
-                              : "text-white"
-                          }`;
-                          return result;
-                        }}
-                      >
-                        <i className="pi pi-user mr-2"></i>
-                        <span className="font-medium">My Profile</span>
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
-                        to="admin"
-                        className={({ isActive }) => {
-                          let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
-                            isActive
-                              ? "text-primary surface-100 text-primary"
-                              : "text-white"
-                          }`;
-                          return result;
-                        }}
-                      >
-                        <i className="pi pi-users mr-2"></i>
-                        <span className="font-medium">Admin</span>
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
-                        to="incharge"
-                        className={({ isActive }) => {
-                          let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
-                            isActive
-                              ? "text-primary surface-100 text-primary"
-                              : "text-white"
-                          }`;
-                          return result;
-                        }}
-                      >
-                        <i className="pi pi-users mr-2"></i>
-                        <span className="font-medium">Incharge</span>
-                      </NavLink>
-                    </li>
-                  
-                    <li>
-                      <NavLink
-                        to="student"
-                        className={({ isActive }) => {
-                          let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
-                            isActive
-                              ? "text-primary surface-100 text-primary"
-                              : "text-white"
-                          }`;
-                          return result;
-                        }}
-                      >
-                        <i className="pi pi-users mr-2"></i>
-                        <span className="font-medium">Student</span>
-                      </NavLink>
-                    </li>
+                        <li>
+                          <NavLink
+                            to="dashboard"
+                            className={({ isActive }) => {
+                              let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
+                                isActive
+                                  ? "text-primary surface-100 text-primary"
+                                  : "text-white"
+                              }`;
+                              return result;
+                            }}
+                          >
+                            <i className="pi pi-box mr-2"></i>
+                            <span className="font-medium">Dashboard</span>
+                          </NavLink>
+                        </li>
+                        <li>
+                          <NavLink
+                            to="profile"
+                            className={({ isActive }) => {
+                              let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
+                                isActive
+                                  ? "text-primary surface-100 text-primary"
+                                  : "text-white"
+                              }`;
+                              return result;
+                            }}
+                          >
+                            <i className="pi pi-user mr-2"></i>
+                            <span className="font-medium">My Profile</span>
+                          </NavLink>
+                        </li>
+                        <li>
+                          <NavLink
+                            to="admin"
+                            className={({ isActive }) => {
+                              let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
+                                isActive
+                                  ? "text-primary surface-100 text-primary"
+                                  : "text-white"
+                              }`;
+                              return result;
+                            }}
+                          >
+                            <i className="pi pi-users mr-2"></i>
+                            <span className="font-medium">Admin</span>
+                          </NavLink>
+                        </li>
+                        <li>
+                          <NavLink
+                            to="incharge"
+                            className={({ isActive }) => {
+                              let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
+                                isActive
+                                  ? "text-primary surface-100 text-primary"
+                                  : "text-white"
+                              }`;
+                              return result;
+                            }}
+                          >
+                            <i className="pi pi-users mr-2"></i>
+                            <span className="font-medium">Incharge</span>
+                          </NavLink>
+                        </li>
 
-                    <li>
-                      <NavLink
-                        to="faculty"
-                        className={({ isActive }) => {
-                          let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
-                            isActive
-                              ? "text-primary surface-100 text-primary"
-                              : "text-white"
-                          }`;
-                          return result;
-                        }}
-                      >
-                        <i className="pi pi-user mr-2"></i>
-                        <span className="font-medium">Faculty</span>
-                      </NavLink>
-                    </li>
+                        <li>
+                          <NavLink
+                            to="student"
+                            className={({ isActive }) => {
+                              let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
+                                isActive
+                                  ? "text-primary surface-100 text-primary"
+                                  : "text-white"
+                              }`;
+                              return result;
+                            }}
+                          >
+                            <i className="pi pi-users mr-2"></i>
+                            <span className="font-medium">Student</span>
+                          </NavLink>
+                        </li>
 
-                    <li>
-                      <NavLink
-                        to="pendingrequests"
-                        className={({ isActive }) => {
-                          let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
-                            isActive
-                              ? "text-primary surface-100 text-primary"
-                              : "text-white"
-                          }`;
-                          return result;
-                        }}
-                      >
-                        <i className="pi pi-clock mr-2"></i>
-                        <span className="font-medium">Pending Requests</span>
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
-                        to="activerequests"
-                        className={({ isActive }) => {
-                          let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
-                            isActive
-                              ? "text-primary surface-100 text-primary"
-                              : "text-white"
-                          }`;
-                          return result;
-                        }}
-                      >
-                        <i className="pi pi-verified mr-2"></i>
-                        <span className="font-medium">Active Requests</span>
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
-                        to="history"
-                        className={({ isActive }) => {
-                          let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
-                            isActive
-                              ? "text-primary surface-100 text-primary"
-                              : "text-white"
-                          }`;
-                          return result;
-                        }}
-                      >
-                        <i className="pi pi-history mr-2"></i>
-                        <span className="font-medium">History</span>
-                      </NavLink>
-                    </li>
-                   
-                    <li>
-                      <NavLink
-                        to="logs"
-                        className={({ isActive }) => {
-                          let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
-                            isActive
-                              ? "text-primary surface-100 text-primary"
-                              : "text-white"
-                          }`;
-                          return result;
-                        }}
-                      >
-                        <i className="pi pi-address-book mr-2"></i>
-                        <span className="font-medium">Logs</span>
-                      </NavLink>
-                    </li>
+                        <li>
+                          <NavLink
+                            to="faculty"
+                            className={({ isActive }) => {
+                              let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
+                                isActive
+                                  ? "text-primary surface-100 text-primary"
+                                  : "text-white"
+                              }`;
+                              return result;
+                            }}
+                          >
+                            <i className="pi pi-user mr-2"></i>
+                            <span className="font-medium">Faculty</span>
+                          </NavLink>
+                        </li>
+
+                        <li>
+                          <NavLink
+                            to="pendingrequests"
+                            className={({ isActive }) => {
+                              let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
+                                isActive
+                                  ? "text-primary surface-100 text-primary"
+                                  : "text-white"
+                              }`;
+                              return result;
+                            }}
+                          >
+                            <i className="pi pi-clock mr-2"></i>
+                            <span className="font-medium">
+                              Pending Requests
+                            </span>
+                          </NavLink>
+                        </li>
+                        <li>
+                          <NavLink
+                            to="activerequests"
+                            className={({ isActive }) => {
+                              let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
+                                isActive
+                                  ? "text-primary surface-100 text-primary"
+                                  : "text-white"
+                              }`;
+                              return result;
+                            }}
+                          >
+                            <i className="pi pi-verified mr-2"></i>
+                            <span className="font-medium">Active Requests</span>
+                          </NavLink>
+                        </li>
+                        <li>
+                          <NavLink
+                            to="history"
+                            className={({ isActive }) => {
+                              let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
+                                isActive
+                                  ? "text-primary surface-100 text-primary"
+                                  : "text-white"
+                              }`;
+                              return result;
+                            }}
+                          >
+                            <i className="pi pi-history mr-2"></i>
+                            <span className="font-medium">History</span>
+                          </NavLink>
+                        </li>
+
+                        <li>
+                          <NavLink
+                            to="logs"
+                            className={({ isActive }) => {
+                              let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
+                                isActive
+                                  ? "text-primary surface-100 text-primary"
+                                  : "text-white"
+                              }`;
+                              return result;
+                            }}
+                          >
+                            <i className="pi pi-address-book mr-2"></i>
+                            <span className="font-medium">Logs</span>
+                          </NavLink>
+                        </li>
+                        <li>
+                          <NavLink
+                            to="holidaymessage"
+                            className={({ isActive }) => {
+                              let result = `p-ripple no-underline flex  align-items-center hover:text-primary  cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full ${
+                                isActive
+                                  ? "text-primary surface-100 text-primary"
+                                  : "text-white"
+                              }`;
+                              return result;
+                            }}
+                          >
+                            <i className="pi pi-send mr-2"></i>
+                            <span className="font-medium">Holiday Message</span>
+                          </NavLink>
+                        </li>
                       </ul>
                     </div>
                   </Sidebar>

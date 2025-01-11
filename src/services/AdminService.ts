@@ -58,21 +58,21 @@ export const UploadStudentBulkData = async (students: any) => {
   }
 };
 
-export const adminUpdateStudentProfile = async (student:Student) => {
-
-    try {
-      const response = await axios.put(
-        `${server}/student/update/${student.rollNo.toUpperCase()}`,student,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.log("Error : while updating student", error);
-    }
+export const adminUpdateStudentProfile = async (student: Student) => {
+  try {
+    const response = await axios.put(
+      `${server}/student/update/${student.rollNo.toUpperCase()}`,
+      student,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Error : while updating student", error);
+  }
 };
 
 export const deleteStudent = async (rollNo: string) => {
@@ -84,42 +84,44 @@ export const deleteStudent = async (rollNo: string) => {
   }
 };
 
-export const createLog = async (newLog:LOG)=>{
-  try{
-    const response = await axios.post(`${server}/logs/add-log`,newLog,        {
+export const createLog = async (newLog: LOG) => {
+  try {
+    const response = await axios.post(`${server}/logs/add-log`, newLog, {
       headers: {
         "Content-Type": "application/json",
       },
-    })
+    });
     return response.data;
-  }catch(error){
-    console.log("Error : while creating a log",error)
-
+  } catch (error) {
+    console.log("Error : while creating a log", error);
   }
-}
+};
 
 export const getLogs = async (date: Date) => {
   try {
-    const response = await axios.post(`${server}/logs/getLogs`,{date:date},{
-      headers:{
-        "Content-Type":"application/json"
+    const response = await axios.post(
+      `${server}/logs/getLogs`,
+      { date: date },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    });
+    );
     return response.data;
   } catch (error) {
     console.log("Error : while getting Log data", error);
   }
 };
 
-export const getAllAdmins = async ()=>{
-  try{
+export const getAllAdmins = async () => {
+  try {
     const response = await axios.get(`${server}/admin/getAdmins`);
     return response.data;
-
-  }catch(error){
-    console.log("Error : While getting all admins data",error)
+  } catch (error) {
+    console.log("Error : While getting all admins data", error);
   }
-}
+};
 
 export const updateAdmin = async (admin: Admin) => {
   try {
@@ -147,54 +149,63 @@ export const deleteAdmin = async (eid: string) => {
   }
 };
 
-export const UpdateMultipleStudents = async (rollNumbers:string[],year:string)=>{
-
+export const UpdateMultipleStudents = async (
+  rollNumbers: string[],
+  year: string
+) => {
   try {
-    const response = await axios.put(`${server}/student/updateMany`,{rollNumbers:rollNumbers,year:year},{
-      headers:{
-        "Content-Type":"application/json"
+    const response = await axios.put(
+      `${server}/student/updateMany`,
+      { rollNumbers: rollNumbers, year: year },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    });
+    );
     return response.data;
   } catch (error) {
     console.log("Error : while Updating  Multiple students", error);
   }
+};
 
-}
-
-export const DeleteMultipleStudents = async (rollNumbers:string[]) => {
+export const DeleteMultipleStudents = async (rollNumbers: string[]) => {
   try {
-    const response = await axios.delete(`${server}/student/deleteMany`,
-      {data:{rollNumbers:rollNumbers},headers:{"Content-Type":"application/json"}});
+    const response = await axios.delete(`${server}/student/deleteMany`, {
+      data: { rollNumbers: rollNumbers },
+      headers: { "Content-Type": "application/json" },
+    });
     return response.data;
   } catch (error) {
     console.log("Error : while Deleting Multiple students", error);
   }
 };
 
-export const FetchFacultyData = async ()=>{
-  try{
+export const FetchFacultyData = async () => {
+  try {
     const response = await axios.get(`${server}/faculty/get`);
     return response.data;
-  }catch(error){
-    console.log("Error : While fetching faculty credentials",error)
+  } catch (error) {
+    console.log("Error : While fetching faculty credentials", error);
   }
-}
+};
 
-export const UpdateFacultyData = async (username:string,password:string)=>{
-
+export const UpdateFacultyData = async (username: string, password: string) => {
   try {
-    const response = await axios.put(`${server}/faculty/update`,{username:username,password:password},{
-      headers:{
-        "Content-Type":"application/json"
+    const response = await axios.put(
+      `${server}/faculty/update`,
+      { username: username, password: password },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    });
+    );
     return response.data;
   } catch (error) {
     console.log("Error : while Updating  Faculty data", error);
   }
-
-}
+};
 
 export const deleteLogs = async () => {
   try {
@@ -202,6 +213,20 @@ export const deleteLogs = async () => {
     return response.data;
   } catch (error) {
     console.log("Error : while Deleting Logs", error);
+  }
+};
+
+export const SendHolidayMessage = async (data: any) => {
+  try {
+    console.log(data)
+    const response = await axios.post(`${server}/holiday/send`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error : while Sending Holiday Messages", error);
   }
 };
 
