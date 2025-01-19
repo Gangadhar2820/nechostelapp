@@ -223,7 +223,6 @@ function AdminViewStudent() {
 
   return (
     <>
-      <Toast ref={ViewStudentToast} position="center" />
       <ConfirmDialog />
       <div
         className="w-full"
@@ -233,7 +232,8 @@ function AdminViewStudent() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Search Student">
+        <Toast ref={ViewStudentToast} position="center" />
+        <Card title="Search Student" className="special-font">
           <form onSubmit={handleSearchFormSubmit} className="grid">
             <div className="col-12 sm:col-6 mt-3 ">
               <FloatLabel>
@@ -632,7 +632,7 @@ function AdminViewStudent() {
                     <div className="flex align-items-start justify-content-between">
                       <div className="font-medium text-xl text-900 mb-3">
                         <i className="pi pi-user font-medium text-xl text-900"></i>
-                        &nbsp;&nbsp;Student Profile
+                        &nbsp;&nbsp;<p className="special-font inline">Student Profile</p>
                       </div>
                       <div className="status">
                         <Chip
@@ -765,7 +765,7 @@ function AdminViewStudent() {
         </Card>
 
         {student !== null && student?.lastRequest !== null && !enableEdit && (
-          <Card title="Last Request" className="">
+          <Card title="Last Request" className="special-font">
             <ReqCard request={student?.lastRequest} />
           </Card>
         )}

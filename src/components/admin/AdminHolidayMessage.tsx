@@ -3,17 +3,25 @@ import { Card } from "primereact/card";
 import { FloatLabel } from "primereact/floatlabel";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Admin } from "../interfaces/Admin";
 import { Calendar } from "primereact/calendar";
 import { Nullable } from "primereact/ts-helpers";
 import { Dropdown } from "primereact/dropdown";
 import { InputTextarea } from "primereact/inputtextarea";
-import { SendHolidayMessage } from "../../services/AdminService";
+import { createLog, SendHolidayMessage } from "../../services/AdminService";
 import { AdminContext } from "./AdminHome";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { typeImplementation } from "@testing-library/user-event/dist/type/typeImplementation";
 import { formatDate } from "../interfaces/Date";
+import axios from "axios";
+import { LOG } from "../interfaces/Log";
 
 interface HolidayMessage {
   year: string;
@@ -36,43 +44,132 @@ function AdminHolidayMessage() {
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [admin, setAdmin] = useState<Admin>(useContext(AdminContext));
 
-  const handleHolidayMessageForm = (
+  const handleHolidayMessageForm = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
 
-    // confirmDialog({
-    //       message: ``,
-    //       header: "Message Confirmation",
-    //       icon: "pi pi-info-circle",
-    //       defaultFocus: "reject",
-    //       acceptClassName: "p-button-danger",
-    //       accept,
-    //       reject,
-    //       id: "inchargependingrequestdialog",
-    //     });
-    
-    SendHolidayMessage({
-      sendBy: admin.name,
-      college: JSON.parse(JSON.stringify(holidayMessage.college)).code,
-      year: JSON.parse(JSON.stringify(holidayMessage.year)).code,
-      fromDate: formatDate(holidayMessage.fromDate as Date),
-      toDate: formatDate(holidayMessage.toDate as Date),
-      occasion: holidayMessage.occasion,
-    })
-      .then((data) => {
-        console.log(data);
+    const occasionTEL = await axios.get(
+      `https://api.mymemory.translated.net/get?q=${holidayMessage.occasion}&langpair=en|te`
+    );
+    const teluguOccasionName = occasionTEL.data.responseData.translatedText;
+
+    const accept = () => {
+      setIsSendingMessage(true);
+
+      SendHolidayMessage({
+        sendBy: admin.name,
+        college: JSON.parse(JSON.stringify(holidayMessage.college)).code,
+        year: JSON.parse(JSON.stringify(holidayMessage.year)).code,
+        fromDate: formatDate(holidayMessage.fromDate as Date),
+        toDate: formatDate(holidayMessage.toDate as Date),
+        occasion: holidayMessage.occasion,
       })
-      .catch((err) => {
-        console.log("Error : while sending holiday messages ", err);
-      });
-    // setHolidayMessage({
-    //   year: "",
-    //   college: "",
-    //   fromDate: null,
-    //   toDate: null,
-    //   occasion: "",
-    // });
+        .then((data) => {
+          setIsSendingMessage(false);
+          if (data?.success) {
+            let myLog: LOG = {
+              date: new Date(),
+              userId: admin.eid,
+              username: admin.name as string,
+              action: `Holiday Message : ${messageFORlog}`,
+            };
+            createLog(myLog);
+
+            if (holidayToast?.current) {
+              holidayToast?.current.show({
+                severity: "success",
+                summary: `Success !`,
+                detail: `Total ${data.totalMessagesSent} messages sended`,
+              });
+            }
+          } else {
+            if (holidayToast?.current) {
+              holidayToast?.current.show({
+                severity: "error",
+                summary: `Failure !`,
+                detail: `Failed to send messages`,
+              });
+            }
+          }
+          // setHolidayMessage({
+          //   year: "",
+          //   college: "",
+          //   fromDate: null,
+          //   toDate: null,
+          //   occasion: "",
+          // });
+        })
+        .catch((err) => {
+          console.log("Error : while sending holiday messages ", err);
+        });
+    };
+    const reject = () => {};
+
+    const messageFORlog = `ప్రియమైన తల్లిదండ్రులకు, మీ పిల్లలు చదువుకుంటున్న ${holidayMessage.college === "ALL" ? "NEC/NIT/NIPS" : JSON.parse(JSON.stringify(holidayMessage.college)).code} కళాశాలలో ${teluguOccasionName} సందర్భంగా ${formatDate(holidayMessage.fromDate as Date)} నుండి ${formatDate(holidayMessage.toDate as Date)} వరకు సెలవులు ప్రకటించబడినట్లు తెలియజేస్తున్నాము. NEC హాస్టల్స్ - GEDNEC`
+
+    const message = (
+      <p>
+        ప్రియమైన తల్లిదండ్రులకు, మీ పిల్లలు చదువుకుంటున్న{" "}
+        <span
+          style={{
+            color: "blue",
+            fontWeight: "bold",
+            fontStyle: "italic",
+            textDecoration: "underline",
+          }}
+        >
+          {holidayMessage.college === "ALL"
+            ? "NEC/NIT/NIPS"
+            : JSON.parse(JSON.stringify(holidayMessage.college)).code}
+        </span>{" "}
+        కళాశాలలో{" "}
+        <span
+          style={{
+            color: "blue",
+            fontWeight: "bold",
+            fontStyle: "italic",
+            textDecoration: "underline",
+          }}
+        >
+          {teluguOccasionName}
+        </span>{" "}
+        సందర్భంగా{" "}
+        <span
+          style={{
+            color: "blue",
+            fontWeight: "bold",
+            fontStyle: "italic",
+            textDecoration: "underline",
+          }}
+        >
+          {formatDate(holidayMessage.fromDate as Date)}
+        </span>{" "}
+        నుండి{" "}
+        <span
+          style={{
+            color: "blue",
+            fontWeight: "bold",
+            fontStyle: "italic",
+            textDecoration: "underline",
+          }}
+        >
+          {formatDate(holidayMessage.toDate as Date)}
+        </span>{" "}
+        వరకు సెలవులు ప్రకటించబడినట్లు తెలియజేస్తున్నాము. NEC హాస్టల్స్ - GEDNEC
+      </p>
+    );
+
+    confirmDialog({
+      message: message,
+      header: "Preview Holiday Message",
+      icon: "pi pi-eye",
+      defaultFocus: "reject",
+      acceptClassName: "p-button-success",
+      accept,
+      reject,
+      id: "adminholidaymessagedialog",
+    });
   };
 
   const colleges = [
@@ -108,6 +205,8 @@ function AdminHolidayMessage() {
     validateForm();
   }, [validateForm]);
 
+  const holidayToast = useRef<Toast>(null);
+
   return (
     <>
       <div
@@ -118,12 +217,14 @@ function AdminHolidayMessage() {
           transform: "translatex(-50%)",
         }}
       >
-        <ConfirmDialog id="inchargependingrequestdialog" />
-        
-        {/* <Toast ref={adminToast} position="center"></Toast> */}
+        <ConfirmDialog
+          id="inchargependingrequestdialog"
+          className="w-10 md:w-6 "
+        />
 
+        <Toast ref={holidayToast} position="center"></Toast>
 
-        <Card title="Send Holiday Message">
+        <Card title="Send Holiday Message" className="special-font">
           <form action="" className="grid" onSubmit={handleHolidayMessageForm}>
             <div className="col-12 md:col-6 mt-3">
               <div className="w-12 md:w-8">

@@ -249,7 +249,7 @@ function InchargeActiveRequest() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Active Requests">
+        <Card title="Active Requests" className="special-font">
           <div className="card flex justify-content-center">
             <div className="flex flex-wrap gap-3">
               <div className="flex align-items-center">
@@ -284,7 +284,7 @@ function InchargeActiveRequest() {
           </div>
         </Card>
 
-        <Card title={selectionOption} className="mt-2">
+        <Card title={selectionOption} className="mt-2 special-font">
           {selectionOption === "Leaves" ? (
             <DataTable
               value={leaves}

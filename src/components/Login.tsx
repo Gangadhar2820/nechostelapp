@@ -197,8 +197,8 @@ function Login() {
           <TabView>
             <TabPanel header="Faculty">
               <div className="text-center mb-5">
-                <div className="text-900 text-2xl font-medium mb-2">
-                  Faculty Sign In
+                <div className="text-900 text-2xl font-medium mb-2 special-font">
+                  Faculty Sign in
                 </div>
               </div>
               <div>
@@ -279,8 +279,8 @@ function Login() {
 
             <TabPanel header="Incharge">
               <div className="text-center mb-5">
-                <div className="text-900 text-2xl font-medium mb-2">
-                  Incharge Sign In
+                <div className="text-900 text-2xl font-medium mb-2 special-font">
+                  Incharge Sign in
                 </div>
               </div>
               <div>
@@ -368,8 +368,8 @@ function Login() {
 
             <TabPanel header="Admin">
               <div className="text-center mb-5">
-                <div className="text-900 text-2xl font-medium mb-2">
-                  Admin Sign In
+                <div className="text-900 text-2xl font-medium mb-2 special-font">
+                  Admin Sign in
                 </div>
               </div>
               <div>

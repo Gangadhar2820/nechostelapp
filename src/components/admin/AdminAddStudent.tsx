@@ -142,13 +142,10 @@ function AdminAddStudent() {
       });
   };
 
-  const onDataUpload = () => {
-    console.log("data uploaded");
-  };
 
   return (
     <>
-      <Toast ref={adminStudentToast} position="center"></Toast>
+       
 
       <div
         className="w-full p-2"
@@ -158,7 +155,10 @@ function AdminAddStudent() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Add Student">
+        
+        <Card title="Add Student" className="special-font">
+        <Toast ref={adminStudentToast} position="center"></Toast>
+
           <form
             action=""
             className="grid"
@@ -179,7 +179,7 @@ function AdminAddStudent() {
                   }}
                   required
                 />
-                <label htmlFor="ad-add-stu-rollno">Roll Number</label>
+                <label htmlFor="ad-add-stu-rollno">Roll No</label>
               </FloatLabel>
             </div>
 
@@ -314,7 +314,7 @@ function AdminAddStudent() {
                   }}
                   required
                 />
-                <label htmlFor="ad-add-stu-phoneno">Phone Number</label>
+                <label htmlFor="ad-add-stu-phoneno">Phone No</label>
               </FloatLabel>
               {!/^[0-9]{10}$/.test(newStudent.phoneNo) &&
                 newStudent.phoneNo !== "" && (
@@ -339,7 +339,7 @@ function AdminAddStudent() {
                   }}
                   required
                 />
-                <label htmlFor="ad-add-stu-rollno">EMail</label>
+                <label htmlFor="ad-add-stu-rollno">Email</label>
               </FloatLabel>
               {!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
                 newStudent.email
@@ -452,7 +452,7 @@ function AdminAddStudent() {
                   }}
                   required
                 />
-                <label htmlFor="ad-add-stu-fathername">Father's Name</label>
+                <label htmlFor="ad-add-stu-fathername">Parent Name</label>
               </FloatLabel>
             </div>
 
@@ -471,7 +471,7 @@ function AdminAddStudent() {
                   }}
                   required
                 />
-                <label htmlFor="ad-add-stu-fathermobile">Father Mobile No</label>
+                <label htmlFor="ad-add-stu-fathermobile">Parent Phone No</label>
               </FloatLabel>
               {!/^[0-9]{10}$/.test(newStudent.parentPhoneNo) &&
                 newStudent.parentPhoneNo !== "" && (
@@ -494,7 +494,7 @@ function AdminAddStudent() {
           <span className="p-tag">OR</span>
         </Divider>
 
-        <Card title="Import Data (.xls / .xlsx)">
+        <Card title="Import Data (.xls / .xlsx)" className="special-font">
         
         <AdminStudentBulkDataUpload/>
         </Card>

@@ -16,7 +16,7 @@ function StudentDashboard() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Last Request" className="mt-1">
+        <Card title="Last Request" className="mt-1 special-font">
           {student?.lastRequest ? (
             <ReqCard request={student?.lastRequest} />
           ) : (

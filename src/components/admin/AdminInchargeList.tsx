@@ -6,7 +6,6 @@ import { Incharge } from "../interfaces/Incharge";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { getAllIncharges } from "../../services/StudentService";
-import { Leave, Permission } from "../interfaces/Request";
 import { Dialog } from "primereact/dialog";
 import AdminViewIncharge from "./AdminViewIncharge";
 import { Toast } from "primereact/toast";
@@ -89,7 +88,7 @@ function AdminInchargeList() {
           setShowInchrgeCard(false);
           setSelectedIncharge(null);
         }}
-        className="w-11 lg:w-8"
+        className="w-11 lg:w-8 special-font"
       >
         <AdminViewIncharge
           incharge={selectedIncharge}
@@ -106,7 +105,7 @@ function AdminInchargeList() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Incharge List">
+        <Card title="Incharge List" className="special-font">
           <form onSubmit={handleIncSearchForm} className="grid">
             <div className="col-12 sm:col-6 mt-3">
               <div className="custom-select-container w-12">

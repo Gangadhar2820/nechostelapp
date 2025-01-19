@@ -6,7 +6,7 @@ import { DataTable } from "primereact/datatable";
 import { FloatLabel } from "primereact/floatlabel";
 import { Nullable } from "primereact/ts-helpers";
 import React, { useContext, useRef, useState } from "react";
-import { formatDateWithTime } from "../interfaces/Date";
+import { formatDate, formatDateWithTime } from "../interfaces/Date";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
@@ -17,6 +17,8 @@ import { Divider } from "primereact/divider";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
 import { AdminContext } from "./AdminHome";
+import * as XLSX from "xlsx";
+
 
 function AdminLogs() {
   const [date, setDate] = useState<Nullable<Date>>(null);
@@ -51,12 +53,12 @@ function AdminLogs() {
       <div className="flex justify-content-between">
         <Button
           type="button"
-          icon="pi pi-filter-slash"
-          label=""
+          icon="pi pi-download"
           outlined
           onClick={() => {
-            setGlobalFilterValue("");
+            exportExcel()
           }}
+          disabled={logs?(logs.length>0?false:true):true}
         />
         <IconField iconPosition="left">
           <InputIcon className="pi pi-search" />
@@ -178,6 +180,17 @@ function AdminLogs() {
     });
   };
 
+  const exportExcel = () => {
+   const worksheet = XLSX.utils.json_to_sheet(logs as LOG[]);
+   
+         const workbook = XLSX.utils.book_new();
+         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+   
+         XLSX.writeFile(workbook, `NEC_HOSTEL_LOGS_(${formatDate(date as Date)}).xlsx`);
+};
+
+
+
   return (
     <>
       <ConfirmDialog />
@@ -190,7 +203,7 @@ function AdminLogs() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Trace Logs">
+        <Card title="Trace Logs" className="special-font">
           <form onSubmit={handleLogsFormSubmit} className="grid">
             <div className="col-12 sm:col-6  mt-3">
               <FloatLabel>
@@ -256,7 +269,7 @@ function AdminLogs() {
           <span className="p-tag">OR</span>
         </Divider>
 
-        <Card title={"Delete Logs"}>
+        <Card title={"Delete Logs"} className="special-font">
           <ul>
             <li>NEC Hostel Portal maintains last 6 months log data</li>
             <li>

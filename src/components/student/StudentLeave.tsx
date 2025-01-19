@@ -161,7 +161,7 @@ function StudentLeave() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Apply Leave / Permission">
+        <Card title="Apply Leave / Permission" className="special-font">
           <div className="card flex justify-content-center">
             <div className="flex flex-wrap gap-3">
               <div className="flex align-items-center">
@@ -197,7 +197,7 @@ function StudentLeave() {
         </Card>
 
         {!(student?.lastRequest?.isActive) ? (
-          <Card title={selectionOption} className="mt-2">
+          <Card title={selectionOption} className="mt-2 special-font" >
             <form
               action=""
               className="grid"

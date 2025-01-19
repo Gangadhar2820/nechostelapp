@@ -103,11 +103,11 @@ function StudentLogin() {
         <div className="surface-card p-4 shadow-2 border-round w-full lg:w-5">
      
               <div className="text-center mb-5">
-                <div className="text-900 text-2xl font-medium mb-2">
-                  Student Sign In
+                <div className="text-900 text-2xl font-medium mb-2 special-font">
+                  Student Sign in
                 </div>
                 <span className="text-600 font-medium line-height-2">
-                  Don't have an account?
+                  Don't have an account ?
                 </span>
                 <Link
                   className="font-medium no-underline ml-2 text-blue-500  cursor-pointer mt-2"

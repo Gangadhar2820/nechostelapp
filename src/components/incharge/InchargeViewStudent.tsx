@@ -57,7 +57,7 @@ function InchargeViewStudent() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Search Student">
+        <Card title="Search Student" className="special-font">
           <form onSubmit={handleSearchFormSubmit} className="grid">
             <div className="col-12 sm:col-6 mt-3 ">
               <FloatLabel>
@@ -93,7 +93,7 @@ function InchargeViewStudent() {
               <div className="flex align-items-start justify-content-between">
                 <div className="font-medium text-3xl text-900 mb-3">
                   <i className="pi pi-user font-medium text-3xl text-900"></i>
-                  &nbsp;&nbsp;Student Profile
+                  &nbsp;&nbsp;<span className="special-font">Student Profile</span>
                 </div>
                 <div className="status">
                   <Chip

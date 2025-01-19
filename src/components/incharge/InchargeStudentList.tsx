@@ -96,7 +96,7 @@ function InchargeStudentList() {
     </div>
   );
 
-  const StudentListHeader = <h2 className="m-0 pt-3 pl-3">List Students</h2>;
+  const StudentListHeader = <h2 className="m-0 pt-3 pl-3 special-font">Students List</h2>;
 
   return (
     <>

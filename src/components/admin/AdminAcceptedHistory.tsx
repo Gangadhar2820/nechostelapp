@@ -199,7 +199,7 @@ function AdminAcceptedHistory() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Accepted History">
+        <Card title="Accepted Requests" className="special-font">
           <form onSubmit={handleListStudentForm} className="grid">
             <div className="col-12 sm:col-6 md:col-4 mt-3">
               <div className="custom-select-container w-full">
@@ -304,7 +304,7 @@ function AdminAcceptedHistory() {
           </div>
         </Card>
 
-        <Card title={selectionOption} className="mt-2">
+        <Card title={selectionOption} className="mt-2 special-font" >
           {selectionOption === "Leaves" ? (
             <DataTable
               value={leaves}

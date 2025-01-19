@@ -6,6 +6,8 @@ import * as XLSX from "xlsx";
 import { createLog, UploadStudentBulkData } from "../../services/AdminService";
 import { LOG } from "../interfaces/Log";
 import { AdminContext } from "./AdminHome";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import PreviewTable from "../../charts/PreviewTable";
 
 interface ExcelData {
   [key: string]: string | number | boolean;
@@ -98,7 +100,6 @@ function AdminStudentBulkDataUpload() {
   }, [data]);
 
   const handleFileUpload = () => {
-    setIsUploading(true);
     const exactData = data?.filter((element) => element.rollNo !== "__");
     const result = exactData?.map((student) => {
       let newStudent = {
@@ -116,7 +117,20 @@ function AdminStudentBulkDataUpload() {
       return newStudent;
     });
 
-    UploadStudentBulkData(result)
+    let previewTableData:any ;
+
+    if( result && result.length > 5){
+      previewTableData = result.slice(1,4)
+    }else if(result){
+      previewTableData = result;
+    }else{
+      previewTableData = []
+    }
+
+    const accept = ()=>{
+    setIsUploading(true);
+
+      UploadStudentBulkData(result)
       .then((data) => {
         setIsUploading(false);
         const {added,message} = data;
@@ -148,11 +162,31 @@ function AdminStudentBulkDataUpload() {
         }
       })
       .catch((err) => console.log("something went wrong", err));
+
+    }
+    const reject = ()=>{
+
+    }
+
+    confirmDialog({
+          message: <PreviewTable previewTableData={previewTableData}></PreviewTable>,
+          header: "Student Data Preview",
+          defaultFocus: "reject",
+          acceptClassName: "p-button-success",
+          accept,
+          reject,
+          id: "adminholidaymessagedialog",
+        });
+
+    
   };
 
   return (
     <>
-      <Toast ref={uploadDataToast} position="center" />
+    <ConfirmDialog
+              id="studentbulkdataupload"
+              className="w-10 md:w-6 "
+            />
       <div className="instructions">
         <strong style={{ color: "red" }}>Requirements : </strong>
         <ul>
@@ -168,8 +202,8 @@ function AdminStudentBulkDataUpload() {
             {isExcelFormat !== null &&
               (isExcelFormat ? (
                 <i
-                  className="pi pi-check-circle"
-                  style={{ color: "green" }}
+                className="pi pi-check-circle"
+                style={{ color: "green" }}
                 ></i>
               ) : (
                 <i className="pi pi-times-circle" style={{ color: "red" }}></i>
@@ -219,6 +253,8 @@ function AdminStudentBulkDataUpload() {
       </div>
 
       <div className="grid">
+      <Toast ref={uploadDataToast} position="bottom-center" />
+
         <div className="col-12 md:col-6 lg:col-4 m-3">
           <input type="file" accept=".xls,.xlsx" onChange={handleFileChange} />
         </div>

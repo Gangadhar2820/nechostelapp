@@ -129,7 +129,7 @@ function StudentRegister() {
         onHide={() => {
           Navigate("/", { replace: true });
         }}
-        className="w-11 lg:w-8"
+        className="w-11 lg:w-8 special-font"
       >
         <Card className="w-full mt-1">
           <form onSubmit={handleStuRegFormSubmit}>
@@ -521,7 +521,7 @@ function StudentRegister() {
                     (isPasswordsSame && stuPassword ? false : true) ||
                     (isRegistering ? true : false)
                   }
-                  className="w-full text-center"
+                  className="w-full text-center mt-1"
                 >
                   {isRegistering && <i className="pi pi-spin pi-spinner"></i>}
                 </Button>

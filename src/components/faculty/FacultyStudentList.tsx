@@ -119,7 +119,7 @@ function FacultyStudentList() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card header={StudentListHeader}>
+        <Card header={StudentListHeader} className="special-font">
           <form onSubmit={handleListStudentForm} className="grid">
             <div className="col-12 sm:col-6  md:col-3 mt-3">
               <div className="custom-select-container w-12">

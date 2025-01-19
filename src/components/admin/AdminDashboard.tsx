@@ -11,7 +11,8 @@ import { Button } from "primereact/button";
 import { Leave, Permission } from "../interfaces/Request";
 import { Dialog } from "primereact/dialog";
 import TodayRequestsView from "../incharge/TodayRequestsView";
-// import { InchargeContext } from "./InchargeHome";
+import PieChartt from "../../charts/PieChartt";
+import BarChartt from "../../charts/BarChartt";
 
 interface TotalCount {
   hostel: number;
@@ -54,9 +55,22 @@ interface NIPS {
   total: number;
 }
 
+interface PieChartData {
+  value: number;
+  label: string;
+}
+
+
 function AdminDashboard() {
   const [BH1TotalStats, setBH1TotalStats] = useState<TotalCount | null>(null);
   const [GH1TotalStats, setGH1TotalStats] = useState<TotalCount | null>(null);
+
+  const [BH1PieChartData, setBH1PieChartData] = useState<PieChartData[] | null>(
+    null
+  );
+  const [GH1PieChartData, setGH1PieChartData] = useState<PieChartData[] | null>(
+    null
+  );
 
   const [BH1TodayAcceptedStats, setBH1TodayAcceptedStats] =
     useState<TodayStats | null>(null);
@@ -94,6 +108,11 @@ function AdminDashboard() {
           leaves: data.leave,
           total: data.total,
         });
+        setBH1PieChartData([
+          { label: "Hostel", value: data.hostel },
+          { label: "Leave", value: data.leave },
+          { label: "Permission", value: data.permission },
+        ]);
       })
       .catch((err) => {
         console.log("something went wrong", err);
@@ -107,6 +126,11 @@ function AdminDashboard() {
           leaves: data.leave,
           total: data.total,
         });
+        setGH1PieChartData([
+          { label: "Hostel", value: data.hostel },
+          { label: "Leave", value: data.leave },
+          { label: "Permission", value: data.permission },
+        ]);
       })
       .catch((err) => {
         console.log("something went wrong", err);
@@ -292,7 +316,7 @@ function AdminDashboard() {
   }, []);
 
   const todayAcceptedCardHeader = () => {
-    return <h4 className="text-center">Today Accepted Requests</h4>;
+    return <h4 className="text-center special-font">Today Accepted Requests</h4>;
   };
 
   const todayAcceptedCardFooter = (hostelId: string) => {
@@ -323,7 +347,7 @@ function AdminDashboard() {
   };
 
   const todayArrivedCardHeader = () => {
-    return <h4 className="text-center">Today Arrived Students</h4>;
+    return <h4 className="text-center special-font">Today Arrived Students</h4>;
   };
 
   const todayArrivedCardFooter = (hostelId: string) => {
@@ -354,19 +378,11 @@ function AdminDashboard() {
   };
 
   const studentCardHeader = () => {
-    return <h4 className="text-center">Students</h4>;
+    return <h4 className="text-center special-font">Student Statistics</h4>;
   };
 
-  const NECCardHeader = () => {
-    return <h4 className="text-center">NEC</h4>;
-  };
-
-  const NITCardHeader = () => {
-    return <h4 className="text-center">NIT</h4>;
-  };
-
-  const NIPSCardHeader = () => {
-    return <h4 className="text-center">NIPS</h4>;
+  const collegeDataHeader = () => {
+    return <h4 className="text-center special-font">College & Year wise data</h4>;
   };
 
   return (
@@ -394,7 +410,10 @@ function AdminDashboard() {
           transform: "translatex(-50%)",
         }}
       >
-        <div className="p-card grid mt-1 p-0">
+        <div
+          className="p-card grid  mt-1 p-0"
+          style={{ backgroundColor: "aliceblue" }}
+        >
           <div className="col-12 flex align-items-center justify-content-center">
             <Chip
               label="Boys Hostel (BH1)"
@@ -403,40 +422,15 @@ function AdminDashboard() {
             />
           </div>
 
-          <Card header={studentCardHeader} className="col-12 sm:col-6 lg:col-4">
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">
-                In Hostel
-              </div>
-              <div className="text-900 font-bold m-1">
-                {BH1TotalStats?.hostel}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">
-                On Permission
-              </div>
-              <div className="text-900 font-bold m-1">
-                {BH1TotalStats?.permissions}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">On Leave</div>
-              <div className="text-900 font-bold m-1">
-                {BH1TotalStats?.leaves}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
-              <div className="text-500 font-bold font-medium m-1">Total</div>
-              <div className="text-900 font-bold m-1">
-                {BH1TotalStats?.total}
-              </div>
+          <Card header={studentCardHeader} className="col-12  lg:col-8">
+            <div style={{ justifySelf: "center" }}>
+              <PieChartt data={BH1PieChartData} total={BH1TotalStats?.total} />
             </div>
           </Card>
           <Card
             header={todayAcceptedCardHeader}
             footer={todayAcceptedCardFooter("BH1")}
-            className=" col-12 sm:col-6 lg:col-4 "
+            className=" col-12 sm:col-6 lg:col-4 align-self-start"
           >
             <div className="flex align-items-center  justify-content-between">
               <div className="text-500 font-bold font-medium m-1">
@@ -462,7 +456,7 @@ function AdminDashboard() {
           <Card
             header={todayArrivedCardHeader}
             footer={todayArrivedCardFooter("BH1")}
-            className=" col-12 sm:col-6 lg:col-4 mt-2"
+            className=" col-12 sm:col-6 lg:col-4 mt-2 align-self-end"
           >
             <div className="flex align-items-center  justify-content-between">
               <div className="text-500 font-bold font-medium m-1">
@@ -486,128 +480,16 @@ function AdminDashboard() {
             </div>
           </Card>
 
-          <Card
-            header={NECCardHeader}
-            className="col-12 sm:col-6 lg:col-4 mt-2"
-          >
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">I Year</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NECTotalData?.Iyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">II Year</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NECTotalData?.IIyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">III Year</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NECTotalData?.IIIyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">IV Year</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NECTotalData?.IVyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
-              <div className="text-500 font-bold font-medium m-1">Total</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NECTotalData?.total}
-              </div>
-            </div>
-          </Card>
-
-          <Card
-            header={NITCardHeader}
-            className="col-12 sm:col-6 lg:col-4 mt-2"
-          >
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">I Year</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NITTotalData?.Iyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">II Year</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NITTotalData?.IIyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">III Year</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NITTotalData?.IIIyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">IV Year</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NITTotalData?.IVyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
-              <div className="text-500 font-bold font-medium m-1">Total</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NITTotalData?.total}
-              </div>
-            </div>
-          </Card>
-
-          <Card
-            header={NIPSCardHeader}
-            className="col-12 sm:col-6 lg:col-4 mt-2"
-          >
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">I Year</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NIPSTotalData?.Iyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">II Year</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NIPSTotalData?.IIyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">III Year</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NIPSTotalData?.IIIyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">IV Year</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NIPSTotalData?.IVyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">V Year</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NIPSTotalData?.Vyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">VI Year</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NIPSTotalData?.VIyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
-              <div className="text-500 font-bold font-medium m-1">Total</div>
-              <div className="text-900 font-bold m-1">
-                {BH1NIPSTotalData?.total}
-              </div>
-            </div>
+          <Card header={collegeDataHeader} className=" col-12 lg:col-8 mt-2">
+            <BarChartt
+              nec={BH1NECTotalData}
+              nit={BH1NITTotalData}
+              nips={BH1NIPSTotalData}
+            />
           </Card>
         </div>
 
-        <div className="p-card grid mt-2 p-0">
+        <div className="p-card grid mt-2 p-0" style={{backgroundColor:"whitesmoke"}}>
           <div className="col-12 flex align-items-center justify-content-center">
             <Chip
               label="Girls Hostel (GH1)"
@@ -616,40 +498,15 @@ function AdminDashboard() {
             />
           </div>
 
-          <Card header={studentCardHeader} className="col-12 sm:col-6 lg:col-4">
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">
-                In Hostel
-              </div>
-              <div className="text-900 font-bold m-1">
-                {GH1TotalStats?.hostel}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">
-                On Permission
-              </div>
-              <div className="text-900 font-bold m-1">
-                {GH1TotalStats?.permissions}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">On Leave</div>
-              <div className="text-900 font-bold m-1">
-                {GH1TotalStats?.leaves}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
-              <div className="text-500 font-bold font-medium m-1">Total</div>
-              <div className="text-900 font-bold m-1">
-                {GH1TotalStats?.total}
-              </div>
+          <Card header={studentCardHeader} className="col-12  lg:col-8">
+            <div style={{ justifySelf: "center" }}>
+              <PieChartt data={GH1PieChartData} total={GH1TotalStats?.total} />
             </div>
           </Card>
           <Card
             header={todayAcceptedCardHeader}
             footer={todayAcceptedCardFooter("GH1")}
-            className=" col-12 sm:col-6 lg:col-4 "
+            className=" col-12 sm:col-6 lg:col-4 align-self-start"
           >
             <div className="flex align-items-center  justify-content-between">
               <div className="text-500 font-bold font-medium m-1">
@@ -675,7 +532,7 @@ function AdminDashboard() {
           <Card
             header={todayArrivedCardHeader}
             footer={todayArrivedCardFooter("GH1")}
-            className=" col-12 sm:col-6 lg:col-4 mt-2"
+            className=" col-12 sm:col-6 lg:col-4 mt-2 align-self-end"
           >
             <div className="flex align-items-center  justify-content-between">
               <div className="text-500 font-bold font-medium m-1">
@@ -699,124 +556,12 @@ function AdminDashboard() {
             </div>
           </Card>
 
-          <Card
-            header={NECCardHeader}
-            className="col-12 sm:col-6 lg:col-4 mt-2"
-          >
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">I Year</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NECTotalData?.Iyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">II Year</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NECTotalData?.IIyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">III Year</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NECTotalData?.IIIyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">IV Year</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NECTotalData?.IVyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
-              <div className="text-500 font-bold font-medium m-1">Total</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NECTotalData?.total}
-              </div>
-            </div>
-          </Card>
-
-          <Card
-            header={NITCardHeader}
-            className="col-12 sm:col-6 lg:col-4 mt-2"
-          >
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">I Year</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NITTotalData?.Iyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">II Year</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NITTotalData?.IIyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">III Year</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NITTotalData?.IIIyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">IV Year</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NITTotalData?.IVyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
-              <div className="text-500 font-bold font-medium m-1">Total</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NITTotalData?.total}
-              </div>
-            </div>
-          </Card>
-
-          <Card
-            header={NIPSCardHeader}
-            className="col-12 sm:col-6 lg:col-4 mt-2"
-          >
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">I Year</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NIPSTotalData?.Iyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">II Year</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NIPSTotalData?.IIyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">III Year</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NIPSTotalData?.IIIyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">IV Year</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NIPSTotalData?.IVyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">V Year</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NIPSTotalData?.Vyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between">
-              <div className="text-500 font-bold font-medium m-1">VI Year</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NIPSTotalData?.VIyear}
-              </div>
-            </div>
-            <div className="flex align-items-center  justify-content-between mt-1 border-top-1 border-bottom-1">
-              <div className="text-500 font-bold font-medium m-1">Total</div>
-              <div className="text-900 font-bold m-1">
-                {GH1NIPSTotalData?.total}
-              </div>
-            </div>
+          <Card header={collegeDataHeader} className=" col-12 lg:col-8 mt-2">
+            <BarChartt
+              nec={GH1NECTotalData}
+              nit={GH1NITTotalData}
+              nips={GH1NIPSTotalData}
+            />
           </Card>
         </div>
       </div>

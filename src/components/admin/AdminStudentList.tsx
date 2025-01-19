@@ -6,6 +6,7 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import React, {
+  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -23,6 +24,9 @@ import {
 } from "../../services/AdminService";
 import { LOG } from "../interfaces/Log";
 import { AdminContext } from "./AdminHome";
+import { Checkbox, CheckboxChangeEvent } from "primereact/checkbox";
+import { Dialog } from "primereact/dialog";
+import DownloadExcel from "../../charts/DownloadExcel";
 
 function AdminStudentList() {
   const [hostelId, setHostelId] = useState<string>("label");
@@ -99,7 +103,7 @@ function AdminStudentList() {
 
             if (isUpdated) {
               setStudentsList([...result1, ...result3]);
-              setSelectedStudents([])
+              setSelectedStudents([]);
               let myLog: LOG = {
                 date: new Date(),
                 userId: admin.eid,
@@ -157,7 +161,7 @@ function AdminStudentList() {
         const { isDeleted, message } = data;
         if (isDeleted) {
           setStudentsList(result1);
-          setSelectedStudents([])
+          setSelectedStudents([]);
           let myLog: LOG = {
             date: new Date(),
             userId: admin.eid,
@@ -350,11 +354,39 @@ function AdminStudentList() {
   };
 
   const tableHeader = renderHeader();
-  const StudentListHeader = <h2 className="m-0 pt-3 pl-3">Students List</h2>;
+  const StudentListHeader = (
+    <h2 className="m-0 pt-3 pl-3 special-font">Students List</h2>
+  );
+
+
+
+
+  const [dwnldDialogVisible, setdwnldDialogVisible] = useState<boolean>(false);
+
+  const paginatorRight = (
+    <Button
+      type="button"
+      onClick={()=>setdwnldDialogVisible(true)}
+      icon="pi pi-download"
+      text
+    />
+  );
 
   return (
     <>
       <ConfirmDialog />
+      <Dialog
+        header={`${college}-clg__${year}-yr__${branch}-dept__${hostelId.toUpperCase()==="ALL"?"Boys-Girls":(hostelId.toUpperCase()==="BH1"?"Boys":(hostelId.toUpperCase()==="GH1"?"Girls":""))}.xlsx`}
+        visible={dwnldDialogVisible}
+        onHide={() => {
+          if (!dwnldDialogVisible) return;
+          setdwnldDialogVisible(false);
+        }}
+        className="w-10 md:w-8 lg:w-6 special-font"
+      >
+        <DownloadExcel selectedStudents={selectedStudents} filename={`${college}-clg__${year}-yr__${branch}-dept__${hostelId.toUpperCase()==="ALL"?"Boys-Girls":(hostelId.toUpperCase()==="BH1"?"Boys":(hostelId.toUpperCase()==="GH1"?"Girls":""))}`} />
+
+      </Dialog>
 
       <div
         className="w-full"
@@ -364,7 +396,6 @@ function AdminStudentList() {
           transform: "translatex(-50%)",
         }}
       >
-
         <Card header={StudentListHeader}>
           <form onSubmit={handleListStudentForm} className="grid">
             <div className="col-12 sm:col-6  md:col-3 mt-3">
@@ -478,7 +509,7 @@ function AdminStudentList() {
 
         {studentsList && (
           <Card className="mt-2">
-      <Toast ref={mytoast} position="bottom-center"></Toast>
+            <Toast ref={mytoast} position="bottom-center"></Toast>
 
             <DataTable
               value={studentsList}
@@ -495,6 +526,7 @@ function AdminStudentList() {
               selectionMode={"checkbox"}
               selection={selectedStudents}
               onSelectionChange={(e) => setSelectedStudents(e.value)}
+              paginatorRight={paginatorRight}
             >
               <Column
                 selectionMode="multiple"

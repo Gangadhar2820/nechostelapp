@@ -10,8 +10,7 @@ import { InputText } from "primereact/inputtext";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
-import { AdminInchargeRegisteration, AdminRegisteration } from "../../services/RegisterService";
-import { Incharge } from "../interfaces/Incharge";
+import { AdminRegisteration } from "../../services/RegisterService";
 import { createLog } from "../../services/AdminService";
 import { LOG } from "../interfaces/Log";
 import { AdminContext } from "./AdminHome";
@@ -114,7 +113,7 @@ function AdminAddAdmin() {
       >
       <Toast ref={adminToast} position="center"></Toast>
 
-        <Card title="Admin Registration">
+        <Card title="Admin Registration" className="special-font">
           <form
             action=""
             className="grid"

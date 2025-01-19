@@ -217,7 +217,7 @@ function History() {
             setShowRequestCard(false);
             setSelectedRequest(null);
           }}
-          className="w-11 lg:w-8"
+          className="w-11 lg:w-8 special-font"
         >
           <ReqCard request={selectedRequest} />
         </Dialog>
@@ -256,7 +256,7 @@ function History() {
           </div>
         </Card>
 
-        <Card title={selectionOption} className="mt-2">
+        <Card title={selectionOption} className="mt-2 special-font">
           {selectionOption === "Leaves" ? (
             <DataTable
               value={leaves}

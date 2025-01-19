@@ -81,7 +81,7 @@ function AdminFaculty() {
 
         <Card
           title={"Faculty Login Credentials"}
-          className="flex justify-content-center align-items-center"
+          className="flex justify-content-center align-items-center special-font"
         >
           <form onSubmit={handleFormSubmit}>
             <label

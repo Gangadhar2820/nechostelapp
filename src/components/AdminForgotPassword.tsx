@@ -214,7 +214,7 @@ function AdminForgotPassword() {
         onHide={() => {
           Navigate("/admins", { replace: true });
         }}
-        className="w-11 lg:w-5"
+        className="w-11 lg:w-5 special-font"
       >
         <Card className="mt-1 w-full">
           <form onSubmit={handleAdminForgotPassFormSubmit}>

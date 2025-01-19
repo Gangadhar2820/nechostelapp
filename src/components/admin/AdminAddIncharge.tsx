@@ -115,7 +115,7 @@ function AdminAddIncharge() {
       >
       <Toast ref={adminInchargeToast} position="center"></Toast>
 
-        <Card title="Incharge Registration">
+        <Card title="Incharge Registration" className="special-font">
           <form
             action=""
             className="grid"

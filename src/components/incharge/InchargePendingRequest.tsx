@@ -364,7 +364,7 @@ function InchargePendingRequest() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Pending Requests">
+        <Card title="Pending Requests" className="special-font">
           <div className="card flex justify-content-center">
             <div className="flex flex-wrap gap-3">
               <div className="flex align-items-center">
@@ -377,7 +377,7 @@ function InchargePendingRequest() {
                   }
                   checked={selectionOption === "Permissions"}
                 />
-                <label htmlFor="inc-pend-req-permissions" className="ml-2">
+                <label htmlFor="inc-pend-req-permissions" className="ml-2 special-font">
                   Permissions
                 </label>
               </div>
@@ -391,7 +391,7 @@ function InchargePendingRequest() {
                   }
                   checked={selectionOption === "Leaves"}
                 />
-                <label htmlFor="inc-pend-req-leaves" className="ml-2">
+                <label htmlFor="inc-pend-req-leaves" className="ml-2 special-font">
                   Leaves
                 </label>
               </div>
@@ -399,7 +399,7 @@ function InchargePendingRequest() {
           </div>
         </Card>
 
-        <Card title={selectionOption} className="mt-2">
+        <Card title={selectionOption} className="mt-2 special-font">
           {selectionOption === "Leaves" ? (
             <DataTable
               value={leaves}

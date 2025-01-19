@@ -23,7 +23,7 @@ function StudentProfile() {
             <div className="flex align-items-start justify-content-between">
               <div className="font-medium text-3xl text-900 mb-3">
                 <i className="pi pi-user font-medium text-3xl text-900"></i>
-                &nbsp;&nbsp;My Profile
+                &nbsp;&nbsp;<span className="special-font"> My Profile</span>
               </div>
               <div className="status">
                 <Chip

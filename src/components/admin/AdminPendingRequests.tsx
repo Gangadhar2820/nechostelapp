@@ -352,6 +352,15 @@ function AdminPendingRequests() {
     });
   };
 
+  const submittedTime = (data: any) => {
+    if (data.submitted) {
+      const date = data?.submitted?.time;
+      const formatDate = data ? formatDateWithTime(new Date(date)) : "";
+      return formatDate;
+    }
+    return "";
+  };
+
   return (
     <>
       <ConfirmDialog id="inchargependingrequestdialog" />
@@ -365,7 +374,7 @@ function AdminPendingRequests() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Pending Requests">
+        <Card title="Pending Requests" className="special-font">
           <div className="card flex justify-content-center">
             <div className="flex flex-wrap gap-3">
               <div className="flex align-items-center">
@@ -400,7 +409,7 @@ function AdminPendingRequests() {
           </div>
         </Card>
 
-        <Card title={selectionOption} className="mt-2">
+        <Card title={selectionOption} className="mt-2 special-font">
           {selectionOption === "Leaves" ? (
             <DataTable
               value={leaves}
@@ -416,7 +425,15 @@ function AdminPendingRequests() {
               tableStyle={{ minWidth: "50rem" }}
               selectionMode="single"
             >
-             
+              <Column
+                field="submitted"
+                header="Submitted Time"
+                body={submittedTime}
+                style={{ minWidth: "120px" }}
+                frozen
+                sortable
+              ></Column>
+
               <Column
                 field="rollNo"
                 className="font-bold"
@@ -424,11 +441,10 @@ function AdminPendingRequests() {
                 sortable
                 frozen
               ></Column>
-               <Column
+              <Column
                 field="hostelId"
                 className="font-bold"
                 header="Hostel ID"
-                sortable
               ></Column>
 
               <Column field="name" header="Name"></Column>
@@ -465,7 +481,15 @@ function AdminPendingRequests() {
               rowsPerPageOptions={[5, 10, 25, 50]}
               tableStyle={{ minWidth: "50rem" }}
             >
-             
+              <Column
+                field="submitted"
+                header="Submitted Time"
+                body={submittedTime}
+                style={{ minWidth: "120px" }}
+                frozen
+                sortable
+              ></Column>
+
               <Column
                 field="rollNo"
                 className="font-bold"
@@ -473,11 +497,10 @@ function AdminPendingRequests() {
                 sortable
                 frozen
               ></Column>
-               <Column
+              <Column
                 field="hostelId"
                 className="font-bold"
                 header="Hostel ID"
-                sortable
               ></Column>
 
               <Column field="name" header="Name"></Column>

@@ -3,7 +3,7 @@ import "primereact/resources/primereact.min.css";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 import Login from "./components/Login";
 import StudentRegister from "./components/StudentRegister";
@@ -69,7 +69,9 @@ import AdminFaculty from "./components/admin/AdminFaculty";
 import FacultyStudentList from "./components/faculty/FacultyStudentList";
 import AdminForgotPassword from "./components/AdminForgotPassword";
 import AdminHolidayMessage from "./components/admin/AdminHolidayMessage";
-
+import DownloadExcel from "./charts/DownloadExcel";
+import { Button } from "primereact/button";
+import DeveloperCard from "./components/DeveloperCard";
 
 function App() {
   return (
@@ -98,6 +100,11 @@ function App() {
                   <Route
                     path="/adminfpassword"
                     element={<AdminForgotPassword />}
+                  ></Route>
+
+                  <Route
+                    path="/developers"
+                    element={<DeveloperCard />}
                   ></Route>
 
                   {/* student routes start */}
@@ -228,7 +235,10 @@ function App() {
                       </Route>
 
                       <Route path="logs" element={<AdminLogs />} />
-                      <Route path="holidaymessage" element={<AdminHolidayMessage />} />
+                      <Route
+                        path="holidaymessage"
+                        element={<AdminHolidayMessage />}
+                      />
                     </Route>
                   </Route>
                   {/* admin routes ends */}
@@ -263,6 +273,22 @@ function App() {
 
                   {/* faculty routes ends */}
                 </Routes>
+
+                <Link to="/developers">
+                  <Button
+                    raised
+                    style={{
+                      position: "absolute",
+                      bottom: "5px",
+                      right: "5px",
+                      backgroundColor: "dodgerblue",
+                      color: "white",
+                      borderRadius: "15px",
+                    }}
+                  >
+                    Developers ?
+                  </Button>
+                </Link>
               </BrowserRouter>
             </FacultyAuthProvider>
           </AdminAuthProvider>

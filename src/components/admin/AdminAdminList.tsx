@@ -26,7 +26,7 @@ function AdminList() {
           transform: "translatex(-50%)",
         }}
       >
-        <Card title="Admins List" className="pt-2 pb-2">
+        <Card title="Admin List" className="pt-2 pb-2 special-font">
           <div className="grid">
             
             {admins && admins.map((admin)=>{return (

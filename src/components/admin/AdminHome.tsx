@@ -120,7 +120,7 @@ function AdminHome() {
                           return result;
                         }}
                       >
-                        <i className="pi pi-user mr-2"></i>
+                        <i className="pi pi-id-card mr-2"></i>
                         <span className="font-medium">My Profile</span>
                       </NavLink>
                     </li>
@@ -169,7 +169,7 @@ function AdminHome() {
                           return result;
                         }}
                       >
-                        <i className="pi pi-users mr-2"></i>
+                        <i className="pi pi-graduation-cap mr-2"></i>
                         <span className="font-medium">Student</span>
                       </NavLink>
                     </li>
@@ -314,7 +314,7 @@ function AdminHome() {
                               return result;
                             }}
                           >
-                            <i className="pi pi-user mr-2"></i>
+                            <i className="pi pi-id-card mr-2"></i>
                             <span className="font-medium">My Profile</span>
                           </NavLink>
                         </li>
@@ -363,7 +363,7 @@ function AdminHome() {
                               return result;
                             }}
                           >
-                            <i className="pi pi-users mr-2"></i>
+                            <i className="pi pi-graduation-cap mr-2"></i>
                             <span className="font-medium">Student</span>
                           </NavLink>
                         </li>
