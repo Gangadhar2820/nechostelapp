@@ -83,7 +83,7 @@ function DeveloperCard() {
         <div className="grid justify-content-center gap-4 mt-2">
           <div className="p-card p-shadow-6 profile-card col-10 md:col-5 ">
             <div className="text">
-              <img src="/images/avatar.jpg" alt="Profile" />
+              <img src="/images/developers/21471A0521.png" alt="Profile" />
               <h3>Gangadhar Rongala</h3>
               <p className="role">Full Stack Web Developer</p>
               <p className="description special-font">
