@@ -58,41 +58,41 @@ api.interceptors.response.use(
         case 400:
           alert("Bad Request: Please check your input.");
           removeTokens();
-          window.location.href = "/";
+          window.location.href = "/nechostelapp";
           break;
         case 401:
           alert("Session Expired: Please log in again.");
           removeTokens();
-          window.location.href = "/";
+          window.location.href = "/nechostelapp";
           break;
         case 403:
           alert("Forbidden: You don't have permission.");
           removeTokens();
-          window.location.href = "/";
+          window.location.href = "/nechostelapp";
           break;
         case 404:
           alert("Not Found: Requested resource not found.");
           removeTokens();
-          window.location.href = "/";
+          window.location.href = "/nechostelapp";
           break;
         case 500:
           alert("Server Error: Please try again later.");
           removeTokens();
-          window.location.href = "/";
+          window.location.href = "/nechostelapp";
           break;
         default:
           alert("Something went wrong. Please try again.");
           removeTokens();
-          window.location.href = "/";
+          window.location.href = "/nechostelapp";
       }
     } else if (error.request) {
       alert("No response from the server. Please try again.");
       removeTokens();
-      window.location.href = "/";
+      window.location.href = "/nechostelapp";
     } else {
       alert("Error: " + error.message);
       removeTokens();
-      window.location.href = "/";
+      window.location.href = "/nechostelapp";
     }
     return Promise.reject(error);
   }

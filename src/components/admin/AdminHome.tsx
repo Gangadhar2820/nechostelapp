@@ -89,12 +89,12 @@ function AdminHome() {
             className={`${styles.header} p-card flex p-1 align-items-center justify-content-between`}
           >
             <img
-              src="/images/logo-no-background.png"
+              src="/nechostelapp/images/logo-no-background.png"
               alt="Nec logo"
               className="ml-3 mr-3 h-full hidden sm:block"
             />
             <img
-              src="/images/Nec.png"
+              src="/nechostelapp/images/Nec.png"
               alt="Nec logo"
               className="ml-3 mr-3 h-full"
             />

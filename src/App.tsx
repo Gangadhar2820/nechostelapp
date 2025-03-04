@@ -80,7 +80,7 @@ function App() {
         <InchargeAuthProvider>
           <AdminAuthProvider>
             <FacultyAuthProvider>
-              <BrowserRouter>
+              <BrowserRouter basename="/nechostelapp">
                 <Routes>
                   <Route path="/" element={<StudentLogin />} />
                   <Route path="/admins" element={<Login />} />

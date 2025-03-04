@@ -11,7 +11,7 @@ function InchargeCard(props: any) {
             <div className="col-12 sm:col-4">
               <img
                 alt="Card"
-                src={`/images/incharges/${incharge?.eid}.jpg`}
+                src={`/nechostelapp/images/incharges/${incharge?.eid}.jpg`}
                 className=""
                 style={{ height: "120px", width: "120px",border:"1px solid black" }}
               />

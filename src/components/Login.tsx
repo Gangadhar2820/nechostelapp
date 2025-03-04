@@ -200,13 +200,17 @@ function Login() {
         style={{ backgroundColor: "#3FA2F6" }}
       >
         <img
-          src="/images/logo-no-background1.png"
+          src={`/nechostelapp/images/logo nec 2.png`}
           alt="Nec logo"
           className="ml-4 h-3rem"
         />
-        <img src="/images/Nec.png" alt="Nec logo" className="mr-4 h-4rem" />
         <img
-          src="/images/logo nec 2.png"
+          src="/nechostelapp/images/Nec.png"
+          alt="Nec logo"
+          className="mr-4 h-4rem"
+        />
+        <img
+          src="/nechostelapp/images/logo nec 2.png"
           alt="Nec logo"
           className="mr-4 h-4rem hidden sm:block"
         />

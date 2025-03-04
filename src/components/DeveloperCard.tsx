@@ -31,25 +31,25 @@ function DeveloperCard() {
   useEffect(() => {
     setImages([
       {
-        itemImageSrc: "/images/developers/hostel-2.jpg",
+        itemImageSrc: "/nechostelapp/images/developers/hostel-2.jpg",
         thumbnailImageSrc: "",
         alt: "Description for Image 1",
         title: "",
       },
       {
-        itemImageSrc: "/images/developers/hostel-1.jpg",
+        itemImageSrc: "/nechostelapp/images/developers/hostel-1.jpg",
         thumbnailImageSrc: "",
         alt: "Description for Image 1",
         title: "",
       },
       {
-        itemImageSrc: "/images/developers/hostel-4.jpg",
+        itemImageSrc: "/nechostelapp/images/developers/hostel-4.jpg",
         thumbnailImageSrc: "",
         alt: "Description for Image 1",
         title: "",
       },
       {
-        itemImageSrc: "/images/developers/hostel-3.jpg",
+        itemImageSrc: "/nechostelapp/images/developers/hostel-3.jpg",
         thumbnailImageSrc: "",
         alt: "Description for Image 1",
         title: "",
@@ -83,7 +83,7 @@ function DeveloperCard() {
         <div className="grid justify-content-center gap-4 mt-2">
           <div className="p-card p-shadow-6 profile-card col-10 md:col-5 ">
             <div className="text">
-              <img src="/images/developers/21471A0521.png" alt="Profile" />
+              <img src="/nechostelapp/images/developers/21471A0521.png" alt="Profile" />
               <h3>Gangadhar Rongala</h3>
               <p className="role">Full Stack Web Developer</p>
               <p className="description special-font">
@@ -114,7 +114,7 @@ function DeveloperCard() {
 
           <div className="p-card p-shadow-6 profile-card col-10 md:col-5 ">
             <div className="text">
-              <img src="/images/avatar.jpg" alt="Profile" />
+              <img src="/nechostelapp/images/developers/21471A05K4.png" alt="Profile" />
               <h3>Bhuvanesh Thotakura</h3>
               <p className="role">Full Stack Web Developer</p>
               <p className="description">
