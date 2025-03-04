@@ -23,7 +23,7 @@ function AdminAddStudent() {
     branch: "label",
     year: 0,
     gender: "",
-    dob: new Date(),
+    roomNo: "",
     phoneNo: "",
     email: "",
     parentPhoneNo: "",
@@ -50,10 +50,7 @@ function AdminAddStudent() {
     const isPhonenoValid = /^[0-9]{10}$/.test(newStudent.phoneNo);
     const isFatherNameValid = newStudent.parentName !== "";
     const isFatherMobileValid = /^[0-9]{10}$/.test(newStudent.parentPhoneNo);
-    const isDOBValid =
-      newStudent.dob !== null &&
-      newStudent.dob &&
-      newStudent.dob.toString() !== "";
+    
     const isEmailValid =
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(newStudent.email);
 
@@ -67,7 +64,6 @@ function AdminAddStudent() {
       isPhonenoValid &&
       isFatherNameValid &&
       isFatherMobileValid &&
-      isDOBValid &&
       isEmailValid &&
       isCollegeValid;
 
@@ -118,7 +114,7 @@ function AdminAddStudent() {
             branch: "label",
             year: 0,
             gender: "",
-            dob: new Date(),
+            roomNo:"",
             phoneNo: "",
             email: "",
             parentPhoneNo: "",
@@ -282,20 +278,19 @@ function AdminAddStudent() {
 
             <div className="col-12 md:col-6 lg:col-4 mt-3">
               <FloatLabel>
-                <Calendar
-                  required
-                  dateFormat="dd/mm/yy"
-                  inputId="ad-add-stu-birth_date"
-                  value={newStudent.dob}
-                  onChange={(e) =>
+              <InputText
+                  id="ad-add-stu-roomNo"
+                  type="text"
+                  className="w-12"
+                  value={newStudent.roomNo}
+                  onChange={(e) => {
                     setNewStudent({
                       ...newStudent,
-                      dob: e.target.value,
-                    } as Student)
-                  }
-                  className="w-12"
+                      roomNo: e.target.value,
+                    } as Student);
+                  }}
                 />
-                <label htmlFor="ad-add-stu-birth_date">Date of Birth</label>
+                <label htmlFor="ad-add-stu-roomNo">Room No</label>
               </FloatLabel>
             </div>
 

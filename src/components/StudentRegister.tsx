@@ -11,8 +11,6 @@ import {
 } from "../services/RegisterService";
 import { FloatLabel } from "primereact/floatlabel";
 import { Student } from "./interfaces/Student";
-import { Calendar } from "primereact/calendar";
-import { formatDate, parseDate } from "./interfaces/Date";
 import { createLog } from "../services/AdminService";
 import { LOG } from "./interfaces/Log";
 
@@ -247,22 +245,13 @@ function StudentRegister() {
 
                 <div className="col-12 md:col-6 mt-3">
                   <FloatLabel>
-                    <Calendar
-                      required
-                      inputId="stu-reg-birth_date"
-                      dateFormat="dd/mm/yy"
-                      value={parseDate(
-                        formatDate(new Date(studentData?.dob as Date))
-                      )}
-                      onChange={(e) => {
-                        setStudentData({
-                          ...studentData,
-                          dob: e.value,
-                        } as Student);
-                      }}
+                  <InputText
+                      id="stu-reg-roomNo"
+                      type="text"
                       className="w-12"
+                      value={studentData?.roomNo}
                     />
-                    <label htmlFor="stu-reg-birth_date">Date Of Birth</label>
+                    <label htmlFor="stu-reg-roomNo">Room No</label>
                   </FloatLabel>
                 </div>
 

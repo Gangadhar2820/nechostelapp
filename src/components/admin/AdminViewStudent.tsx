@@ -185,8 +185,6 @@ function AdminViewStudent() {
     const isCollegeValid = student?.college !== "label";
     const isYearValid = student?.year !== "label";
     const isGenderValid = student?.gender !== "";
-    const isDOBValid =
-      student?.dob !== null && student?.dob && student.dob.toString() !== "";
     const isPhonenoValid = /^[0-9]{10}$/.test(student?.phoneNo as string);
     const isEmailValid =
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
@@ -207,7 +205,6 @@ function AdminViewStudent() {
       isPhonenoValid &&
       isParentNameValid &&
       isParentPhoneNoValid &&
-      isDOBValid &&
       isEmailValid;
 
     if (isformValid) {
@@ -397,24 +394,19 @@ function AdminViewStudent() {
 
                 <div className="col-12 md:col-6 lg:col-4 mt-3">
                   <FloatLabel>
-                    <Calendar
-                      required
-                      dateFormat="dd/mm/yy"
-                      inputId="ad-view-stu-birth_date"
-                      value={parseDate(
-                        formatDate(new Date(student?.dob as Date))
-                      )}
-                      onChange={(e) =>
+                    <InputText
+                      id="ad-view-stu-roomNo"
+                      type="text"
+                      className="w-12"
+                      value={student.roomNo}
+                      onChange={(e) => {
                         setStudent({
                           ...student,
-                          dob: e.value,
-                        } as Student)
-                      }
-                      className="w-12"
+                          roomNo: e.target.value,
+                        } as Student);
+                      }}
                     />
-                    <label htmlFor="ad-view-stu-birth_date">
-                      Date of Birth
-                    </label>
+                    <label htmlFor="ad-view-stu-roomNo">Room No</label>
                   </FloatLabel>
                 </div>
 
@@ -632,7 +624,8 @@ function AdminViewStudent() {
                     <div className="flex align-items-start justify-content-between">
                       <div className="font-medium text-xl text-900 mb-3">
                         <i className="pi pi-user font-medium text-xl text-900"></i>
-                        &nbsp;&nbsp;<p className="special-font inline">Student Profile</p>
+                        &nbsp;&nbsp;
+                        <p className="special-font inline">Student Profile</p>
                       </div>
                       <div className="status">
                         <Chip
@@ -711,10 +704,10 @@ function AdminViewStudent() {
                         </div>
                         <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
                           <div className="text-500 font-medium w-6">
-                            Date Of Birth
+                            Room No
                           </div>
                           <div className="text-900 w-6">
-                            {formatDate(new Date(studentOldData?.dob as Date))}
+                            {student?.roomNo}
                           </div>
                         </div>
                       </li>

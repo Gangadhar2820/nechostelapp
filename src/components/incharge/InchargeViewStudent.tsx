@@ -152,7 +152,7 @@ function InchargeViewStudent() {
                       Date Of Birth
                     </div>
                     <div className="text-900 w-6">
-                      {formatDate(new Date(student?.dob))}
+                      {student?.roomNo}
                     </div>
                   </div>
                 </li>

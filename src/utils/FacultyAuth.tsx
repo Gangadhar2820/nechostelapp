@@ -17,6 +17,7 @@ export const FacultyAuthProvider = ({ children }:any) => {
   const facultyLogout = () => {
     setFacultyExist(false);
     localStorage.removeItem("facultyExist");
+    localStorage.removeItem("facultyToken");
   };
 
   return (

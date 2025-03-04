@@ -48,7 +48,7 @@ api.interceptors.response.use(
           break;
         case 401:
           alert("Unauthorized: Please log in again.");
-          // window.location.href = "/login";
+          window.location.href = "/";
           break;
         case 403:
           alert("Forbidden: You don't have permission.");
