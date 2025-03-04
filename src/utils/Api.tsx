@@ -61,7 +61,7 @@ api.interceptors.response.use(
           window.location.href = "/";
           break;
         case 401:
-          alert("Unauthorized: Please log in again.");
+          alert("Session Expired: Please log in again.");
           removeTokens();
           window.location.href = "/";
           break;
@@ -86,7 +86,7 @@ api.interceptors.response.use(
           window.location.href = "/";
       }
     } else if (error.request) {
-      alert("No response from the server. Check your internet connection.");
+      alert("No response from the server. Please try again.");
       removeTokens();
       window.location.href = "/";
     } else {
