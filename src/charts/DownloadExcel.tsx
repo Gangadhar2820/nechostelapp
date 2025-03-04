@@ -56,7 +56,7 @@ const DownloadExcel = (props: any) => {
     { name: "Year", key: "year" },
     { name: "Branch", key: "branch" },
     { name: "Gender", key: "gender" },
-    { name: "Date Of Birth", key: "dob" },
+    { name: "Room No", key: "roomNo" },
     { name: "Email", key: "email" },
     { name: "Phone No", key: "phoneNo" },
     { name: "Parent Name", key: "parentName" },

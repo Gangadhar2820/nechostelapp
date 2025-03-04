@@ -25,13 +25,13 @@ function AdminStudentBulkDataUpload() {
   const admin = useContext(AdminContext);
 
   const [requiredKeys, setRequiredKeys] = useState<any>([
-    "name",
     "rollNo",
+    "name",
+    "roomNo",
     "college",
     "year",
     "branch",
     "gender",
-    "dob",
     "phoneNo",
     "email",
     "parentName",
@@ -191,7 +191,7 @@ function AdminStudentBulkDataUpload() {
         <strong style={{ color: "red" }}>Requirements : </strong>
         <ul>
           <li>
-            Download Template.&nbsp;<a  style={{fontSize:"large"}} target="_blank" href="https://docs.google.com/spreadsheets/d/1rKVL7_M3MKcB7gSPTLjaOGcwNyiUKk2Y/edit?usp=drive_link&ouid=116090889097757040545&rtpof=true&sd=true">click here</a>
+            Download Template.&nbsp;<a  style={{fontSize:"large"}} target="_blank" href="https://docs.google.com/spreadsheets/d/1dR4f4iCOTI2sJrPDG_k8wex0hENgn67T/edit?usp=sharing&ouid=100065442155014362182&rtpof=true&sd=true">click here</a>
           </li>
           <li>
             File should be in{" "}

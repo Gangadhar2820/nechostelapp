@@ -1,5 +1,4 @@
 import { Button } from "primereact/button";
-import { Calendar } from "primereact/calendar";
 import { Card } from "primereact/card";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { FloatLabel } from "primereact/floatlabel";
@@ -16,7 +15,6 @@ import React, {
 import { Student } from "../interfaces/Student";
 import { getStudent } from "../../services/StudentService";
 import ReqCard from "../student/ReqCard";
-import { formatDate, parseDate } from "../interfaces/Date";
 import { Chip } from "primereact/chip";
 import {
   adminUpdateStudentProfile,
@@ -672,44 +670,47 @@ function AdminViewStudent() {
                         </div>
                         <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
                           <div className="text-500 font-medium w-6">
+                            Room No
+                          </div>
+                          <div className="text-900 w-6">
+                            {studentOldData?.roomNo}
+                          </div>
+                        </div>
+                        
+                      </li>
+
+                      <li className="grid py-3 px-2 border-top-1 border-300">
+                      <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
+                          <div className="text-500 font-medium w-6">
                             College
                           </div>
                           <div className="text-900 w-6 ">
                             {studentOldData?.college}
                           </div>
                         </div>
-                      </li>
-
-                      <li className="grid py-3 px-2 border-top-1 border-300">
                         <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
                           <div className="text-500 w-6 font-medium">Year</div>
                           <div className="text-900 w-6">
                             {studentOldData?.year}
                           </div>
                         </div>
-                        <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
+                        
+                      </li>
+
+                      <li className="grid py-3 px-2 border-top-1 border-300">
+                      <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
                           <div className="text-500 font-medium w-6">Branch</div>
                           <div className="text-900 w-6">
                             {studentOldData?.branch}
                           </div>
                         </div>
-                      </li>
-
-                      <li className="grid py-3 px-2 border-top-1 border-300">
                         <div className="flex mt-1 mb-1  w-12 md:w-6 align-items-center justify-content-start">
                           <div className="text-500 w-6 font-medium">Gender</div>
                           <div className="text-900 w-6">
                             {studentOldData?.gender}
                           </div>
                         </div>
-                        <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
-                          <div className="text-500 font-medium w-6">
-                            Room No
-                          </div>
-                          <div className="text-900 w-6">
-                            {student?.roomNo}
-                          </div>
-                        </div>
+                        
                       </li>
 
                       <li className="grid py-3 px-2 border-top-1 border-300">

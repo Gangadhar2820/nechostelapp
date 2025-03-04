@@ -250,6 +250,12 @@ function StudentRegister() {
                       type="text"
                       className="w-12"
                       value={studentData?.roomNo}
+                      onChange={(e) => {
+                        setStudentData({
+                          ...studentData,
+                          roomNo: e.target.value,
+                        } as Student);
+                      }}
                     />
                     <label htmlFor="stu-reg-roomNo">Room No</label>
                   </FloatLabel>

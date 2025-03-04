@@ -25,14 +25,8 @@ const PreviewTable = ({ previewTableData }: { previewTableData: any[] }) => {
         className="font-bold"
       ></Column>
       <Column field="name" header="Name"></Column>
+      <Column field="roomNo" header="Room No"></Column>
       <Column field="gender" header="Gender"></Column>
-
-      <Column
-        field="dob"
-        header="DOB"
-        body={fromDateTemplate}
-        style={{ minWidth: "120px" }}
-      ></Column>
       <Column field="college" header="College"></Column>
       <Column field="year" header="Year"></Column>
       <Column field="branch" header="Branch"></Column>

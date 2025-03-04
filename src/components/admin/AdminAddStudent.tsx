@@ -179,6 +179,25 @@ function AdminAddStudent() {
               </FloatLabel>
             </div>
 
+            
+            <div className="col-12 md:col-6 lg:col-4 mt-3">
+              <FloatLabel>
+                <InputText
+                  id="ad-add-stu-fullname"
+                  type="text"
+                  className="w-12"
+                  value={newStudent.name}
+                  onChange={(e) => {
+                    setNewStudent({
+                      ...newStudent,
+                      name: e.target.value,
+                    } as Student);
+                  }}
+                  required
+                />
+                <label htmlFor="ad-add-stu-fullname">Full Name</label>
+              </FloatLabel>
+            </div>
             <div className="col-12 md:col-6 lg:col-4 mt-3">
               <div className="custom-select-container w-12">
                 <select
@@ -200,22 +219,22 @@ function AdminAddStudent() {
                 </select>
               </div>
             </div>
+            
             <div className="col-12 md:col-6 lg:col-4 mt-3">
               <FloatLabel>
-                <InputText
-                  id="ad-add-stu-fullname"
+              <InputText
+                  id="ad-add-stu-roomNo"
                   type="text"
                   className="w-12"
-                  value={newStudent.name}
+                  value={newStudent.roomNo}
                   onChange={(e) => {
                     setNewStudent({
                       ...newStudent,
-                      name: e.target.value,
+                      roomNo: e.target.value,
                     } as Student);
                   }}
-                  required
                 />
-                <label htmlFor="ad-add-stu-fullname">Full Name</label>
+                <label htmlFor="ad-add-stu-roomNo">Room No</label>
               </FloatLabel>
             </div>
 
@@ -276,75 +295,8 @@ function AdminAddStudent() {
               </div>
             </div>
 
-            <div className="col-12 md:col-6 lg:col-4 mt-3">
-              <FloatLabel>
-              <InputText
-                  id="ad-add-stu-roomNo"
-                  type="text"
-                  className="w-12"
-                  value={newStudent.roomNo}
-                  onChange={(e) => {
-                    setNewStudent({
-                      ...newStudent,
-                      roomNo: e.target.value,
-                    } as Student);
-                  }}
-                />
-                <label htmlFor="ad-add-stu-roomNo">Room No</label>
-              </FloatLabel>
-            </div>
 
-            <div className="col-12 md:col-6 lg:col-4 mt-3">
-              <FloatLabel>
-                <InputText
-                  id="ad-add-stu-phoneno"
-                  type="text"
-                  className="w-12"
-                  value={newStudent.phoneNo}
-                  onChange={(e) => {
-                    setNewStudent({
-                      ...newStudent,
-                      phoneNo: e.target.value,
-                    } as Student);
-                  }}
-                  required
-                />
-                <label htmlFor="ad-add-stu-phoneno">Phone No</label>
-              </FloatLabel>
-              {!/^[0-9]{10}$/.test(newStudent.phoneNo) &&
-                newStudent.phoneNo !== "" && (
-                  <small id="phoneno-help" className="text-red-500">
-                    Phone number must be 10 digits
-                  </small>
-                )}
-            </div>
-
-            <div className="col-12 md:col-6 lg:col-4 mt-3">
-              <FloatLabel>
-                <InputText
-                  id="ad-add-stu-email"
-                  type="text"
-                  className="w-12"
-                  value={newStudent.email}
-                  onChange={(e) => {
-                    setNewStudent({
-                      ...newStudent,
-                      email: e.target.value,
-                    } as Student);
-                  }}
-                  required
-                />
-                <label htmlFor="ad-add-stu-rollno">Email</label>
-              </FloatLabel>
-              {!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-                newStudent.email
-              ) &&
-                newStudent.email !== "" && (
-                  <small id="email-help" className="text-red-500">
-                    Invalid Email Format
-                  </small>
-                )}
-            </div>
+            
 
             <div className="col-12 md:col-6 lg:col-4 mt-3">
             
@@ -430,6 +382,57 @@ function AdminAddStudent() {
                   <option value="PHARMD">Pharm D</option>
                 </select>
               </div>
+            </div>
+            <div className="col-12 md:col-6 lg:col-4 mt-3">
+              <FloatLabel>
+                <InputText
+                  id="ad-add-stu-phoneno"
+                  type="text"
+                  className="w-12"
+                  value={newStudent.phoneNo}
+                  onChange={(e) => {
+                    setNewStudent({
+                      ...newStudent,
+                      phoneNo: e.target.value,
+                    } as Student);
+                  }}
+                  required
+                />
+                <label htmlFor="ad-add-stu-phoneno">Phone No</label>
+              </FloatLabel>
+              {!/^[0-9]{10}$/.test(newStudent.phoneNo) &&
+                newStudent.phoneNo !== "" && (
+                  <small id="phoneno-help" className="text-red-500">
+                    Phone number must be 10 digits
+                  </small>
+                )}
+            </div>
+
+            <div className="col-12 md:col-6 lg:col-4 mt-3">
+              <FloatLabel>
+                <InputText
+                  id="ad-add-stu-email"
+                  type="text"
+                  className="w-12"
+                  value={newStudent.email}
+                  onChange={(e) => {
+                    setNewStudent({
+                      ...newStudent,
+                      email: e.target.value,
+                    } as Student);
+                  }}
+                  required
+                />
+                <label htmlFor="ad-add-stu-rollno">Email</label>
+              </FloatLabel>
+              {!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+                newStudent.email
+              ) &&
+                newStudent.email !== "" && (
+                  <small id="email-help" className="text-red-500">
+                    Invalid Email Format
+                  </small>
+                )}
             </div>
 
             <div className="col-12 md:col-6 lg:col-4 mt-3">

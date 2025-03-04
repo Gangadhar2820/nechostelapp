@@ -24,7 +24,6 @@ import {
 } from "../../services/AdminService";
 import { LOG } from "../interfaces/Log";
 import { AdminContext } from "./AdminHome";
-import { Checkbox, CheckboxChangeEvent } from "primereact/checkbox";
 import { Dialog } from "primereact/dialog";
 import DownloadExcel from "../../charts/DownloadExcel";
 
@@ -157,7 +156,6 @@ function AdminStudentList() {
 
       DeleteMultipleStudents(Array.from(selectStudentRollNo)).then((data) => {
         setIsDeleting(false);
-        console.log(data);
         const { isDeleted, message } = data;
         if (isDeleted) {
           setStudentsList(result1);
@@ -533,6 +531,14 @@ function AdminStudentList() {
                 frozen
                 headerStyle={{ width: "3rem" }}
               ></Column>
+              <Column
+                field="roomNo"
+                header="Room No"
+                frozen
+                sortable
+                className="font-bold"
+              ></Column>
+
               <Column
                 field="rollNo"
                 header="Roll Number"
