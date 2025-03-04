@@ -126,35 +126,38 @@ function InchargeViewStudent() {
                     <div className="text-900 w-6">{student?.hostelId}</div>
                   </div>
                   <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
-                    <div className="text-500 font-medium w-6">College</div>
-                    <div className="text-900 w-6 ">{student?.college}</div>
-                  </div>
-                </li>
-
-                <li className="grid py-3 px-2 border-top-1 border-300">
-                  <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
-                    <div className="text-500 w-6 font-medium">Year</div>
-                    <div className="text-900 w-6">{student?.year}</div>
-                  </div>
-                  <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
-                    <div className="text-500 font-medium w-6">Branch</div>
-                    <div className="text-900 w-6">{student?.branch}</div>
-                  </div>
-                </li>
-
-                <li className="grid py-3 px-2 border-top-1 border-300">
-                  <div className="flex mt-1 mb-1  w-12 md:w-6 align-items-center justify-content-start">
-                    <div className="text-500 w-6 font-medium">Gender</div>
-                    <div className="text-900 w-6">{student?.gender}</div>
-                  </div>
-                  <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
                     <div className="text-500 font-medium w-6">
-                      Date Of Birth
+                      Room No
                     </div>
                     <div className="text-900 w-6">
                       {student?.roomNo}
                     </div>
                   </div>
+                  
+                </li>
+
+                <li className="grid py-3 px-2 border-top-1 border-300">
+                <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
+                    <div className="text-500 font-medium w-6">College</div>
+                    <div className="text-900 w-6 ">{student?.college}</div>
+                  </div>
+                  <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
+                    <div className="text-500 w-6 font-medium">Year</div>
+                    <div className="text-900 w-6">{student?.year}</div>
+                  </div>
+                  
+                </li>
+
+                <li className="grid py-3 px-2 border-top-1 border-300">
+                <div className="flex mt-1 mb-1 w-12 md:w-6 align-items-center justify-content-start">
+                    <div className="text-500 font-medium w-6">Branch</div>
+                    <div className="text-900 w-6">{student?.branch}</div>
+                  </div>
+                  <div className="flex mt-1 mb-1  w-12 md:w-6 align-items-center justify-content-start">
+                    <div className="text-500 w-6 font-medium">Gender</div>
+                    <div className="text-900 w-6">{student?.gender}</div>
+                  </div>
+                  
                 </li>
 
                 <li className="grid py-3 px-2 border-top-1 border-300">

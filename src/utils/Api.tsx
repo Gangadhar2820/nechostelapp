@@ -12,6 +12,18 @@ export const getExistingToken = () => {
   return tokens.find((token) => token) || null; // Get first available token
 };
 
+const removeTokens = () => {
+  localStorage.removeItem("adminToken");
+  localStorage.removeItem("inchargeToken");
+  localStorage.removeItem("facultyToken");
+  localStorage.removeItem("studentToken");
+
+  localStorage.removeItem("adminExist");
+  localStorage.removeItem("inchargeExist");
+  localStorage.removeItem("facultyExist");
+  localStorage.removeItem("studentExist");
+};
+
 const api = axios.create({
   baseURL: server,
   timeout: 10000,
@@ -38,34 +50,49 @@ api.interceptors.request.use(
 
 // 🔹 Response Interceptor for Error Handling
 api.interceptors.response.use(
-  (response) => response, 
+  (response) => response,
   (error) => {
     if (error.response) {
       const status = error.response.status;
       switch (status) {
         case 400:
           alert("Bad Request: Please check your input.");
+          removeTokens();
+          window.location.href = "/";
           break;
         case 401:
           alert("Unauthorized: Please log in again.");
+          removeTokens();
           window.location.href = "/";
           break;
         case 403:
           alert("Forbidden: You don't have permission.");
+          removeTokens();
+          window.location.href = "/";
           break;
         case 404:
           alert("Not Found: Requested resource not found.");
+          removeTokens();
+          window.location.href = "/";
           break;
         case 500:
           alert("Server Error: Please try again later.");
+          removeTokens();
+          window.location.href = "/";
           break;
         default:
           alert("Something went wrong. Please try again.");
+          removeTokens();
+          window.location.href = "/";
       }
     } else if (error.request) {
       alert("No response from the server. Check your internet connection.");
+      removeTokens();
+      window.location.href = "/";
     } else {
       alert("Error: " + error.message);
+      removeTokens();
+      window.location.href = "/";
     }
     return Promise.reject(error);
   }
