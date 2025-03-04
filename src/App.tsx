@@ -69,9 +69,9 @@ import AdminFaculty from "./components/admin/AdminFaculty";
 import FacultyStudentList from "./components/faculty/FacultyStudentList";
 import AdminForgotPassword from "./components/AdminForgotPassword";
 import AdminHolidayMessage from "./components/admin/AdminHolidayMessage";
-import DownloadExcel from "./charts/DownloadExcel";
 import { Button } from "primereact/button";
 import DeveloperCard from "./components/DeveloperCard";
+import PageNotFound from "./components/PageNotFound";
 
 function App() {
   return (
@@ -270,6 +270,8 @@ function App() {
                       />
                     </Route>
                   </Route>
+
+                  <Route path="*" element={<PageNotFound/>}></Route>
 
                   {/* faculty routes ends */}
                 </Routes>

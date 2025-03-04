@@ -2,7 +2,13 @@ import styles from "../styles/home.module.css";
 import React, { createContext, useEffect, useState } from "react";
 import { Sidebar } from "primereact/sidebar";
 import { Button } from "primereact/button";
-import { NavLink, Outlet, useParams } from "react-router-dom";
+import {
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { Student } from "../interfaces/Student";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import {
@@ -10,6 +16,10 @@ import {
   updateStudentProfile,
 } from "../../services/StudentService";
 import { useStudentAuth } from "../../utils/StudentAuth";
+import { jwtDecode } from "jwt-decode";
+import { CustomStudentJwtPayload } from "../StudentLogin";
+import { isTokenExpired } from "../interfaces/Token";
+import SessionExpCard from "../SessionExpCard";
 
 export const StudentContext = createContext<any>(null);
 export const StudentProvider = StudentContext.Provider;
@@ -24,16 +34,49 @@ function StudentHome() {
 
   const [student, setStudent] = useState<Student>();
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [isSessionExpired, setIsSessionExpired] = useState<boolean>(false);
+
   useEffect(() => {
     // in first render cycle get the student data
-    getStudent(params.rollNo as string)
-      .then((data) => {
-        setStudent(data.hosteler);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const studentToken = localStorage.getItem("studentToken");
+    const isTokenValid = !isTokenExpired(studentToken as string);
+
+    if (isTokenValid) {
+      const decoded = jwtDecode<CustomStudentJwtPayload>(
+        studentToken as string
+      );
+      getStudent(decoded.rollNo as string)
+        .then((data) => {
+          setStudent(data.hosteler);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      setIsSessionExpired(false);
+    } else {
+      setIsSessionExpired(true);
+    }
   }, []);
+
+  useEffect(() => {
+    const studentToken = localStorage.getItem("studentToken");
+    if (isTokenExpired(studentToken as string)) {
+      setIsSessionExpired(true);
+    } else {
+      setIsSessionExpired(false);
+    }
+  }, [navigate, location]);
+
+  useEffect(() => {
+    if (isSessionExpired) {
+      setTimeout(() => {
+        studentLogout();
+      }, 4000);
+    }
+  }, [isSessionExpired]);
 
   const updateStudent = (student: Student) => {
     updateStudentProfile(
@@ -51,8 +94,9 @@ function StudentHome() {
   };
 
   const handleLogout = () => {
-
-    const accept = () => {studentLogout();};
+    const accept = () => {
+      studentLogout();
+    };
     const reject = () => {};
 
     confirmDialog({
@@ -68,13 +112,13 @@ function StudentHome() {
 
   return (
     <>
-    <ConfirmDialog />
+      {isSessionExpired && <SessionExpCard />}
+      <ConfirmDialog />
       <StudentProvider value={{ student, updateStudent }}>
         <div className={styles.container}>
           <div
             className={`${styles.header} p-card flex p-1 align-items-center justify-content-between `}
           >
-            
             <img
               src="/images/logo-no-background.png"
               alt="Nec logo"
@@ -199,7 +243,6 @@ function StudentHome() {
                         <span className="font-medium">Incharge</span>
                       </NavLink>
                     </li>
-              
                   </ul>
                 </div>
               </div>

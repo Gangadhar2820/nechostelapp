@@ -8,9 +8,10 @@ export const FacultyAuthProvider = ({ children }:any) => {
     return storedFaculty ? JSON.parse(storedFaculty) : false;
   });
 
-  const facultyLogin = () => {
+  const facultyLogin = (token:any) => {
     setFacultyExist(true);
     localStorage.setItem("facultyExist", JSON.stringify(true));
+    localStorage.setItem("facultyToken", JSON.stringify(token));
   };
 
   const facultyLogout = () => {

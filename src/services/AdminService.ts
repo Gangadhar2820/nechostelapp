@@ -1,14 +1,14 @@
-import axios from "axios";
 import { Incharge } from "../components/interfaces/Incharge";
 import { Student } from "../components/interfaces/Student";
 import { LOG } from "../components/interfaces/Log";
 import { Admin } from "../components/interfaces/Admin";
+import api, { getExistingToken } from "../utils/Api";
 
 const server = process.env.REACT_APP_SERVER;
 
 export const getAdmin = async (eid: string) => {
   try {
-    const response = await axios.get(`${server}/admin/getadmin/${eid}`);
+    const response = await api.get(`${server}/admin/getadmin/${eid}`);
     return response.data;
   } catch (error) {
     console.log("Error : while getting Admin details", error);
@@ -17,12 +17,13 @@ export const getAdmin = async (eid: string) => {
 
 export const updateIncharge = async (incharge: Incharge) => {
   try {
-    const response = await axios.put(
+    const response = await api.put(
       `${server}/incharge/update/${incharge.eid}`,
       incharge,
       {
         headers: {
           "Content-Type": "application/json",
+
         },
       }
     );
@@ -34,7 +35,7 @@ export const updateIncharge = async (incharge: Incharge) => {
 
 export const deleteIncharge = async (eid: string) => {
   try {
-    const response = await axios.delete(`${server}/incharge/delete/${eid}`);
+    const response = await api.delete(`${server}/incharge/delete/${eid}`);
     return response.data;
   } catch (error) {
     console.log("Error : while Deleting Incharge details", error);
@@ -43,14 +44,9 @@ export const deleteIncharge = async (eid: string) => {
 
 export const UploadStudentBulkData = async (students: any) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${server}/upload/addStudents`,
-      students,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      students
     );
     return response.data;
   } catch (error) {
@@ -60,14 +56,9 @@ export const UploadStudentBulkData = async (students: any) => {
 
 export const adminUpdateStudentProfile = async (student: Student) => {
   try {
-    const response = await axios.put(
+    const response = await api.put(
       `${server}/student/update/${student.rollNo.toUpperCase()}`,
-      student,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      student
     );
     return response.data;
   } catch (error) {
@@ -77,7 +68,7 @@ export const adminUpdateStudentProfile = async (student: Student) => {
 
 export const deleteStudent = async (rollNo: string) => {
   try {
-    const response = await axios.delete(`${server}/student/delete/${rollNo}`);
+    const response = await api.delete(`${server}/student/delete/${rollNo}`);
     return response.data;
   } catch (error) {
     console.log("Error : while Deleting Student details", error);
@@ -86,11 +77,7 @@ export const deleteStudent = async (rollNo: string) => {
 
 export const createLog = async (newLog: LOG) => {
   try {
-    const response = await axios.post(`${server}/logs/add-log`, newLog, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await api.post(`${server}/logs/add-log`, newLog);
     return response.data;
   } catch (error) {
     console.log("Error : while creating a log", error);
@@ -99,14 +86,9 @@ export const createLog = async (newLog: LOG) => {
 
 export const getLogs = async (date: Date) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${server}/logs/getLogs`,
-      { date: date },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { date: date }
     );
     return response.data;
   } catch (error) {
@@ -116,7 +98,7 @@ export const getLogs = async (date: Date) => {
 
 export const getAllAdmins = async () => {
   try {
-    const response = await axios.get(`${server}/admin/getAdmins`);
+    const response = await api.get(`${server}/admin/getAdmins`);
     return response.data;
   } catch (error) {
     console.log("Error : While getting all admins data", error);
@@ -125,14 +107,9 @@ export const getAllAdmins = async () => {
 
 export const updateAdmin = async (admin: Admin) => {
   try {
-    const response = await axios.put(
+    const response = await api.put(
       `${server}/admin/update/${admin.eid}`,
-      admin,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      admin
     );
     return response.data;
   } catch (error) {
@@ -142,7 +119,7 @@ export const updateAdmin = async (admin: Admin) => {
 
 export const deleteAdmin = async (eid: string) => {
   try {
-    const response = await axios.delete(`${server}/admin/delete/${eid}`);
+    const response = await api.delete(`${server}/admin/delete/${eid}`);
     return response.data;
   } catch (error) {
     console.log("Error : while Deleting Admin details", error);
@@ -154,14 +131,9 @@ export const UpdateMultipleStudents = async (
   year: string
 ) => {
   try {
-    const response = await axios.put(
+    const response = await api.put(
       `${server}/student/updateMany`,
-      { rollNumbers: rollNumbers, year: year },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { rollNumbers: rollNumbers, year: year }
     );
     return response.data;
   } catch (error) {
@@ -171,9 +143,8 @@ export const UpdateMultipleStudents = async (
 
 export const DeleteMultipleStudents = async (rollNumbers: string[]) => {
   try {
-    const response = await axios.delete(`${server}/student/deleteMany`, {
-      data: { rollNumbers: rollNumbers },
-      headers: { "Content-Type": "application/json" },
+    const response = await api.delete(`${server}/student/deleteMany`, {
+      data: { rollNumbers: rollNumbers }
     });
     return response.data;
   } catch (error) {
@@ -183,7 +154,7 @@ export const DeleteMultipleStudents = async (rollNumbers: string[]) => {
 
 export const FetchFacultyData = async () => {
   try {
-    const response = await axios.get(`${server}/faculty/get`);
+    const response = await api.get(`${server}/faculty/get`);
     return response.data;
   } catch (error) {
     console.log("Error : While fetching faculty credentials", error);
@@ -192,14 +163,9 @@ export const FetchFacultyData = async () => {
 
 export const UpdateFacultyData = async (username: string, password: string) => {
   try {
-    const response = await axios.put(
+    const response = await api.put(
       `${server}/faculty/update`,
-      { username: username, password: password },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { username: username, password: password }
     );
     return response.data;
   } catch (error) {
@@ -209,7 +175,7 @@ export const UpdateFacultyData = async (username: string, password: string) => {
 
 export const deleteLogs = async () => {
   try {
-    const response = await axios.delete(`${server}/logs/delete-logs`);
+    const response = await api.delete(`${server}/logs/delete-logs`);
     return response.data;
   } catch (error) {
     console.log("Error : while Deleting Logs", error);
@@ -219,11 +185,7 @@ export const deleteLogs = async () => {
 export const SendHolidayMessage = async (data: any) => {
   try {
     console.log(data)
-    const response = await axios.post(`${server}/holiday/send`, data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await api.post(`${server}/holiday/send`, data);
     return response.data;
   } catch (error) {
     console.log("Error : while Sending Holiday Messages", error);

@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../utils/Api";
 
 const server = process.env.REACT_APP_SERVER;
 
@@ -6,18 +6,13 @@ export {};
 
 const AuthenticateStudentLogin = async (username: string, password: string) => {
   try {
-    const response = await axios.post(
-      `${server}/student-auth/login`,
-      { rollNo: username, password: password },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+    const response = await api.post(
+      `/student-auth/login`,
+      { rollNo: username, password: password }
     );
     return response.data;
   } catch (err) {
-    console.log("there is some error");
+    console.log("Error : while authenticating student")
   }
 };
 
@@ -26,14 +21,9 @@ const AuthenticateInchargeLogin = async (
   password: string
 ) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${server}/incharge-auth/login`,
-      { eid: username, password: password },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { eid: username, password: password }
     );
     return response.data;
   } catch (err) {
@@ -43,7 +33,7 @@ const AuthenticateInchargeLogin = async (
 
 const VerifyStuFPassMail = async (rollNo: string) => {
   try {
-    const response = await axios.get(`${server}/student/verify/${rollNo}`);
+    const response = await api.get(`${server}/student/verify/${rollNo}`);
 
     return response.data;
   } catch (err) {
@@ -53,14 +43,9 @@ const VerifyStuFPassMail = async (rollNo: string) => {
 
 export const VerifyStuOTP = async (rollNo: string, otp: string) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${server}/student-auth/verifyOTP`,
-      { rollNo: rollNo, otp: otp },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { rollNo: rollNo, otp: otp }
     );
     return response.data;
   } catch (err) {
@@ -70,14 +55,9 @@ export const VerifyStuOTP = async (rollNo: string, otp: string) => {
 
 const UpdateStuNewPassword = async (rollNo: string, password: string) => {
   try {
-    const response = await axios.put(
+    const response = await api.put(
       `${server}/student-auth/update-password`,
-      { rollNo: rollNo, newPassword: password },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { rollNo: rollNo, newPassword: password }
     );
 
     return response.data;
@@ -88,7 +68,7 @@ const UpdateStuNewPassword = async (rollNo: string, password: string) => {
 
 export const VerifyINCFPassMail = async (eid: string) => {
   try {
-    const response = await axios.get(`${server}/incharge/verify/${eid}`);
+    const response = await api.get(`${server}/incharge/verify/${eid}`);
     return response.data;
   } catch (err) {
     console.log("Error : while verifying Incharge id ", err);
@@ -97,14 +77,9 @@ export const VerifyINCFPassMail = async (eid: string) => {
 
 export const VerifyINCOTP = async (eid: string, otp: string) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${server}/incharge-auth/verifyOTP`,
-      { eid: eid, otp: otp },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { eid: eid, otp: otp }
     );
     return response.data;
   } catch (err) {
@@ -114,14 +89,9 @@ export const VerifyINCOTP = async (eid: string, otp: string) => {
 
 export const UpdateINCNewPassword = async (eid: string, password: string) => {
   try {
-    const response = await axios.put(
+    const response = await api.put(
       `${server}/incharge-auth/update-password`,
-      { eid: eid, newPassword: password },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { eid: eid, newPassword: password }
     );
 
     return response.data;
@@ -132,7 +102,7 @@ export const UpdateINCNewPassword = async (eid: string, password: string) => {
 
 export const VerifyADMINFPassMail = async (eid: string) => {
   try {
-    const response = await axios.get(`${server}/admin/verify/${eid}`);
+    const response = await api.get(`${server}/admin/verify/${eid}`);
     return response.data;
   } catch (err) {
     console.log("Error : while verifying Admin id ", err);
@@ -141,14 +111,9 @@ export const VerifyADMINFPassMail = async (eid: string) => {
 
 export const VerifyADMINOTP = async (eid: string, otp: string) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${server}/admin-auth/verifyOTP`,
-      { eid: eid, otp: otp },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { eid: eid, otp: otp }
     );
     return response.data;
   } catch (err) {
@@ -158,14 +123,9 @@ export const VerifyADMINOTP = async (eid: string, otp: string) => {
 
 export const UpdateADMINNewPassword = async (eid: string, password: string) => {
   try {
-    const response = await axios.put(
+    const response = await api.put(
       `${server}/admin-auth/update-password`,
-      { eid: eid, newPassword: password },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { eid: eid, newPassword: password }
     );
 
     return response.data;
@@ -178,14 +138,9 @@ export const UpdateADMINNewPassword = async (eid: string, password: string) => {
 
 export const AuthenticateAdminLogin = async (eid: string, password: string) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${server}/admin-auth/login`,
-      { eid: eid, password: password },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { eid: eid, password: password }
     );
     return response.data;
   } catch (err) {
@@ -198,14 +153,9 @@ export const AuthenticateFacultyLogin = async (
   password: string
 ) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${server}/faculty/login`,
-      { username: username, password: password },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { username: username, password: password }
     );
 
     return response.data;

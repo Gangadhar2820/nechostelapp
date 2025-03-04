@@ -14,13 +14,14 @@ import {
 import { useInchargeAuth } from "../utils/InchargeAuth";
 import { useAdminAuth } from "../utils/AdminAuth";
 import { useFacultyAuth } from "../utils/FacultyAuth";
+import { isTokenExpired } from "./interfaces/Token";
 
-interface CustomInchargeJwtPayload {
+export interface CustomInchargeJwtPayload {
   eid: string;
   id: string;
 }
 
-interface CustomAdminJwtPayload {
+export interface CustomAdminJwtPayload {
   eid: string;
   id: string;
 }
@@ -47,23 +48,41 @@ function Login() {
 
   useEffect(() => {
     const facultyExist = localStorage.getItem("facultyExist");
-    const inchargeExist = localStorage.getItem("inchargeExist");
-    const adminExist = localStorage.getItem("adminExist");
+    const facultyToken = localStorage.getItem("facultyToken");
+    const isFacultyTokenValid = !isTokenExpired(facultyToken as string);
 
-    if (facultyExist) {
-      Navigate(`/faculty`, { replace: true });
-    } else if (inchargeExist && localStorage.getItem("inchargeToken")) {
-      const decoded = jwtDecode<CustomInchargeJwtPayload>(
-        localStorage.getItem("inchargeToken") as string
-      );
-      const eid = decoded.eid;
-      Navigate(`/incharge/${eid}`, { replace: true });
-    } else if (adminExist && localStorage.getItem("adminToken")) {
-      const decoded = jwtDecode<CustomAdminJwtPayload>(
-        localStorage.getItem("adminToken") as string
-      );
-      const eid = decoded.eid;
-      Navigate(`/admin/${eid}`, { replace: true });
+    const inchargeExist = localStorage.getItem("inchargeExist");
+    const inchargeToken = localStorage.getItem("inchargeToken");
+    const isInchargeTokenValid = !isTokenExpired(inchargeToken as string);
+
+    const adminExist = localStorage.getItem("adminExist");
+    const adminToken = localStorage.getItem("adminToken");
+    const isAdminTokenValid = !isTokenExpired(adminToken as string);
+
+    if (facultyExist && facultyToken) {
+      if (isFacultyTokenValid) {
+        Navigate(`/faculty`, { replace: true });
+      } else {
+        facultyLogout();
+      }
+    } else if (inchargeExist && inchargeToken) {
+      if (isInchargeTokenValid) {
+        const decoded = jwtDecode<CustomInchargeJwtPayload>(inchargeToken);
+        const eid = decoded.eid;
+        Navigate(`/incharge/${eid}`, { replace: true });
+      } else {
+        inchargeLogout();
+      }
+    } else if (adminExist && adminToken) {
+      if (isAdminTokenValid) {
+        const decoded = jwtDecode<CustomAdminJwtPayload>(
+          localStorage.getItem("adminToken") as string
+        );
+        const eid = decoded.eid;
+        Navigate(`/admin/${eid}`, { replace: true });
+      } else {
+        adminLogout();
+      }
     }
   }, [Navigate]);
 
@@ -74,7 +93,7 @@ function Login() {
     AuthenticateFacultyLogin(facUsername, facPassword)
       .then((data) => {
         setShowFacLoading(false);
-        const { success } = data;
+        const { success, token } = data;
         if (success) {
           if (loginToast.current) {
             loginToast.current.show({
@@ -83,7 +102,7 @@ function Login() {
               detail: "Welcome, User",
             });
           }
-          facultyLogin();
+          facultyLogin(token);
           Navigate(`/faculty`, { replace: true });
         } else {
           if (loginToast.current) {

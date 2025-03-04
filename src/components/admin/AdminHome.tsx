@@ -2,11 +2,22 @@ import styles from "../styles/home.module.css";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Sidebar } from "primereact/sidebar";
 import { Button } from "primereact/button";
-import { Link, NavLink, Outlet, useParams } from "react-router-dom";
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { Dialog } from "primereact/dialog";
 import { useAdminAuth } from "../../utils/AdminAuth";
 import { Admin } from "../interfaces/Admin";
 import { getAdmin } from "../../services/AdminService";
+import { isTokenExpired } from "../interfaces/Token";
+import { jwtDecode } from "jwt-decode";
+import { CustomAdminJwtPayload } from "../Login";
+import SessionExpCard from "../SessionExpCard";
 
 export const AdminContext = createContext<any>(null);
 export const AdminProvider = AdminContext.Provider;
@@ -20,15 +31,47 @@ function AdminHome() {
   const [admin, setAdmin] = useState<Admin>();
   const { adminLogout } = useAdminAuth();
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [isSessionExpired, setIsSessionExpired] = useState<boolean>(false);
+
   useEffect(() => {
-    getAdmin(params?.eid as string)
-      .then((data) => {
-        setAdmin(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const adminToken = localStorage.getItem("adminToken");
+    const isTokenValid = !isTokenExpired(adminToken as string);
+
+    if (isTokenValid) {
+      const decoded = jwtDecode<CustomAdminJwtPayload>(adminToken as string);
+
+      getAdmin(decoded?.eid as string)
+        .then((data) => {
+          setAdmin(data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      setIsSessionExpired(false);
+    } else {
+      setIsSessionExpired(true);
+    }
   }, []);
+
+  useEffect(() => {
+    const adminToken = localStorage.getItem("adminToken");
+    if (isTokenExpired(adminToken as string)) {
+      setIsSessionExpired(true);
+    } else {
+      setIsSessionExpired(false);
+    }
+  }, [navigate, location]);
+
+  useEffect(() => {
+    if (isSessionExpired) {
+      setTimeout(() => {
+        adminLogout();
+      }, 4000);
+    }
+  }, [isSessionExpired]);
 
   const handleLogout = () => {
     let result = window.confirm("Are you sure you want to Logout?");
@@ -39,6 +82,7 @@ function AdminHome() {
 
   return (
     <>
+      {isSessionExpired && <SessionExpCard />}
       <AdminProvider value={admin}>
         <div className={styles.container}>
           <div

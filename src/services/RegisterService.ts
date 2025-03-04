@@ -2,6 +2,7 @@ import axios from "axios";
 import { Student } from "../components/interfaces/Student";
 import { Incharge } from "../components/interfaces/Incharge";
 import { Admin } from "../components/interfaces/Admin";
+import api from "../utils/Api";
 
 const server = process.env.REACT_APP_SERVER;
 
@@ -9,7 +10,7 @@ export {};
 
 const VerifyStudentRegister = async (rollnumber: string) => {
   try {
-    const response = await axios.get(
+    const response = await api.get(
       `${server}/student/register/${rollnumber}`
     );
     return response.data;
@@ -24,15 +25,11 @@ const RegisterStudent = async (
   password: string
 ) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${server}/student-auth/register-student`,
-      { rollNo: rollnumber, hosteler: student, password: password },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { rollNo: rollnumber, hosteler: student, password: password }
     );
+    // console.log(response)
     return response.data;
   } catch (err) {
     console.log("Error : while registering student ", err);
@@ -44,15 +41,10 @@ const AdminInchargeRegisteration = async (
   password: string
 ) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${server}/incharge/create`,
       {...newIncharge,
         password: password,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
       }
     );
     return response.data;
@@ -66,15 +58,10 @@ export const AdminRegisteration = async (
   password: string
 ) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${server}/admin/add-admin`,
       {...newAdmin,
         password: password,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
       }
     );
     return response.data;
@@ -86,15 +73,10 @@ export const AdminRegisteration = async (
 const AdminStudentRegisteration = async (newStudent:Student
 ) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${server}/student/create`,
       {
        ...newStudent
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
       }
     );
     return response.data;
