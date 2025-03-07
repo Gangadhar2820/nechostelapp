@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const server = process.env.REACT_APP_SERVER;
+console.log(server)
 
 export const getExistingToken = () => {
   const tokens = [
@@ -26,7 +27,7 @@ const removeTokens = () => {
 
 const api = axios.create({
   baseURL: server,
-  timeout: 10000,
+  timeout: 240000,
   headers: {
     "Content-Type": "application/json",
   },
