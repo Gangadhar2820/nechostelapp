@@ -1,7 +1,6 @@
 import axios from "axios";
 
 const server = process.env.REACT_APP_SERVER;
-console.log(server)
 
 export const getExistingToken = () => {
   const tokens = [
