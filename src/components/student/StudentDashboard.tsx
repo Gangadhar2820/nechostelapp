@@ -16,6 +16,7 @@ function StudentDashboard() {
           transform: "translatex(-50%)",
         }}
       >
+        <p className="special-font text-center"><i className="pi pi-refresh"></i> Please refresh to get updates</p>
         <Card title="Last Request" className="mt-1 special-font">
           {student?.lastRequest ? (
             <ReqCard request={student?.lastRequest} />

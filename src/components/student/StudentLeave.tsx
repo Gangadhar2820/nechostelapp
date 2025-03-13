@@ -71,6 +71,14 @@ function StudentLeave() {
     ValidateForm();
   }, [date, fromDate, fromTime, toDate, toTime, reason]);
 
+  useEffect(()=>{
+    setToTime(fromTime)
+  },[fromTime])
+
+  useEffect(()=>{
+    setToDate(fromDate)
+  },[fromDate])
+
   useEffect(() => {
     msgs.current?.clear();
     msgs.current?.show({
@@ -258,6 +266,7 @@ function StudentLeave() {
                         className="w-12 md:w-8"
                         showButtonBar
                         dateFormat="dd/mm/yy"
+                        minDate={new Date()}
                       />
                       <label htmlFor="stu-pl-date">Date</label>
                     </FloatLabel>
@@ -271,8 +280,10 @@ function StudentLeave() {
                         required
                         inputId="stu-pl-fromTime"
                         value={fromTime}
-                        onChange={(e) => setFromTime(e.value)}
+                        onChange={(e) => {
+                          setFromTime(e.value);}}
                         className="w-12 md:w-8"
+                        minDate={new Date()}
                       />
                       <label htmlFor="stu-pl-fromTime">From Time</label>
                     </FloatLabel>
@@ -287,7 +298,8 @@ function StudentLeave() {
                         value={toTime}
                         onChange={(e) => setToTime(e.value)}
                         className="w-12 md:w-8"
-                      />
+                        minDate={fromTime ? new Date(fromTime) : undefined}
+                        />
                       <label htmlFor="stu-pl-toTime">To Time</label>
                     </FloatLabel>
                   </div>
@@ -308,6 +320,7 @@ function StudentLeave() {
                         showTime
                         hourFormat="12"
                         dateFormat="dd/mm/yy"
+                        minDate={new Date()}
                       />
                       <label htmlFor="stu-pl-fromDate">From Date</label>
                     </FloatLabel>
@@ -325,6 +338,7 @@ function StudentLeave() {
                         showTime
                         hourFormat="12"
                         dateFormat="dd/mm/yy"
+                        minDate={fromDate?new Date(fromDate):undefined}
                       />
                       <label htmlFor="stu-pl-toDate">To Date</label>
                     </FloatLabel>
