@@ -71,13 +71,13 @@ function StudentLeave() {
     ValidateForm();
   }, [date, fromDate, fromTime, toDate, toTime, reason]);
 
-  useEffect(()=>{
-    setToTime(fromTime)
-  },[fromTime])
+  // useEffect(()=>{
+  //   setToTime(fromTime)
+  // },[fromTime])
 
-  useEffect(()=>{
-    setToDate(fromDate)
-  },[fromDate])
+  // useEffect(()=>{
+  //   setToDate(fromDate)
+  // },[fromDate])
 
   useEffect(() => {
     msgs.current?.clear();
@@ -317,7 +317,7 @@ function StudentLeave() {
                         onChange={(e) => setFromDate(e.value)}
                         className="w-12 md:w-8"
                         showButtonBar
-                        showTime
+                        // showTime
                         hourFormat="12"
                         dateFormat="dd/mm/yy"
                         minDate={new Date()}
@@ -335,7 +335,7 @@ function StudentLeave() {
                         onChange={(e) => setToDate(e.value)}
                         className="w-12 md:w-8"
                         showButtonBar
-                        showTime
+                        // showTime
                         hourFormat="12"
                         dateFormat="dd/mm/yy"
                         minDate={fromDate?new Date(fromDate):undefined}
